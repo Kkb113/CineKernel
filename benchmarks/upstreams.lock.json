@@ -13,7 +13,7 @@
     "source_commit_ahead_of_package": true,
     "source_commits_ahead": 9,
     "license_file": "LICENSE.md",
-    "license_sha256": "11d935579351f40f3caa42c7a45f7d2fd57b94d817178a83485ed3d8b9333c07",
+    "license_sha256": "bd65083b940f61904f6ef298aade918a7cad72a3e35bc406e36fab365844b673",
     "sparse_paths": [
       "README.md", "LICENSE.md", "AGENTS.md", "package.json",
       "packages/core", "packages/renderer", "packages/cli", "packages/player",

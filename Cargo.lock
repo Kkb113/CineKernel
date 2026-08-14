@@ -2791,6 +2791,7 @@ dependencies = [
  "anyhow",
  "chrono",
  "clap",
+ "hex",
  "jsonschema",
  "phase0-common",
  "phase0-verifier",

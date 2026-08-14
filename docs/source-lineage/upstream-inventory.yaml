@@ -10,7 +10,7 @@ entries:
     release_tag: v4.0.509
     release_commit: 6ef4fbb15937540aec723d618780a4b9d6ef133c
     source_commits_ahead: 9
-    license_sha256: 11d935579351f40f3caa42c7a45f7d2fd57b94d817178a83485ed3d8b9333c07
+    license_sha256: bd65083b940f61904f6ef298aade918a7cad72a3e35bc406e36fab365844b673
     upstream_paths: [packages/core, packages/renderer, packages/three]
     permission_basis: owner assertion plus upstream license
     original_license: Remotion License (see pinned LICENSE.md)
