@@ -402,4 +402,22 @@ mod tests {
         assert_eq!(REMOTION_COMMIT.len(), 40);
         assert_eq!(HYPERFRAMES_COMMIT.len(), 40);
     }
+
+    #[test]
+    fn runtime_paths_preserve_spaces_unicode_and_normalize_components() {
+        let temporary = tempfile::tempdir().expect("create temporary directory");
+        let root = temporary.path().join("Cine Kernel – portable");
+        let runtime = runtime_root(&root);
+        assert_eq!(runtime, root.join(".cinekernel"));
+        assert!(ensure_safe_generated_path(
+            &root,
+            &runtime
+                .join("generated")
+                .join("fixtures")
+                .join("..")
+                .join("assets")
+        )
+        .is_ok());
+        assert!(ensure_safe_generated_path(&root, &runtime.join("generated").join("..")).is_err());
+    }
 }

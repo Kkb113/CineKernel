@@ -1,5 +1,16 @@
 # Remotion / HyperFrames comparison
 
+```mermaid
+flowchart TB
+  R["Remotion: React + frame context"] --> W["Wrapped web compatibility backend"]
+  H["HyperFrames: HTML + exact-time seek"] --> W
+  W --> C["CineKernel-owned contracts"]
+  C --> T["Rational timing"]
+  C --> M["Media and audio oracles"]
+  C --> S["Bounded scheduling"]
+  C --> V["Structural and decoded verification"]
+```
+
 | Dimension | Remotion 4e459b8b | HyperFrames 532caf7a | CineKernel implication |
 |---|---|---|---|
 | Authoring | React composition tree | HTML/data attributes | Neither becomes authoritative IR |
