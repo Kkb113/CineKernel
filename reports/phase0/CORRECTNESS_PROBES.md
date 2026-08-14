@@ -1,4 +1,6 @@
-# Correctness probes
+# Historical Phase 0 correctness probes (superseded)
+
+These pre-remediation probes are retained for history only and do not satisfy Phase 0.1. Canonical Probes A–J will overwrite this report after the clean full run.
 
 | Probe | Status | Evidence |
 |---|---|---|

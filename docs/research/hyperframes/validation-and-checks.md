@@ -14,3 +14,13 @@ Errors and fallbacks are explicit in engine/producer services; caches require ve
 flowchart LR
 A[lint] --> B[runtime sweep] --> C[layout] --> D[motion] --> E[contrast]
 ```
+
+## Concrete trace and ownership
+
+The CLI `check` command composes static lint with browser runtime, sampled layout, motion, contrast, and optional snapshot checks. Lint rules own source-level findings; runtime diagnostics own page exceptions/readiness; layout/motion/contrast passes own sampled observations. Strict mode promotes configured findings to process failure. These checks run before each benchmark render and their durations are recorded as preflight, not render time.
+
+Validation is intentionally layered. A clean lint/check result proves the composition is structurally renderable at sampled times; it does not prove every final frame, timestamp, audio window, codec field, or mux. Conversely, the artifact verifier cannot explain every authoring warning. CineKernel retains both records and never substitutes one for the other.
+
+Preview checks use a browser and sampled times, while final verification decodes the actual MP4. Errors propagate through nonzero CLI exit; the harness aborts the repetition and preserves command logs. There is no retry for deterministic lint failure. Caches/browser reuse may accelerate checking but do not change strict outcome.
+
+Decision: **adopt** lint/check as preflight for HyperFrames projects, **derive** layered diagnostics, **reimplement** cross-engine semantic/mux verification, and **reject** sampled validation as acceptance evidence by itself. Confidence: **high** for authoring diagnostics; artifact acceptance depends on the central verifier.

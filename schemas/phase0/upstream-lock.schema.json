@@ -15,16 +15,22 @@
     "upstream": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["repository", "commit", "release_or_package_version", "source_commit_ahead_of_package", "license_file", "sparse_paths"],
+      "required": ["repository", "commit", "source_tree_git_sha", "release_or_package_version", "package_registry_integrity", "package_git_head", "release_tag", "release_commit", "source_commit_ahead_of_package", "source_commits_ahead", "license_file", "license_sha256", "sparse_paths"],
       "properties": {
         "repository": {"type": "string", "format": "uri"},
         "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "source_tree_git_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
         "release_or_package_version": {"type": "string", "minLength": 1},
-        "source_commit_ahead_of_package": {"enum": [true, false, "unknown_pending_archaeology"]},
+        "package_registry_integrity": {"type": "string", "pattern": "^sha512-"},
+        "package_git_head": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+        "release_tag": {"type": "string", "minLength": 1},
+        "release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "source_commit_ahead_of_package": {"type": "boolean"},
+        "source_commits_ahead": {"type": "integer", "minimum": 0},
         "license_file": {"type": "string", "minLength": 1},
+        "license_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "sparse_paths": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
       }
     }
   }
 }
-

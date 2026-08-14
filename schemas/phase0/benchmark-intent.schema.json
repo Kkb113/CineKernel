@@ -14,7 +14,7 @@
     "case": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "title", "purpose", "duration_seconds", "resolution", "fps", "local_assets", "scene_boundaries_seconds", "expected_visual_events", "expected_audio_events", "expected_frame_count", "verification_points_seconds", "supported_engines"],
+      "required": ["id", "title", "purpose", "duration_seconds", "resolution", "fps", "local_assets", "scene_boundaries_seconds", "expected_visual_events", "expected_audio_events", "expected_audio_tracks", "expected_frame_count", "verification_points_seconds", "semantic_checkpoints", "equivalence", "supported_engines"],
       "properties": {
         "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
         "title": {"type": "string"},
@@ -26,11 +26,14 @@
         "scene_boundaries_seconds": {"type": "array", "items": {"type": "number", "minimum": 0}},
         "expected_visual_events": {"type": "array", "items": {"type": "string"}},
         "expected_audio_events": {"type": "array", "items": {"type": "string"}},
+        "expected_audio_clip_count": {"type": "integer", "minimum": 0},
+        "expected_audio_tracks": {"type": "integer", "minimum": 0, "maximum": 1},
         "expected_frame_count": {"type": "integer", "minimum": 1},
         "verification_points_seconds": {"type": "array", "minItems": 1, "items": {"type": "number", "minimum": 0}},
+        "semantic_checkpoints": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+        "equivalence": {"type": "object", "minProperties": 1, "additionalProperties": {"enum": ["equivalent", "partial", "feasibility", "unsupported"]}},
         "supported_engines": {"type": "array", "minItems": 1, "items": {"enum": ["remotion", "hyperframes", "native-2d", "native-wgpu"]}}
       }
     }
   }
 }
-

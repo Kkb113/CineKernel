@@ -1,16 +1,16 @@
 [package]
-name = "phase0-native-2d"
+name = "phase0-verifier"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 
 [dependencies]
 anyhow.workspace = true
-clap.workspace = true
-phase0-native-font = {path = "../phase0-native-font"}
-resvg.workspace = true
+hex.workspace = true
+serde.workspace = true
 serde_json.workspace = true
-tiny-skia.workspace = true
+sha2.workspace = true
+tempfile.workspace = true
 
 [lints]
 workspace = true

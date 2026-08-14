@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cinekernel.dev/schemas/phase0/benchmark-result-v1.schema.json",
+  "title": "CineKernel retained historical Phase 0 benchmark result",
+  "type": "object",
+  "required": ["schema_version", "run_id", "engine", "case_id", "profile", "verification", "exit_code"],
+  "properties": {
+    "schema_version": {"const": "phase0.result.v1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "engine": {"type": "string", "minLength": 1},
+    "case_id": {"type": "string", "minLength": 1},
+    "profile": {"enum": ["smoke", "full"]},
+    "verification": {"type": "object"},
+    "exit_code": {"type": "integer"}
+  },
+  "additionalProperties": true
+}

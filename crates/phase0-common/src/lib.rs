@@ -27,9 +27,16 @@ pub struct UpstreamLock {
 pub struct Upstream {
     pub repository: String,
     pub commit: String,
+    pub source_tree_git_sha: String,
     pub release_or_package_version: String,
+    pub package_registry_integrity: String,
+    pub package_git_head: Option<String>,
+    pub release_tag: String,
+    pub release_commit: String,
     pub source_commit_ahead_of_package: Value,
+    pub source_commits_ahead: u64,
     pub license_file: String,
+    pub license_sha256: String,
     pub sparse_paths: Vec<String>,
 }
 
@@ -47,6 +54,10 @@ pub struct BenchmarkCase {
     pub purpose: String,
     pub duration_seconds: f64,
     pub expected_frame_count: u64,
+    #[serde(default)]
+    pub expected_audio_tracks: usize,
+    #[serde(default)]
+    pub equivalence: BTreeMap<String, String>,
     pub supported_engines: Vec<String>,
 }
 

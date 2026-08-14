@@ -12,8 +12,12 @@ export interface BenchmarkCase {
   readonly scene_boundaries_seconds: readonly number[];
   readonly expected_visual_events: readonly string[];
   readonly expected_audio_events: readonly string[];
+  readonly expected_audio_clip_count?: number;
+  readonly expected_audio_tracks: number;
   readonly expected_frame_count: number;
   readonly verification_points_seconds: readonly number[];
+  readonly semantic_checkpoints: readonly Record<string, unknown>[];
+  readonly equivalence: Readonly<Partial<Record<Engine, "equivalent" | "partial" | "feasibility" | "unsupported">>>;
   readonly supported_engines: readonly Engine[];
 }
 
@@ -23,12 +27,14 @@ export interface BenchmarkIntentSpec {
   readonly cases: readonly BenchmarkCase[];
 }
 
-export const sourceFrameRgb = (frame: number): readonly [number, number, number] => [
-  (frame * 47 + 17) % 256,
-  (frame * 97 + 31) % 256,
-  (frame * 193 + 53) % 256,
-];
+export const sourceFrameRgb = (frame: number): readonly [number, number, number] => {
+  const code = (frame * 97) % 240;
+  return [
+    15 + (code % 7) * 37,
+    15 + (Math.floor(code / 7) % 6) * 44,
+    15 + (Math.floor(code / 42) % 6) * 44,
+  ];
+};
 
 export const frameCount = (durationSeconds: number, fps = 30): number =>
   Math.round(durationSeconds * fps);
-

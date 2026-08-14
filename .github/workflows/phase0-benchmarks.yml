@@ -1,17 +1,28 @@
 name: Phase 0 benchmarks
+
 on:
   workflow_dispatch:
     inputs:
       profile:
+        description: Canonical benchmark profile
         type: choice
         options: [smoke, full]
         default: smoke
+        required: true
       engine:
+        description: Engine selection
         type: choice
         options: [all, remotion, hyperframes, native-2d, native-wgpu]
         default: all
+        required: true
+
+permissions:
+  contents: read
+
 jobs:
   benchmark:
+    name: canonical-${{ inputs.profile }}-${{ inputs.engine }} (${{ matrix.os }})
+    timeout-minutes: 720
     strategy:
       fail-fast: false
       matrix:
@@ -19,29 +30,70 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.8.0
+          run_install: false
+
       - uses: actions/setup-node@v4
-        with: {node-version-file: .node-version, cache: pnpm}
-      - run: corepack enable
-      - run: pnpm install --frozen-lockfile
-      - run: cargo xtask doctor --json
-      - run: cargo xtask upstream sync
-      - run: cargo xtask phase0 prepare
-      - name: Run selected benchmark
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install JavaScript dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Capture environment and dependencies
+        run: cargo xtask doctor --json
+
+      - name: Synchronize pinned upstream source
+        run: cargo xtask upstream sync
+
+      - name: Verify pinned upstream source
+        run: cargo xtask upstream verify --json
+
+      - name: Prepare deterministic fixtures
+        run: cargo xtask phase0 prepare --json
+
+      - name: Run selected canonical benchmark
         shell: pwsh
         run: |
-          $engine = '${{ inputs.engine }}'
-          $args = @('xtask','phase0','run','--profile','${{ inputs.profile }}')
-          if ($engine -ne 'all') { $args += @('--engine',$engine) }
-          cargo @args
-      - if: always()
-        run: cargo xtask phase0 report
-      - if: always()
+          $arguments = @('xtask','phase0','canonical-run','--profile','${{ inputs.profile }}','--timeout-seconds','7200','--stall-seconds','1800','--json')
+          if ('${{ inputs.engine }}' -ne 'all') {
+            $arguments += @('--engine','${{ inputs.engine }}')
+          }
+          & cargo @arguments
+          exit $LASTEXITCODE
+
+      - name: Verify complete canonical matrix
+        run: cargo xtask phase0 verify --canonical --json
+
+      - name: Run canonical correctness probes
+        if: inputs.profile == 'full' && inputs.engine == 'all'
+        run: cargo xtask phase0 probes --canonical --json
+
+      - name: Generate canonical reports
+        if: always()
+        run: cargo xtask phase0 report --canonical --json
+
+      - name: Upload canonical benchmark evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase0-${{ matrix.os }}-${{ inputs.profile }}-${{ inputs.engine }}
+          name: phase0-${{ github.sha }}-${{ matrix.os }}-${{ inputs.profile }}-${{ inputs.engine }}
+          retention-days: 90
+          if-no-files-found: warn
           path: |
             .cinekernel/runs/
+            .cinekernel/logs/
             .cinekernel/environments/
-            reports/phase0/BASELINE_RESULTS.*
-
+            .cinekernel/projects/
+            .cinekernel/probes/
+            reports/phase0/CANONICAL_RUN_MANIFEST.json
+            reports/phase0/CANONICAL_BASELINE_RESULTS.*
+            reports/phase0/CORRECTNESS_PROBES.*
+            reports/phase0/ARTIFACT_INDEX.md
+            reports/phase0/VERIFIER_REPORT.md

@@ -15,3 +15,13 @@ flowchart LR
 A[frame range] --> B[page workers] --> C[chunks] --> D[encode]
 E[Lambda] --> C
 ```
+
+## Concrete trace and ownership
+
+`renderFrames()` wraps `internalRenderFrames`; `innerRenderFrames` schedules frame numbers onto a browser page pool and returns `FrameAndAssets`. The constant `MAX_RETRIES_PER_FRAME` bounds frame retry. `render-frame-and-retry-target-close.ts` isolates a closed-target recovery case rather than retrying arbitrary deterministic failures. Completion order is a scheduling property; the frame number remains the semantic key.
+
+Local resource ownership belongs to the page pool, Chromium processes, downloaded assets, temporary frame files, and FFmpeg. Cancellation must close pages and children. CineKernel therefore supervises the entire engine process tree with heartbeats, RSS/temp-disk sampling, wall/stall deadlines, graceful termination, and forced tree kill. Warm-up is a separate untimed attempt and its failure aborts the group.
+
+Lambda's shared chunk contract partitions frame ranges and later combines them. That design informs a future CineKernel distributed protocol, but Lambda storage/retry/assembly is not exercised by Phase 0.1 and is not counted as proven reuse. Local worker modes are measured explicitly: Remotion media runs at default, 1, and 4 concurrency; five repetitions per mode prevent a single favorable schedule from defining the result.
+
+Preview is normally single interactive state, while final rendering can use multiple isolated pages and out-of-order completion. Cache warming and browser reuse can affect performance, so measurements record mode and repetition and do not merge historical runs. Decision: **derive** ordinal frame scheduling and bounded retry, **reimplement** process supervision and canonical evidence selection, **wrap** Remotion local concurrency, and defer distributed adoption. Confidence: **high** for local scheduling structure, **low** for Lambda operational equivalence until a dedicated phase.

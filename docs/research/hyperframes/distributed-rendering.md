@@ -17,3 +17,13 @@ B --> D[GCP]
 C --> E[verified merge]
 D --> E
 ```
+
+## Concrete trace and ownership
+
+`producer/src/distributed.ts` exports planning, chunk rendering, assembly, project hashing, and typed distributed-format contracts. V2 execution separates `renderChunkV2` from `assembleV2`; project hashes bind workers to frozen input. AWS Lambda and GCP Cloud Run packages supply provider execution around the shared plan rather than redefining composition time.
+
+The coordinator owns plan identity, chunk ranges, retries, and final assembly. Workers own isolated browser/encoder resources for their assigned range. Object storage owns exchanged artifacts. Chunk identifiers and hashes, not completion order, establish assembly order. Provider retries must be idempotent and cannot silently mix project revisions. Assembly errors and missing chunks reject.
+
+Local preview is unrelated to this lifecycle; local final render still shares plan/capture/encode ideas but not provider failure modes. Phase 0.1 does not execute AWS/GCP and makes no performance or reliability claim for them. The canonical implementation revision/spec/lock hashing is deliberately compatible with future distributed input identity.
+
+Decision: **derive** immutable plan hashes, ordinal chunks, idempotent workers, and verified assembly; **defer/reimplement** provider-neutral orchestration in a later phase; **wrap** upstream provider support only for HyperFrames compatibility. Confidence: **high** in the static trace, **low** in unexecuted operations.

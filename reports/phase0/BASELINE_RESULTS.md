@@ -1,4 +1,6 @@
-# Phase 0 baseline results
+# Historical Phase 0 baseline results (non-canonical)
+
+These pre-remediation v1 results are retained for history only. They are not merged into or cited as Phase 0.1 canonical evidence.
 
 Generated from all retained `result.json` files under `.cinekernel/runs/`. Timing summaries include only verified successful attempts; all 14 failed attempts remain in `BASELINE_RESULTS.json` under `raw_results`. Successful attempts: 121. Total retained attempts: 135.
 

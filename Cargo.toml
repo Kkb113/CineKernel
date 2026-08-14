@@ -3,8 +3,10 @@ resolver = "2"
 members = [
   "crates/xtask",
   "crates/phase0-common",
+  "crates/phase0-native-font",
   "crates/phase0-native-2d",
   "crates/phase0-native-wgpu",
+  "crates/phase0-verifier",
 ]
 
 [workspace.package]
@@ -21,6 +23,7 @@ clap = { version = "4.5.51", features = ["derive"] }
 glam = { version = "0.29.3", features = ["bytemuck"] }
 hex = "0.4.3"
 image = { version = "0.25.8", default-features = false, features = ["png"] }
+jsonschema = { version = "0.37.1", default-features = false }
 pollster = "0.3.0"
 png = "0.17.16"
 resvg = "0.44.0"
@@ -34,6 +37,7 @@ tiny-skia = "0.11.4"
 uuid = { version = "1.18.1", features = ["v4", "serde"] }
 walkdir = "2.5.0"
 wgpu = "0.20.1"
+wait-timeout = "0.2.1"
 
 [workspace.lints.rust]
 unsafe_code = "deny"
