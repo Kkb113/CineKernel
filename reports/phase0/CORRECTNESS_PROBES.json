@@ -1,0 +1,67 @@
+{
+  "schema_version": "phase0.probes.v1",
+  "generated_at_utc": "2026-08-14T05:20:35.249Z",
+  "results": [
+    {
+      "id": "A",
+      "title": "Repeated render stability",
+      "status": "PASS",
+      "evidence": "native-2d/typography-layout/smoke decoded framemd5 SHA-256 values 6a33df14dfd78a320bee14ba40c7516116c7b00e7489929bf7e920c21613c8e2 / 6a33df14dfd78a320bee14ba40c7516116c7b00e7489929bf7e920c21613c8e2."
+    },
+    {
+      "id": "B",
+      "title": "Sequential versus parallel media sampling",
+      "status": "PASS",
+      "evidence": "remotion:default=ok[15,25,35,45 vs 15,25,35,45]; remotion:1=ok[15,25,35,45 vs 15,25,35,45]; remotion:4=ok[15,25,35,45 vs 15,25,35,45]; hyperframes:default=ok[15,25,35,45 vs 15,25,35,45]; hyperframes:1=ok[15,25,35,45 vs 15,25,35,45]; hyperframes:4=ok[15,25,35,45 vs 15,25,35,45]"
+    },
+    {
+      "id": "C",
+      "title": "Random-access versus sequential native evaluation",
+      "status": "PASS",
+      "evidence": "native-2d=identical 220bb8829981/220bb8829981; native-wgpu=identical 719fad08d58d/719fad08d58d"
+    },
+    {
+      "id": "D",
+      "title": "Preview/snapshot versus final frame",
+      "status": "PASS",
+      "evidence": "remotion=MAE 0.723 (ok); hyperframes=MAE 1.933 (ok)"
+    },
+    {
+      "id": "E",
+      "title": "Audio presence",
+      "status": "PASS",
+      "evidence": "Decoded full-profile mono RMS tone=0.08995, silence windows=0.00000/0.00000; 24 audio-bearing outputs retained."
+    },
+    {
+      "id": "F",
+      "title": "Audio seam and overlap",
+      "status": "PASS",
+      "evidence": "Encoded max adjacent-sample jumps at 2/3/5/6s=0.00737/0.00000/0.01100/0.00001; required <0.08 with silent gap RMS <0.01."
+    },
+    {
+      "id": "G",
+      "title": "Render-time network isolation",
+      "status": "PASS",
+      "evidence": "Static audit found no HTTP(S) render dependencies in either baseline composition; OS-level blocked-network rerun remains desirable."
+    },
+    {
+      "id": "H",
+      "title": "Final mux integrity",
+      "status": "PASS",
+      "evidence": "121 retained output(s) passed ffprobe track/frame/duration verification."
+    },
+    {
+      "id": "I",
+      "title": "Process failure and cleanup",
+      "status": "PASS",
+      "evidence": "terminated=true; tracked_pids=28320,23744,13288; surviving_pids=none; partial_files=11; success_record=false; next_run_exit=0."
+    },
+    {
+      "id": "J",
+      "title": "Controlled slow consumer",
+      "status": "PASS",
+      "evidence": "Bounded queue capacity=4, observed max=4, produced=100, consumed=100."
+    }
+  ],
+  "source_result_count": 135
+}

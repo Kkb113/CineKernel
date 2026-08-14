@@ -1,0 +1,51 @@
+schema_version: phase0.lineage.v1
+entries:
+  - local_path: packages/phase0-remotion
+    classification: wrapped
+    upstream_repository: https://github.com/remotion-dev/remotion.git
+    upstream_commit: 4e459b8b3aeec12ac8346666773ea28892a30e31
+    upstream_paths: [packages/core, packages/renderer, packages/three]
+    permission_basis: owner assertion plus upstream license
+    original_license: Remotion License (see pinned LICENSE.md)
+    modifications: none to upstream; original controlled benchmark composition
+    local_contracts_added: BenchmarkIntentSpec adapter and verified result boundary
+    conformance_tests: packages/phase0-remotion/test/baseline.test.ts
+    upstream_sync_policy: explicit reviewed lock update only
+    owner: CineKernel maintainers
+  - local_path: packages/phase0-hyperframes
+    classification: wrapped
+    upstream_repository: https://github.com/heygen-com/hyperframes.git
+    upstream_commit: 532caf7aa24fef382cb103013f6414bb547a4129
+    upstream_paths: [packages/core, packages/engine, packages/producer, packages/cli]
+    permission_basis: owner assertion plus upstream license
+    original_license: Apache-2.0
+    modifications: none to upstream; original controlled benchmark composition
+    local_contracts_added: BenchmarkIntentSpec adapter and verified result boundary
+    conformance_tests: packages/phase0-hyperframes/test/baseline.test.ts
+    upstream_sync_policy: explicit reviewed lock update only
+    owner: CineKernel maintainers
+  - local_path: crates/phase0-native-2d
+    classification: original
+    upstream_repository: null
+    upstream_commit: null
+    upstream_paths: []
+    permission_basis: original CineKernel work
+    original_license: Apache-2.0
+    modifications: null
+    local_contracts_added: deterministic software frame renderer
+    conformance_tests: cargo test --workspace --all-features
+    upstream_sync_policy: none
+    owner: CineKernel maintainers
+  - local_path: crates/phase0-native-wgpu
+    classification: original
+    upstream_repository: null
+    upstream_commit: null
+    upstream_paths: []
+    permission_basis: original CineKernel work
+    original_license: Apache-2.0
+    modifications: null
+    local_contracts_added: deterministic native 3D feasibility renderer
+    conformance_tests: smoke render plus ffprobe verification
+    upstream_sync_policy: none
+    owner: CineKernel maintainers
+

@@ -1,0 +1,11 @@
+packages:
+  - packages/*
+
+allowBuilds:
+  '@google/genai': false
+  esbuild: true
+  onnxruntime-node: false
+  protobufjs: false
+
+minimumReleaseAgeExclude:
+  - hyperframes@0.7.108

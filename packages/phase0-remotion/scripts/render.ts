@@ -1,0 +1,21 @@
+import {spawnSync} from "node:child_process";
+import {createRequire} from "node:module";
+import {dirname,resolve} from "node:path";
+import {parseArgs} from "node:util";
+
+const {values}=parseArgs({args:process.argv.slice(2).filter((value)=>value!=="--"),options:{case:{type:"string"},profile:{type:"string"},output:{type:"string"}}});
+if(!values.case||!values.profile||!values.output) throw new Error("--case, --profile, and --output are required");
+const width=Number(process.env.CINEKERNEL_WIDTH??(values.profile==="smoke"?640:1920));
+const height=Number(process.env.CINEKERNEL_HEIGHT??(values.profile==="smoke"?360:1080));
+const durationSeconds=Number(process.env.CINEKERNEL_DURATION_SECONDS??1);
+const fixtures=process.env.CINEKERNEL_FIXTURES;
+if(!fixtures) throw new Error("CINEKERNEL_FIXTURES is required");
+const concurrency=process.env.CINEKERNEL_CONCURRENCY;
+const args=["render","src/index.tsx","CineKernelBenchmark",values.output,"--props",JSON.stringify({caseId:values.case,width,height,durationSeconds}),"--codec","h264","--pixel-format","yuv420p","--public-dir",fixtures,"--log","verbose"];
+if(concurrency) args.push("--concurrency",concurrency);
+const started=performance.now();
+const require=createRequire(import.meta.url);const cli=resolve(dirname(require.resolve("@remotion/cli")),"../remotion-cli.js");
+const result=spawnSync(process.execPath,[cli,...args],{cwd:new URL("..",import.meta.url),stdio:"inherit",shell:false});
+if(result.error) throw result.error;
+if(result.status!==0) process.exit(result.status??1);
+console.log(JSON.stringify({ok:true,engine:"remotion",case:values.case,profile:values.profile,elapsed_ms:performance.now()-started,concurrency:concurrency??"default"}));

@@ -1,0 +1,18 @@
+.cinekernel/
+target/
+node_modules/
+dist/
+coverage/
+*.log
+*.mp4
+*.mov
+*.webm
+*.wav
+*.png
+!docs/assets/phase0/*.png
+.DS_Store
+Thumbs.db
+
+# User-supplied upstream archives are local inputs, not repository content.
+Remotion-Hyperframe-SourceCode/
+

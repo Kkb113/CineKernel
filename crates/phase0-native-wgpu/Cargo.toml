@@ -1,0 +1,19 @@
+[package]
+name = "phase0-native-wgpu"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+bytemuck.workspace = true
+clap.workspace = true
+glam.workspace = true
+image.workspace = true
+pollster.workspace = true
+serde_json.workspace = true
+wgpu.workspace = true
+
+[lints]
+workspace = true
+

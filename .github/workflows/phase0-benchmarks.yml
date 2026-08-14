@@ -1,0 +1,47 @@
+name: Phase 0 benchmarks
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        type: choice
+        options: [smoke, full]
+        default: smoke
+      engine:
+        type: choice
+        options: [all, remotion, hyperframes, native-2d, native-wgpu]
+        default: all
+jobs:
+  benchmark:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-node@v4
+        with: {node-version-file: .node-version, cache: pnpm}
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: cargo xtask doctor --json
+      - run: cargo xtask upstream sync
+      - run: cargo xtask phase0 prepare
+      - name: Run selected benchmark
+        shell: pwsh
+        run: |
+          $engine = '${{ inputs.engine }}'
+          $args = @('xtask','phase0','run','--profile','${{ inputs.profile }}')
+          if ($engine -ne 'all') { $args += @('--engine',$engine) }
+          cargo @args
+      - if: always()
+        run: cargo xtask phase0 report
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase0-${{ matrix.os }}-${{ inputs.profile }}-${{ inputs.engine }}
+          path: |
+            .cinekernel/runs/
+            .cinekernel/environments/
+            reports/phase0/BASELINE_RESULTS.*
+

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cinekernel.dev/schemas/phase0/environment.schema.json",
+  "title": "CineKernel Phase 0 redacted environment manifest",
+  "type": "object",
+  "required": ["schema_version", "environment_id", "captured_at_utc", "os", "architecture", "cpu", "logical_cores", "ram_bytes", "tools", "upstreams", "cinekernel"],
+  "properties": {
+    "schema_version": {"const": "phase0.environment.v1"},
+    "environment_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "captured_at_utc": {"type": "string", "format": "date-time"},
+    "os": {"type": "string"},
+    "architecture": {"type": "string"},
+    "cpu": {"type": "string"},
+    "logical_cores": {"type": "integer", "minimum": 1},
+    "physical_cores": {"type": ["integer", "null"]},
+    "ram_bytes": {"type": "integer", "minimum": 1},
+    "gpu": {"type": ["object", "null"]},
+    "tools": {"type": "object"},
+    "upstreams": {"type": "object"},
+    "cinekernel": {"type": "object"},
+    "render_environment": {"type": "object"}
+  },
+  "additionalProperties": false
+}
+

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cinekernel.dev/schemas/phase0/upstream-lock.schema.json",
+  "title": "CineKernel Phase 0 upstream lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at_utc", "remotion", "hyperframes"],
+  "properties": {
+    "schema_version": {"const": "phase0.upstreams.v1"},
+    "generated_at_utc": {"type": "string", "format": "date-time"},
+    "remotion": {"$ref": "#/$defs/upstream"},
+    "hyperframes": {"$ref": "#/$defs/upstream"}
+  },
+  "$defs": {
+    "upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit", "release_or_package_version", "source_commit_ahead_of_package", "license_file", "sparse_paths"],
+      "properties": {
+        "repository": {"type": "string", "format": "uri"},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "release_or_package_version": {"type": "string", "minLength": 1},
+        "source_commit_ahead_of_package": {"enum": [true, false, "unknown_pending_archaeology"]},
+        "license_file": {"type": "string", "minLength": 1},
+        "sparse_paths": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    }
+  }
+}
+

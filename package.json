@@ -1,0 +1,14 @@
+{
+  "name": "cinekernel-phase0",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.8.0+sha512.1d91d2d1d7cda7adfa1f01d792f0e9bd72e45b4a4ecf8fd0c570e808ec31f67b0e3fc76c95eac9d7a36de09953f7d78f58a0f7c7e0661acbcd5b2c0bb6c8c6c2",
+  "scripts": {
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "fixtures": "pnpm --filter @cinekernel/phase0-common fixtures",
+    "phase0:remotion": "pnpm --filter @cinekernel/phase0-remotion render",
+    "phase0:hyperframes": "pnpm --filter @cinekernel/phase0-hyperframes render"
+  }
+}
+

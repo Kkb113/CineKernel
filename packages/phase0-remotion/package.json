@@ -1,0 +1,32 @@
+{
+  "name": "@cinekernel/phase0-remotion",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test test/*.test.ts",
+    "render": "tsx scripts/render.ts",
+    "studio": "remotion studio src/index.tsx --no-open"
+  },
+  "dependencies": {
+    "@react-three/fiber": "9.2.0",
+    "@remotion/cli": "4.0.509",
+    "@remotion/fonts": "4.0.509",
+    "@remotion/media": "4.0.509",
+    "@remotion/three": "4.0.509",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.509",
+    "three": "0.178.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@types/three": "0.170.0",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3"
+  }
+}

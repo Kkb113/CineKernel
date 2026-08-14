@@ -1,0 +1,43 @@
+[workspace]
+resolver = "2"
+members = [
+  "crates/xtask",
+  "crates/phase0-common",
+  "crates/phase0-native-2d",
+  "crates/phase0-native-wgpu",
+]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+license = "Apache-2.0"
+repository = "https://github.com/Kkb113/CineKernel"
+
+[workspace.dependencies]
+anyhow = "1.0.100"
+bytemuck = { version = "1.24.0", features = ["derive"] }
+chrono = { version = "0.4.42", default-features = false, features = ["clock", "serde"] }
+clap = { version = "4.5.51", features = ["derive"] }
+glam = { version = "0.29.3", features = ["bytemuck"] }
+hex = "0.4.3"
+image = { version = "0.25.8", default-features = false, features = ["png"] }
+pollster = "0.3.0"
+png = "0.17.16"
+resvg = "0.44.0"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
+sha2 = "0.10.9"
+sysinfo = "0.32.1"
+tempfile = "3.23.0"
+thiserror = "2.0.17"
+tiny-skia = "0.11.4"
+uuid = { version = "1.18.1", features = ["v4", "serde"] }
+walkdir = "2.5.0"
+wgpu = "0.20.1"
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+
+[workspace.lints.clippy]
+all = "deny"
+pedantic = "allow"
