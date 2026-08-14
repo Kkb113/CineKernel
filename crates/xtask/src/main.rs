@@ -104,6 +104,8 @@ struct RunArgs {
     stall_seconds: u64,
     #[arg(long)]
     worker_mode: Option<String>,
+    #[arg(long)]
+    max_worker_count: Option<usize>,
 }
 
 #[derive(Debug, Args)]
@@ -576,8 +578,14 @@ fn phase0_run(root: &Path, args: &RunArgs, json_output: bool, canonical: bool) -
                 continue;
             }
             let repetitions = repetition_count(args.profile, &case.id);
-            let modes = worker_modes(engine, &case.id, args.profile, args.worker_mode.as_deref())
-                .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+            let modes = worker_modes(
+                engine,
+                &case.id,
+                args.profile,
+                args.worker_mode.as_deref(),
+                args.max_worker_count,
+            )
+            .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
             for mode in modes {
                 groups.push((engine, case, mode, repetitions));
             }
@@ -607,6 +615,7 @@ fn phase0_run(root: &Path, args: &RunArgs, json_output: bool, canonical: bool) -
             "benchmark_spec_sha256":spec_hash, "upstream_lock_sha256":lock_hash, "profile":args.profile.as_str(),
             "engine_selection":args.engine.map(Engine::as_str).unwrap_or("all"), "case_selection":args.case_id,
             "excluded_engines":args.exclude_engine.iter().map(|engine|engine.as_str()).collect::<Vec<_>>(),
+            "max_worker_count":args.max_worker_count,
             "timeout_seconds":args.timeout_seconds, "stall_seconds":args.stall_seconds, "heartbeat_seconds":15,
             "started_at_utc":started_at, "expected_result_count":expected_result_count, "expected_groups":expected_groups,
         })).map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION,error))?;
@@ -692,6 +701,7 @@ fn phase0_run(root: &Path, args: &RunArgs, json_output: bool, canonical: bool) -
             "upstream_lock_sha256":lock_hash, "profile":args.profile.as_str(),
             "engine_selection":args.engine.map(Engine::as_str).unwrap_or("all"), "case_selection":args.case_id,
             "excluded_engines":args.exclude_engine.iter().map(|engine|engine.as_str()).collect::<Vec<_>>(),
+            "max_worker_count":args.max_worker_count,
             "timeout_seconds":args.timeout_seconds, "stall_seconds":args.stall_seconds, "heartbeat_seconds":15,
             "started_at_utc":started_at, "completed_at_utc":Utc::now().to_rfc3339_opts(SecondsFormat::Millis,true),
             "expected_result_count":expected_result_count, "actual_result_count":actual_result_count, "failure_count":failures,
@@ -752,22 +762,38 @@ fn worker_modes(
     case_id: &str,
     profile: Profile,
     requested: Option<&str>,
+    max_worker_count: Option<usize>,
 ) -> Result<Vec<String>> {
+    if max_worker_count == Some(0) {
+        bail!("max worker count must be at least 1");
+    }
     if let Some(mode) = requested {
         if !["default", "auto", "1", "4"].contains(&mode) {
             bail!("unsupported worker mode {mode}");
         }
+        if let Some((requested_count, maximum)) = mode.parse::<usize>().ok().zip(max_worker_count) {
+            if requested_count > maximum {
+                bail!("worker mode {mode} exceeds available worker count {maximum}");
+            }
+        }
         return Ok(vec![mode.to_owned()]);
     }
     if profile == Profile::Full && case_id == "media-frame-sampling" {
-        return Ok(match engine {
+        let mut modes: Vec<String> = match engine {
             Engine::Remotion => ["default", "1", "4"]
                 .into_iter()
                 .map(str::to_owned)
                 .collect(),
             Engine::Hyperframes => ["auto", "1", "4"].into_iter().map(str::to_owned).collect(),
             _ => vec!["default".to_owned()],
+        };
+        modes.retain(|mode| {
+            mode.parse::<usize>()
+                .ok()
+                .zip(max_worker_count)
+                .is_none_or(|(count, maximum)| count <= maximum)
         });
+        return Ok(modes);
     }
     Ok(vec![if engine == Engine::Hyperframes {
         "auto"
@@ -1563,6 +1589,7 @@ mod tests {
                 Engine::Remotion,
                 "media-frame-sampling",
                 Profile::Full,
+                None,
                 None
             )
             .expect("modes"),
@@ -1573,6 +1600,7 @@ mod tests {
                 Engine::Hyperframes,
                 "media-frame-sampling",
                 Profile::Full,
+                None,
                 None
             )
             .expect("modes"),
@@ -1582,7 +1610,38 @@ mod tests {
             Engine::Remotion,
             "media-frame-sampling",
             Profile::Full,
-            Some("unbounded")
+            Some("unbounded"),
+            None
+        )
+        .is_err());
+        assert_eq!(
+            worker_modes(
+                Engine::Remotion,
+                "media-frame-sampling",
+                Profile::Full,
+                None,
+                Some(3)
+            )
+            .expect("capability-aware modes"),
+            ["default", "1"]
+        );
+        assert_eq!(
+            worker_modes(
+                Engine::Hyperframes,
+                "media-frame-sampling",
+                Profile::Full,
+                None,
+                Some(3)
+            )
+            .expect("capability-aware modes"),
+            ["auto", "1"]
+        );
+        assert!(worker_modes(
+            Engine::Remotion,
+            "media-frame-sampling",
+            Profile::Full,
+            Some("4"),
+            Some(3)
         )
         .is_err());
     }
@@ -1598,13 +1657,33 @@ mod tests {
                     .iter()
                     .any(|candidate| candidate == engine.as_str())
                 {
-                    let modes =
-                        worker_modes(engine, &case.id, Profile::Full, None).expect("worker modes");
+                    let modes = worker_modes(engine, &case.id, Profile::Full, None, None)
+                        .expect("worker modes");
                     count += modes.len() as u64 * repetition_count(Profile::Full, &case.id);
                 }
             }
         }
         assert_eq!(count, 109);
+    }
+
+    #[test]
+    fn three_worker_runner_declares_99_measured_results() {
+        let spec = load_benchmark_spec(&workspace_root()).expect("benchmark spec");
+        let mut count = 0_u64;
+        for engine in Engine::ALL {
+            for case in &spec.cases {
+                if case
+                    .supported_engines
+                    .iter()
+                    .any(|candidate| candidate == engine.as_str())
+                {
+                    let modes = worker_modes(engine, &case.id, Profile::Full, None, Some(3))
+                        .expect("worker modes");
+                    count += modes.len() as u64 * repetition_count(Profile::Full, &case.id);
+                }
+            }
+        }
+        assert_eq!(count, 99);
     }
 
     #[test]

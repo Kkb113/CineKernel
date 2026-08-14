@@ -100,6 +100,16 @@ jobs:
         shell: pwsh
         run: |
           $arguments = @('xtask','phase0','canonical-run','--profile','${{ inputs.profile }}','--timeout-seconds','7200','--stall-seconds','1800','--json')
+          $workerCount = [Environment]::ProcessorCount
+          if ($workerCount -lt 1) {
+            throw 'Unable to determine an available worker count'
+          }
+          $arguments += @('--max-worker-count', "$workerCount")
+          "Canonical worker capability: $workerCount" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+          if ('${{ runner.os }}' -eq 'macOS') {
+            $env:CINEKERNEL_REMOTION_GL = 'angle'
+            'Remotion graphics backend: angle' | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+          }
           if ('${{ inputs.engine }}' -ne 'all') {
             $arguments += @('--engine','${{ inputs.engine }}')
           }
