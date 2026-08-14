@@ -1,19 +1,36 @@
 # Phase 0.1 CI evidence
 
-## Previous failure
+## Green normal CI
 
-The Phase 0 workflow run `31777834639` failed on Windows, Ubuntu, and macOS because `actions/setup-node` attempted pnpm cache resolution before pnpm was installed. That run is retained as failure evidence and is not acceptance evidence.
+Normal CI is green on implementation revision `0249b40ec41673ed8ac2f22c23583ddc3629a320`:
 
-## Remediation
+| OS | Job ID | Conclusion |
+|---|---:|---|
+| Ubuntu | `94799485842` | success |
+| macOS | `94799485855` | success |
+| Windows | `94799485868` | success |
 
-Both workflows install pnpm 11.8.0 before `actions/setup-node`, use the repository Node version, install with a frozen lockfile, install valid Rust tooling, run strict formatting/lint/tests, and upload evidence for 90 days. Normal CI runs on all three operating systems. The manual workflow runs canonical selections on all three operating systems and runs Probes A–J for `full/all`.
+Workflow run: [31810436296](https://github.com/Kkb113/CineKernel/actions/runs/31810436296). This supersedes earlier failed remediation runs while retaining them as diagnostic history.
 
-## Required remote records
+## Retained failure history
 
-| Gate | Revision | Run ID / URL | Result |
+- Run `31777834639`: all jobs failed because `actions/setup-node` attempted pnpm cache resolution before pnpm was installed.
+- Later remediation runs exposed and fixed pnpm ordering, async probe entry, FFmpeg action incompatibility on macOS ARM, deprecated FFmpeg `-vsync`, wgpu case timeout, and sparse-checkout file-path idempotency.
+- A local mistaken invocation, `cargo xtask report --canonical --json`, exited 2 because `report` is nested under `phase0`; `cargo xtask phase0 report --canonical --json` then passed and generated the committed reports.
+
+## Manual benchmark workflow blocker
+
+`.github/workflows/phase0-benchmarks.yml` exists in the repository and defines the required Windows/Ubuntu/macOS matrix, 90-day evidence uploads, full/all selection, and Ubuntu `unshare --net` Probe G. GitHub currently lists only the normal CI workflow because this new workflow has not been registered on the default branch.
+
+Dispatch attempts were deliberately non-destructive and failed as follows:
+
+- `gh workflow run phase0-benchmarks.yml --ref phase/0.1-review-remediation`: HTTP 404 (workflow not registered).
+- Dispatching the registered CI workflow: HTTP 422 because that workflow has no `workflow_dispatch` trigger.
+
+The prompt prohibits merging or changing `master` without explicit instruction. Therefore the manual workflow was not forced onto the default branch. A reviewer/maintainer must merge or otherwise register it, then dispatch `selection=full`, `probes=all`, and retain the resulting three-OS artifacts.
+
+| Gate | Revision | Record | Result |
 |---|---|---|---|
-| Normal CI Windows/Linux/macOS | pending | pending | pending |
-| Manual canonical full/all Windows/Linux/macOS | pending | pending | pending |
-| Ubuntu loopback-only network namespace Probe G | pending | pending | pending |
-
-This report must not claim remote success until actual GitHub Actions conclusions and artifact records are inserted.
+| Normal CI, three OS | implementation A | run `31810436296` | PASS |
+| Manual canonical full/all, three OS | not dispatchable | GitHub workflow registry 404 | BLOCKED |
+| Ubuntu loopback-only Probe G | depends on manual workflow | required `sudo unshare --net` execution | BLOCKED |

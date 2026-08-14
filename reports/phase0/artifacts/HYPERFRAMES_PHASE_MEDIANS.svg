@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">HyperFrames separated phase medians</title>
+  <desc id="desc">Stacked horizontal bars show median preflight, render command, and artifact verification durations for seven canonical workloads.</desc>
+  <rect width="1200" height="760" fill="#08111f"/>
+  <text x="60" y="62" fill="#f8fafc" font-family="Inter,Arial,sans-serif" font-size="30" font-weight="700">HyperFrames phase medians</text>
+  <text x="60" y="94" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="16">Canonical full run · stacked milliseconds · preflight is not charged to render-command comparisons</text>
+  <g font-family="Inter,Arial,sans-serif" font-size="15" fill="#cbd5e1">
+    <rect x="60" y="120" width="16" height="16" rx="3" fill="#a78bfa"/><text x="84" y="134">Preflight</text>
+    <rect x="180" y="120" width="16" height="16" rx="3" fill="#60a5fa"/><text x="204" y="134">Render command</text>
+    <rect x="345" y="120" width="16" height="16" rx="3" fill="#34d399"/><text x="369" y="134">Artifact verify</text>
+  </g>
+  <g stroke="#243247" stroke-width="1"><line x1="300" y1="160" x2="300" y2="685"/><line x1="500" y1="160" x2="500" y2="685"/><line x1="700" y1="160" x2="700" y2="685"/><line x1="900" y1="160" x2="900" y2="685"/></g>
+  <g fill="#64748b" font-family="Inter,Arial,sans-serif" font-size="13"><text x="292" y="710">0</text><text x="480" y="710">20,000</text><text x="680" y="710">40,000</text><text x="880" y="710">60,000</text></g>
+  <g font-family="Inter,Arial,sans-serif" font-size="16" fill="#e2e8f0">
+    <text x="60" y="198">3D scene</text><rect x="300" y="178" width="108.8" height="28" fill="#a78bfa"/><rect x="408.8" y="178" width="153.6" height="28" fill="#60a5fa"/><rect x="562.4" y="178" width="20.9" height="28" fill="#34d399"/><text x="594" y="198" fill="#94a3b8" font-size="13">28,327 total</text>
+    <text x="60" y="268">Audio / captions</text><rect x="300" y="248" width="109.0" height="28" fill="#a78bfa"/><rect x="409" y="248" width="394.3" height="28" fill="#60a5fa"/><rect x="803.3" y="248" width="9.4" height="28" fill="#34d399"/><text x="824" y="268" fill="#94a3b8" font-size="13">51,264 total</text>
+    <text x="60" y="338">Chart / diagram</text><rect x="300" y="318" width="111.0" height="28" fill="#a78bfa"/><rect x="411" y="318" width="154.4" height="28" fill="#60a5fa"/><rect x="565.4" y="318" width="6.9" height="28" fill="#34d399"/><text x="584" y="338" fill="#94a3b8" font-size="13">27,224 total</text>
+    <text x="60" y="408">Media sampling</text><rect x="300" y="388" width="98.9" height="28" fill="#a78bfa"/><rect x="398.9" y="388" width="127.9" height="28" fill="#60a5fa"/><rect x="526.8" y="388" width="11.2" height="28" fill="#34d399"/><text x="550" y="408" fill="#94a3b8" font-size="13">23,807 total</text>
+    <text x="60" y="478">Mixed 2D / 3D</text><rect x="300" y="458" width="127.1" height="28" fill="#a78bfa"/><rect x="427.1" y="458" width="241.3" height="28" fill="#60a5fa"/><rect x="668.4" y="458" width="24.4" height="28" fill="#34d399"/><text x="705" y="478" fill="#94a3b8" font-size="13">39,287 total</text>
+    <text x="60" y="548">Typography / layout</text><rect x="300" y="528" width="103.7" height="28" fill="#a78bfa"/><rect x="403.7" y="528" width="130.2" height="28" fill="#60a5fa"/><rect x="533.9" y="528" width="6.6" height="28" fill="#34d399"/><text x="552" y="548" fill="#94a3b8" font-size="13">24,050 total</text>
+    <text x="60" y="618">Vector / effects</text><rect x="300" y="598" width="110.0" height="28" fill="#a78bfa"/><rect x="410" y="598" width="140.4" height="28" fill="#60a5fa"/><rect x="550.4" y="598" width="6.5" height="28" fill="#34d399"/><text x="569" y="618" fill="#94a3b8" font-size="13">25,698 total</text>
+  </g>
+  <text x="60" y="744" fill="#64748b" font-family="Inter,Arial,sans-serif" font-size="13">Media sampling pools its 15 measured worker-mode results for this phase-overhead view; worker-specific render medians remain in CANONICAL_BASELINE_RESULTS.md.</text>
+</svg>
