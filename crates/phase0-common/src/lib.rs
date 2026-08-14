@@ -259,6 +259,12 @@ fn rustup_version(program: &str) -> Option<String> {
         .then(|| String::from_utf8_lossy(&output.stdout).trim().to_owned())
 }
 
+const MACOS_CHROME_CANDIDATES: [&str; 3] = [
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Chromium.app/Contents/MacOS/Chromium",
+    "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+];
+
 fn chrome_version() -> Option<String> {
     if cfg!(windows) {
         for variable in ["PROGRAMFILES", "PROGRAMFILES(X86)", "LOCALAPPDATA"] {
@@ -288,6 +294,13 @@ fn chrome_version() -> Option<String> {
             }
         }
         return None;
+    }
+    if cfg!(target_os = "macos") {
+        for program in MACOS_CHROME_CANDIDATES {
+            if let Some(version) = command_version(program, &["--version"]) {
+                return Some(version);
+            }
+        }
     }
     for program in ["google-chrome", "chromium", "chromium-browser"] {
         if let Some(version) = command_version(program, &["--version"]) {
@@ -412,6 +425,15 @@ mod tests {
     fn pinned_shas_have_full_length() {
         assert_eq!(REMOTION_COMMIT.len(), 40);
         assert_eq!(HYPERFRAMES_COMMIT.len(), 40);
+    }
+
+    #[test]
+    fn macos_chrome_candidates_cover_runner_app_bundles() {
+        assert!(MACOS_CHROME_CANDIDATES
+            .contains(&"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"));
+        assert!(
+            MACOS_CHROME_CANDIDATES.contains(&"/Applications/Chromium.app/Contents/MacOS/Chromium")
+        );
     }
 
     #[test]
