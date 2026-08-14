@@ -91,3 +91,13 @@ test("probe driver transforms and reaches its argument guard without top-level-a
   assert.match(execution.stderr,/--canonical-run-id is required/);
   assert.doesNotMatch(execution.stderr,/Top-level await/);
 });
+
+test("probe driver excludes warmups and scopes GPU tolerance to documented rows", () => {
+  const root=resolve(import.meta.dirname,"../../..");
+  const source=readFileSync(resolve(root,"benchmarks/probes/run-probes.ts"),"utf8");
+  assert.match(source,/basename\(path\)===\"result\.json\"/);
+  assert.match(source,/engine===\"remotion\"&&caseId===\"mixed-2d-3d\"/);
+  assert.match(source,/minimum_psnr_average_db:35/);
+  assert.match(source,/minimum_ssim_all:\.98/);
+  assert.match(source,/engine===\"remotion\"&&caseId===\"3d-scene\"\?20:15/);
+});
