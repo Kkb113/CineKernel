@@ -15,6 +15,6 @@ Tracked review artifacts are durable summaries from evidence commit `b12e6c74a51
 | `REVIEW_FINDINGS_RESOLUTION.md` | ten findings mapped to fixes and gates | final attestation |
 | `CI_EVIDENCE.md` | actual CI records and manual-dispatch blocker | normal CI green; manual blocked |
 | `SOURCE_ARCHAEOLOGY_SUMMARY.md` | critical-path conclusions and immutable source links | validator PASS |
-| `ARTIFACT_SHA256.txt` | review-artifact integrity manifest | generated after report finalization |
+| `ARTIFACT_SHA256.txt` | review-artifact integrity manifest | 26 entries, regenerated and verified after report finalization |
 
 No `node_modules`, Rust `target`, `.cinekernel`, or `Remotion-Hyperframe-SourceCode` path is tracked.

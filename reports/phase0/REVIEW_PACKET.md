@@ -2,7 +2,7 @@
 
 Status: **CONDITIONAL PASS**. Implementation revision A: `0249b40ec41673ed8ac2f22c23583ddc3629a320`. Evidence revision B: `b12e6c74a519fa693a49f50cd23df6dddc910b88`. Canonical run: `20260814T144948Z-c6e0a98a-b94a-48e9-a26e-f69faf10f048`.
 
-Normal CI: [run 31810436296](https://github.com/Kkb113/CineKernel/actions/runs/31810436296), all three OS jobs green. Manual benchmark workflow path: `.github/workflows/phase0-benchmarks.yml`; no run URL exists because GitHub returns 404 until the workflow is registered on the default branch.
+Normal CI: [run 31810436296](https://github.com/Kkb113/CineKernel/actions/runs/31810436296), all three OS jobs green at implementation A. Post-evidence CI: [run 31817123555](https://github.com/Kkb113/CineKernel/actions/runs/31817123555), all three OS jobs green at attestation `8b4825e`. Manual benchmark workflow path: `.github/workflows/phase0-benchmarks.yml`; no run URL exists because GitHub returns 404 until the workflow is registered on the default branch.
 
 ## Five largest changes
 

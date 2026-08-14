@@ -12,6 +12,16 @@ Normal CI is green on implementation revision `0249b40ec41673ed8ac2f22c23583ddc3
 
 Workflow run: [31810436296](https://github.com/Kkb113/CineKernel/actions/runs/31810436296). This supersedes earlier failed remediation runs while retaining them as diagnostic history.
 
+Post-evidence/report CI is also green at attestation revision `8b4825e2657eda163a5984c9a3a0ca7182841a89`:
+
+| OS | Job ID | Conclusion |
+|---|---:|---|
+| Windows | `94821378357` | success |
+| macOS | `94821378360` | success |
+| Ubuntu | `94821378363` | success |
+
+Workflow run: [31817123555](https://github.com/Kkb113/CineKernel/actions/runs/31817123555). All three jobs uploaded smoke evidence successfully.
+
 ## Retained failure history
 
 - Run `31777834639`: all jobs failed because `actions/setup-node` attempted pnpm cache resolution before pnpm was installed.
@@ -32,5 +42,6 @@ The prompt prohibits merging or changing `master` without explicit instruction. 
 | Gate | Revision | Record | Result |
 |---|---|---|---|
 | Normal CI, three OS | implementation A | run `31810436296` | PASS |
+| Post-evidence CI, three OS | attestation `8b4825e` | run `31817123555` | PASS |
 | Manual canonical full/all, three OS | not dispatchable | GitHub workflow registry 404 | BLOCKED |
 | Ubuntu loopback-only Probe G | depends on manual workflow | required `sudo unshare --net` execution | BLOCKED |

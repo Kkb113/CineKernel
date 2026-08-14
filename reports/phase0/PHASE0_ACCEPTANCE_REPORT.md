@@ -28,7 +28,7 @@ Windows 11; Intel Core Ultra 7; 32 GB RAM; Intel Arc Graphics; driver `32.0.101.
 
 ## 7. Remote CI matrix results
 
-Normal CI run [31810436296](https://github.com/Kkb113/CineKernel/actions/runs/31810436296) at revision A passed: Ubuntu job `94799485842`, macOS `94799485855`, Windows `94799485868`.
+Normal CI run [31810436296](https://github.com/Kkb113/CineKernel/actions/runs/31810436296) at revision A passed: Ubuntu job `94799485842`, macOS `94799485855`, Windows `94799485868`. Post-evidence run [31817123555](https://github.com/Kkb113/CineKernel/actions/runs/31817123555) also passed: Windows `94821378357`, macOS `94821378360`, Ubuntu `94821378363`; every job uploaded smoke evidence.
 
 ## 8. Manual workflow result
 
