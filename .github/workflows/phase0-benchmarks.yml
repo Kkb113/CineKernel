@@ -69,25 +69,56 @@ jobs:
       - name: Prepare deterministic fixtures
         run: cargo xtask phase0 prepare --json
 
+      - name: Detect native wgpu capability
+        id: gpu
+        if: inputs.engine == 'all' || inputs.engine == 'native-wgpu'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path .cinekernel/capabilities | Out-Null
+          $output = & cargo run --release --package phase0-native-wgpu -- --case 3d-scene --profile smoke --output .cinekernel/capabilities/unused.mp4 --capability-only 2>&1
+          $exit = $LASTEXITCODE
+          $text = $output -join "`n"
+          $text | Out-File .cinekernel/capabilities/native-wgpu.txt
+          if ($exit -ne 0) {
+            if ($text -match 'no wgpu adapter available') {
+              'supported=false' | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+              'native-wgpu: UNSUPPORTED (no adapter available)' | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+              exit 0
+            }
+            Write-Output $text
+            exit $exit
+          }
+          $json = $output | Where-Object { $_ -match '^\s*\{' } | Select-Object -Last 1 | ConvertFrom-Json
+          $supported = $json.gpu_active -eq $true -and $json.software_fallback -ne $true
+          "supported=$($supported.ToString().ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          if (-not $supported) {
+            "native-wgpu: UNSUPPORTED ($($json.device_type) adapter is not hardware GPU execution)" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+          }
+
       - name: Run selected canonical benchmark
+        if: inputs.engine != 'native-wgpu' || steps.gpu.outputs.supported == 'true'
         shell: pwsh
         run: |
           $arguments = @('xtask','phase0','canonical-run','--profile','${{ inputs.profile }}','--timeout-seconds','7200','--stall-seconds','1800','--json')
           if ('${{ inputs.engine }}' -ne 'all') {
             $arguments += @('--engine','${{ inputs.engine }}')
           }
+          if ('${{ inputs.engine }}' -eq 'all' -and '${{ steps.gpu.outputs.supported }}' -eq 'false') {
+            $arguments += @('--exclude-engine','native-wgpu')
+          }
           & cargo @arguments
           exit $LASTEXITCODE
 
       - name: Verify complete canonical matrix
+        if: inputs.engine != 'native-wgpu' || steps.gpu.outputs.supported == 'true'
         run: cargo xtask phase0 verify --canonical --json
 
-      - name: Run canonical correctness probes
+      - name: Run canonical correctness probes except Probe G
         if: inputs.profile == 'full' && inputs.engine == 'all'
-        run: cargo xtask phase0 probes --canonical --json
+        run: cargo xtask phase0 probes --canonical --exclude G --json
 
       - name: Generate canonical reports
-        if: always()
+        if: always() && (inputs.engine != 'native-wgpu' || steps.gpu.outputs.supported == 'true')
         run: cargo xtask phase0 report --canonical --json
 
       - name: Upload canonical benchmark evidence
@@ -103,6 +134,7 @@ jobs:
             .cinekernel/environments/
             .cinekernel/projects/
             .cinekernel/probes/
+            .cinekernel/capabilities/
             reports/phase0/CANONICAL_RUN_MANIFEST.json
             reports/phase0/CANONICAL_BASELINE_RESULTS.*
             reports/phase0/CORRECTNESS_PROBES.*

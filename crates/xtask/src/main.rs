@@ -75,7 +75,7 @@ enum Phase0Command {
     Verify(CanonicalArgs),
     VerifyArtifact(VerifyArtifactArgs),
     Report(CanonicalArgs),
-    Probes(CanonicalArgs),
+    Probes(ProbeArgs),
     Clean {
         #[arg(long, value_enum)]
         scope: CleanScope,
@@ -93,6 +93,8 @@ struct RunArgs {
     profile: Profile,
     #[arg(long, value_enum)]
     engine: Option<Engine>,
+    #[arg(long = "exclude-engine", value_enum)]
+    exclude_engine: Vec<Engine>,
     #[arg(long = "case")]
     case_id: Option<String>,
     #[arg(long, default_value_t = 3600)]
@@ -107,6 +109,14 @@ struct RunArgs {
 struct CanonicalArgs {
     #[arg(long)]
     canonical: bool,
+}
+
+#[derive(Debug, Args)]
+struct ProbeArgs {
+    #[arg(long)]
+    canonical: bool,
+    #[arg(long, value_delimiter = ',')]
+    exclude: Vec<String>,
 }
 
 #[derive(Debug, Args)]
@@ -252,7 +262,7 @@ fn execute(cli: &Cli) -> AppResult<Value> {
         } => phase0_report(&root, args.canonical),
         TopCommand::Phase0 {
             command: Phase0Command::Probes(args),
-        } => phase0_probes(&root, args.canonical),
+        } => phase0_probes(&root, args),
         TopCommand::Phase0 {
             command:
                 Phase0Command::Clean {
@@ -537,9 +547,7 @@ fn phase0_run(root: &Path, args: &RunArgs, json_output: bool, canonical: bool) -
         .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
     let lock_hash = hash_file(&root.join("benchmarks/upstreams.lock.json"))
         .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
-    let engines: Vec<Engine> = args
-        .engine
-        .map_or_else(|| Engine::ALL.to_vec(), |engine| vec![engine]);
+    let engines = selected_engines(args.engine, &args.exclude_engine);
     let mut groups = Vec::new();
     for engine in engines {
         for case in &spec.cases {
@@ -582,6 +590,7 @@ fn phase0_run(root: &Path, args: &RunArgs, json_output: bool, canonical: bool) -
             "implementation_revision":implementation_revision, "worktree_clean":true, "environment_id":environment_id,
             "benchmark_spec_sha256":spec_hash, "upstream_lock_sha256":lock_hash, "profile":args.profile.as_str(),
             "engine_selection":args.engine.map(Engine::as_str).unwrap_or("all"), "case_selection":args.case_id,
+            "excluded_engines":args.exclude_engine.iter().map(|engine|engine.as_str()).collect::<Vec<_>>(),
             "timeout_seconds":args.timeout_seconds, "stall_seconds":args.stall_seconds, "heartbeat_seconds":15,
             "started_at_utc":started_at, "expected_result_count":expected_result_count, "expected_groups":expected_groups,
         })).map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION,error))?;
@@ -666,6 +675,7 @@ fn phase0_run(root: &Path, args: &RunArgs, json_output: bool, canonical: bool) -
             "worktree_clean":true, "environment_id":environment_id, "benchmark_spec_sha256":spec_hash,
             "upstream_lock_sha256":lock_hash, "profile":args.profile.as_str(),
             "engine_selection":args.engine.map(Engine::as_str).unwrap_or("all"), "case_selection":args.case_id,
+            "excluded_engines":args.exclude_engine.iter().map(|engine|engine.as_str()).collect::<Vec<_>>(),
             "timeout_seconds":args.timeout_seconds, "stall_seconds":args.stall_seconds, "heartbeat_seconds":15,
             "started_at_utc":started_at, "completed_at_utc":Utc::now().to_rfc3339_opts(SecondsFormat::Millis,true),
             "expected_result_count":expected_result_count, "actual_result_count":actual_result_count, "failure_count":failures,
@@ -690,6 +700,14 @@ fn phase0_run(root: &Path, args: &RunArgs, json_output: bool, canonical: bool) -
 
 fn canonical_run_is_complete(failures: u64, actual: u64, expected: u64) -> bool {
     failures == 0 && actual == expected
+}
+
+fn selected_engines(requested: Option<Engine>, excluded: &[Engine]) -> Vec<Engine> {
+    requested
+        .map_or_else(|| Engine::ALL.to_vec(), |engine| vec![engine])
+        .into_iter()
+        .filter(|engine| !excluded.contains(engine))
+        .collect()
 }
 
 fn canonical_revision_is_eligible(revision: &str, dirty: bool) -> bool {
@@ -876,10 +894,11 @@ fn execute_run(
     } else {
         json!({"container":"mp4","video_codec":"h264","encoder":"libx264","pixel_format":"yuv420p","crf":18,"preset":"medium","audio_codec":if case.expected_audio_tracks>0 {Value::String("aac".to_owned())}else{Value::Null},"audio_bitrate":if case.expected_audio_tracks>0 {Value::String("192k".to_owned())}else{Value::Null},"sample_rate":if case.expected_audio_tracks>0 {Value::from(48000)}else{Value::Null},"channel_layout":if case.expected_audio_tracks>0 {Value::String("mono".to_owned())}else{Value::Null}})
     };
+    let software_fallback = child_json["software_fallback"].as_bool();
     let capabilities = json!({
-        "gpu_active":if engine==Engine::NativeWgpu {Some(true)} else {None},
+        "gpu_active":if engine==Engine::NativeWgpu {software_fallback.map(|fallback|!fallback)} else {None},
         "gpu_backend":child_json["backend"].as_str(),"gpu_adapter":child_json["adapter"].as_str(),
-        "gpu_driver":child_json["driver"].as_str(),"software_fallback":child_json["software_fallback"].as_bool(),
+        "gpu_driver":child_json["driver"].as_str(),"software_fallback":software_fallback,
         "capture_mode":if engine==Engine::Hyperframes {child_json["capture_requested"].as_str().or(Some("auto"))}else{None}
     });
     let equivalence_level = case
@@ -1342,8 +1361,8 @@ fn historical_summary(root: &Path) -> Result<String> {
     Ok(format!("# Historical results summary\n\nRetained historical results are never merged into canonical aggregates.\n\n- Phase 0 v1 retained attempts: {v1}\n- Phase 0.1 v2 attempts across all local canonical runs: {v2}\n- Retained failed attempts: {failed}\n- Canonical selection source: `.cinekernel/canonical/latest.json` only.\n"))
 }
 
-fn phase0_probes(root: &Path, canonical: bool) -> AppResult<Value> {
-    if !canonical {
+fn phase0_probes(root: &Path, args: &ProbeArgs) -> AppResult<Value> {
+    if !args.canonical {
         return Err(Failure::new(
             EXIT_INVALID_CONFIGURATION,
             anyhow!("Phase 0.1 probes require --canonical"),
@@ -1356,16 +1375,19 @@ fn phase0_probes(root: &Path, canonical: bool) -> AppResult<Value> {
         .and_then(OsStr::to_str)
         .context("canonical id missing")
         .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
-    let output = Command::new(pnpm_program())
-        .current_dir(root)
-        .args([
-            "--filter",
-            "@cinekernel/phase0-common",
-            "probes",
-            "--",
-            "--canonical-run-id",
-            id,
-        ])
+    let mut command = Command::new(pnpm_program());
+    command.current_dir(root).args([
+        "--filter",
+        "@cinekernel/phase0-common",
+        "probes",
+        "--",
+        "--canonical-run-id",
+        id,
+    ]);
+    for excluded in &args.exclude {
+        command.args(["--exclude", excluded]);
+    }
+    let output = command
         .output()
         .map_err(|error| Failure::new(EXIT_BENCHMARK_FAILURE, error))?;
     if !output.status.success() {
@@ -1553,6 +1575,19 @@ mod tests {
             }
         }
         assert_eq!(count, 109);
+    }
+
+    #[test]
+    fn capability_exclusions_remove_only_requested_engines() {
+        assert_eq!(
+            selected_engines(None, &[Engine::NativeWgpu]),
+            [Engine::Remotion, Engine::Hyperframes, Engine::Native2d]
+        );
+        assert!(selected_engines(Some(Engine::NativeWgpu), &[Engine::NativeWgpu]).is_empty());
+        assert_eq!(
+            selected_engines(Some(Engine::Remotion), &[Engine::NativeWgpu]),
+            [Engine::Remotion]
+        );
     }
 
     #[test]

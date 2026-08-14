@@ -1,0 +1,56 @@
+name: Phase 0 network isolation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe-g:
+    name: Probe G (ubuntu-latest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install FFmpeg and network namespace tools
+        run: sudo apt-get update && sudo apt-get install --yes ffmpeg iproute2 util-linux
+
+      - name: Install JavaScript dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Synchronize pinned upstream source
+        run: cargo xtask upstream sync
+
+      - name: Verify pinned upstream source
+        run: cargo xtask upstream verify --json
+
+      - name: Prepare deterministic fixtures
+        run: cargo xtask phase0 prepare --json
+
+      - name: Run isolated browser baselines
+        run: pnpm --filter @cinekernel/phase0-common network-probe
+
+      - name: Upload Probe G evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase0-probe-g-${{ github.sha }}-ubuntu-latest
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            .cinekernel/probes/network-isolation/
+            .cinekernel/runs/
+            reports/phase0/NETWORK_ISOLATION_PROBE.*

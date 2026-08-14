@@ -100,4 +100,25 @@ test("probe driver excludes warmups and scopes GPU tolerance to documented rows"
   assert.match(source,/minimum_psnr_average_db:35/);
   assert.match(source,/minimum_ssim_all:\.98/);
   assert.match(source,/engine===\"remotion\"&&caseId===\"3d-scene\"\?20:15/);
+  assert.match(source,/excludedProbes\.has\(\"G\"\)/);
+  assert.match(source,/UNSUPPORTED by canonical environment/);
+});
+
+test("Probe G has a dedicated Linux-only driver and workflow", () => {
+  const root=resolve(import.meta.dirname,"../../..");
+  const source=readFileSync(resolve(root,"benchmarks/probes/run-network-isolation.ts"),"utf8");
+  const workflow=readFileSync(resolve(root,".github/workflows/phase0-network-isolation.yml"),"utf8");
+  assert.match(source,/process\.platform!==\"linux\"/);
+  assert.match(source,/\"unshare\",\"--net\"/);
+  assert.match(source,/\[\"remotion\",\"hyperframes\"\]/);
+  assert.match(workflow,/runs-on: ubuntu-latest/);
+  assert.match(workflow,/network-probe/);
+});
+
+test("manual evidence workflow is GPU capability-aware and excludes Probe G", () => {
+  const root=resolve(import.meta.dirname,"../../..");
+  const workflow=readFileSync(resolve(root,".github/workflows/phase0-benchmarks.yml"),"utf8");
+  assert.match(workflow,/--capability-only/);
+  assert.match(workflow,/--exclude-engine','native-wgpu'/);
+  assert.match(workflow,/phase0 probes --canonical --exclude G/);
 });
