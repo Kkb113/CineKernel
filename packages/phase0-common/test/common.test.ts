@@ -124,5 +124,8 @@ test("manual evidence workflow is GPU capability-aware and excludes Probe G", ()
   const workflow=readFileSync(resolve(root,".github/workflows/phase0-benchmarks.yml"),"utf8");
   assert.match(workflow,/--capability-only/);
   assert.match(workflow,/--exclude-engine','native-wgpu'/);
+  assert.match(workflow,/--max-worker-count/);
+  assert.match(workflow,/\[Environment\]::ProcessorCount/);
+  assert.match(workflow,/CINEKERNEL_REMOTION_GL = 'angle'/);
   assert.match(workflow,/phase0 probes --canonical --exclude G/);
 });

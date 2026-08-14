@@ -44,6 +44,12 @@ test("Remotion can use a pre-resolved browser for network-isolated renders", () 
   assert.match(renderer,/args\.push\("--browser-executable",browserExecutable\)/);
 });
 
+test("Remotion can select a capability-compatible browser graphics backend", () => {
+  const renderer=readFileSync(resolve(packageRoot,"scripts/render.ts"),"utf8");
+  assert.match(renderer,/process\.env\.CINEKERNEL_REMOTION_GL/);
+  assert.match(renderer,/args\.push\("--gl",gl\)/);
+});
+
 test("audio renders are padded and trimmed to the declared composition duration", () => {
   const renderer=readFileSync(resolve(packageRoot,"scripts/render.ts"),"utf8");
   assert.match(renderer,/apad,atrim=duration=/);
