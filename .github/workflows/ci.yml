@@ -31,6 +31,9 @@ jobs:
         with:
           components: rustfmt, clippy
 
+      - name: Install FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@36c6454b5a2348e7794ba2d82a21506605921e3d # v3
+
       - name: Install JavaScript dependencies
         run: pnpm install --frozen-lockfile
 
