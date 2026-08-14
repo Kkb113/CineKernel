@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import {spawnSync} from "node:child_process";
 import {readFileSync} from "node:fs";
 import {createHash} from "node:crypto";
 import {createRequire} from "node:module";
@@ -80,4 +81,13 @@ test("fixture manifest hashes every required generated asset", () => {
     const hash=createHash("sha256").update(readFileSync(resolve(fixtureRoot,asset.name))).digest("hex");
     assert.equal(hash,asset.sha256,asset.name);
   }
+});
+
+test("probe driver transforms and reaches its argument guard without top-level-await failure", () => {
+  const root=resolve(import.meta.dirname,"../../..");
+  const tsx=resolve(import.meta.dirname,"../node_modules/tsx/dist/cli.mjs");
+  const execution=spawnSync(process.execPath,[tsx,resolve(root,"benchmarks/probes/run-probes.ts")],{cwd:root,encoding:"utf8"});
+  assert.notEqual(execution.status,0);
+  assert.match(execution.stderr,/--canonical-run-id is required/);
+  assert.doesNotMatch(execution.stderr,/Top-level await/);
 });
