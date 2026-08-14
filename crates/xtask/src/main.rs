@@ -8,6 +8,7 @@ use phase0_common::{
 };
 use phase0_verifier::{artifact_manifest_path, hash_file, verify, VerifyRequest};
 use serde_json::{json, Value};
+use sha2::{Digest, Sha256};
 use std::ffi::{OsStr, OsString};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -480,7 +481,8 @@ fn upstream_verify(root: &Path) -> AppResult<Value> {
             "HEAD^{tree}",
         ]))
         .map_err(|error| Failure::new(EXIT_VERIFICATION_FAILURE, error))?;
-        let license_hash = hash_file(&license).ok();
+        let license_object = format!("HEAD:{}", upstream.license_file.replace('\\', "/"));
+        let license_hash = git_object_sha256(&target, &license_object).ok();
         let ok = actual == upstream.commit
             && tree == upstream.source_tree_git_sha
             && license_hash.as_deref() == Some(upstream.license_sha256.as_str());
@@ -493,6 +495,20 @@ fn upstream_verify(root: &Path) -> AppResult<Value> {
         }
     }
     Ok(json!({"ok": true, "upstreams": values}))
+}
+
+fn git_object_sha256(repository: &Path, object: &str) -> Result<String> {
+    let output = Command::new("git")
+        .args(["-C", &repository.to_string_lossy(), "show", object])
+        .output()
+        .with_context(|| format!("read Git object {object}"))?;
+    if !output.status.success() {
+        bail!(
+            "git show {object} failed: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    Ok(hex::encode(Sha256::digest(&output.stdout)))
 }
 
 fn prepare(root: &Path) -> AppResult<Value> {
@@ -1506,6 +1522,20 @@ mod tests {
         path
     }
 
+    fn checked_test_git(repository: &Path, args: &[&str]) {
+        let output = Command::new("git")
+            .args(args)
+            .current_dir(repository)
+            .output()
+            .expect("run test Git command");
+        assert!(
+            output.status.success(),
+            "git {} failed: {}",
+            args.join(" "),
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+
     #[test]
     fn canonical_revision_enforcement_rejects_dirty_unborn_and_malformed_state() {
         let revision = "a".repeat(40);
@@ -1611,6 +1641,29 @@ mod tests {
         );
         assert!(rendered.iter().any(|value| value == "README.md"));
         assert!(rendered.iter().any(|value| value == "LICENSE.md"));
+    }
+
+    #[test]
+    fn git_object_hash_is_independent_of_worktree_line_endings() {
+        let repository = temporary_root("git-object-hash");
+        checked_test_git(&repository, &["init"]);
+        checked_test_git(
+            &repository,
+            &["config", "user.email", "phase0@example.invalid"],
+        );
+        checked_test_git(&repository, &["config", "user.name", "Phase 0"]);
+        let license = repository.join("license.txt");
+        fs::write(&license, b"line one\nline two\n").expect("write LF license");
+        checked_test_git(&repository, &["add", "license.txt"]);
+        checked_test_git(&repository, &["commit", "-m", "license"]);
+        let expected = hash_file(&license).expect("hash committed LF bytes");
+        fs::write(&license, b"line one\r\nline two\r\n").expect("rewrite CRLF worktree");
+        assert_eq!(
+            git_object_sha256(&repository, "HEAD:license.txt").expect("hash Git object"),
+            expected
+        );
+        assert_ne!(hash_file(&license).expect("hash CRLF bytes"), expected);
+        fs::remove_dir_all(repository).expect("cleanup test repository");
     }
 
     #[test]
