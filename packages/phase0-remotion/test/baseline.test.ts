@@ -38,6 +38,12 @@ test("Remotion render-time sources contain no remote asset URLs", () => {
   assert.doesNotMatch(`${source}\n${renderer}`,/https?:\/\//);
 });
 
+test("Remotion can use a pre-resolved browser for network-isolated renders", () => {
+  const renderer=readFileSync(resolve(packageRoot,"scripts/render.ts"),"utf8");
+  assert.match(renderer,/process\.env\.CINEKERNEL_BROWSER_EXECUTABLE/);
+  assert.match(renderer,/args\.push\("--browser-executable",browserExecutable\)/);
+});
+
 test("audio renders are padded and trimmed to the declared composition duration", () => {
   const renderer=readFileSync(resolve(packageRoot,"scripts/render.ts"),"utf8");
   assert.match(renderer,/apad,atrim=duration=/);

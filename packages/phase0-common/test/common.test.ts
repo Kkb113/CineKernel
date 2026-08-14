@@ -114,6 +114,8 @@ test("Probe G has a dedicated Linux-only driver and workflow", () => {
   assert.match(source,/\[\"remotion\",\"hyperframes\"\]/);
   assert.match(workflow,/runs-on: ubuntu-latest/);
   assert.match(workflow,/network-probe/);
+  assert.match(workflow,/CINEKERNEL_BROWSER_EXECUTABLE: \/usr\/bin\/google-chrome/);
+  assert.match(workflow,/HYPERFRAMES_BROWSER_PATH: \/usr\/bin\/google-chrome/);
   assert.match(workflow,/\.cinekernel\/logs\//);
 });
 

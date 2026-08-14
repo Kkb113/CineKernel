@@ -15,6 +15,8 @@ const concurrency=process.env.CINEKERNEL_CONCURRENCY;
 const hasAudio=values.case==="audio-captions"||values.case==="mixed-2d-3d";
 const renderOutput=hasAudio?`${values.output}.intermediate.mp4`:values.output;
 const args=["render","src/index.tsx","CineKernelBenchmark",renderOutput,"--props",JSON.stringify({caseId:values.case,width,height,durationSeconds}),"--codec","h264","--pixel-format","yuv420p","--image-format","png","--color-space","bt709","--crf","18","--x264-preset","medium","--public-dir",fixtures,"--timeout","120000","--log","verbose"];
+const browserExecutable=process.env.CINEKERNEL_BROWSER_EXECUTABLE;
+if(browserExecutable)args.push("--browser-executable",browserExecutable);
 if(hasAudio)args.push("--audio-bitrate","192k");else args.push("--muted");
 if(concurrency) args.push("--concurrency",concurrency);
 const started=performance.now();

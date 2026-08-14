@@ -41,6 +41,9 @@ jobs:
         run: cargo xtask phase0 prepare --json
 
       - name: Run isolated browser baselines
+        env:
+          CINEKERNEL_BROWSER_EXECUTABLE: /usr/bin/google-chrome
+          HYPERFRAMES_BROWSER_PATH: /usr/bin/google-chrome
         run: pnpm --filter @cinekernel/phase0-common network-probe
 
       - name: Upload Probe G evidence
