@@ -4,6 +4,13 @@ entries:
     classification: wrapped
     upstream_repository: https://github.com/remotion-dev/remotion.git
     upstream_commit: 4e459b8b3aeec12ac8346666773ea28892a30e31
+    source_tree_git_sha: 26ad029579076f7eedb87b0aca57a997846dfda1
+    package_version: 4.0.509
+    package_integrity: sha512-cstggiBWnblFiY94ndSUXiB+Ev7FXEIyD58U6OWibcCC8IVQ1Y9zkKsvpzuYn+aWyNIpxdcgDeSBVyErCkiIAg==
+    release_tag: v4.0.509
+    release_commit: 6ef4fbb15937540aec723d618780a4b9d6ef133c
+    source_commits_ahead: 9
+    license_sha256: 11d935579351f40f3caa42c7a45f7d2fd57b94d817178a83485ed3d8b9333c07
     upstream_paths: [packages/core, packages/renderer, packages/three]
     permission_basis: owner assertion plus upstream license
     original_license: Remotion License (see pinned LICENSE.md)
@@ -16,6 +23,13 @@ entries:
     classification: wrapped
     upstream_repository: https://github.com/heygen-com/hyperframes.git
     upstream_commit: 532caf7aa24fef382cb103013f6414bb547a4129
+    source_tree_git_sha: 9c8c93a4a5c5e286093eaa9596457408a7124bf5
+    package_version: 0.7.108
+    package_integrity: sha512-f6I6BXjOFB/yBYC798vSpFFxczu5+MENH5pRBzhDqu6HjLmkVzX45KYh8QbQFxfnYnomiFnxiSZcJLh87M3I8A==
+    release_tag: v0.7.108
+    release_commit: 9ba528914dafc05c54e2191c19f99847c8f4420a
+    source_commits_ahead: 2
+    license_sha256: 4259155fb06f127687ee7b0a8a3682d45132db0f2da26cbc0b7a2d1e796436b8
     upstream_paths: [packages/core, packages/engine, packages/producer, packages/cli]
     permission_basis: owner assertion plus upstream license
     original_license: Apache-2.0
@@ -48,4 +62,3 @@ entries:
     conformance_tests: smoke render plus ffprobe verification
     upstream_sync_policy: none
     owner: CineKernel maintainers
-

@@ -1,12 +1,19 @@
 {
   "schema_version": "phase0.upstreams.v1",
-  "generated_at_utc": "2026-08-14T03:04:17.6310013Z",
+  "generated_at_utc": "2026-08-14T10:00:00.000Z",
   "remotion": {
     "repository": "https://github.com/remotion-dev/remotion.git",
     "commit": "4e459b8b3aeec12ac8346666773ea28892a30e31",
+    "source_tree_git_sha": "26ad029579076f7eedb87b0aca57a997846dfda1",
     "release_or_package_version": "4.0.509",
-    "source_commit_ahead_of_package": "unknown_pending_archaeology",
+    "package_registry_integrity": "sha512-cstggiBWnblFiY94ndSUXiB+Ev7FXEIyD58U6OWibcCC8IVQ1Y9zkKsvpzuYn+aWyNIpxdcgDeSBVyErCkiIAg==",
+    "package_git_head": null,
+    "release_tag": "v4.0.509",
+    "release_commit": "6ef4fbb15937540aec723d618780a4b9d6ef133c",
+    "source_commit_ahead_of_package": true,
+    "source_commits_ahead": 9,
     "license_file": "LICENSE.md",
+    "license_sha256": "11d935579351f40f3caa42c7a45f7d2fd57b94d817178a83485ed3d8b9333c07",
     "sparse_paths": [
       "README.md", "LICENSE.md", "AGENTS.md", "package.json",
       "packages/core", "packages/renderer", "packages/cli", "packages/player",
@@ -19,9 +26,16 @@
   "hyperframes": {
     "repository": "https://github.com/heygen-com/hyperframes.git",
     "commit": "532caf7aa24fef382cb103013f6414bb547a4129",
+    "source_tree_git_sha": "9c8c93a4a5c5e286093eaa9596457408a7124bf5",
     "release_or_package_version": "0.7.108",
-    "source_commit_ahead_of_package": "unknown_pending_archaeology",
+    "package_registry_integrity": "sha512-f6I6BXjOFB/yBYC798vSpFFxczu5+MENH5pRBzhDqu6HjLmkVzX45KYh8QbQFxfnYnomiFnxiSZcJLh87M3I8A==",
+    "package_git_head": "9ba528914dafc05c54e2191c19f99847c8f4420a",
+    "release_tag": "v0.7.108",
+    "release_commit": "9ba528914dafc05c54e2191c19f99847c8f4420a",
+    "source_commit_ahead_of_package": true,
+    "source_commits_ahead": 2,
     "license_file": "LICENSE",
+    "license_sha256": "4259155fb06f127687ee7b0a8a3682d45132db0f2da26cbc0b7a2d1e796436b8",
     "sparse_paths": [
       "README.md", "LICENSE", "AGENTS.md", "package.json",
       "packages/core", "packages/engine", "packages/producer", "packages/player",
@@ -31,4 +45,3 @@
     ]
   }
 }
-

@@ -6,12 +6,16 @@ use phase0_common::{
     load_benchmark_spec, load_upstream_lock, new_run_id, pnpm_program, repository_root,
     runtime_root, Upstream,
 };
+use phase0_verifier::{artifact_manifest_path, hash_file, verify, VerifyRequest};
 use serde_json::{json, Value};
 use std::ffi::{OsStr, OsString};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
-use std::time::Instant;
+use std::time::{Duration, Instant};
+
+mod process;
+use process::{run_supervised, write_log};
 
 const EXIT_MISSING_DEPENDENCY: u8 = 1;
 const EXIT_INVALID_CONFIGURATION: u8 = 2;
@@ -67,8 +71,11 @@ enum UpstreamCommand {
 enum Phase0Command {
     Prepare,
     Run(RunArgs),
-    Verify,
-    Report,
+    CanonicalRun(RunArgs),
+    Verify(CanonicalArgs),
+    VerifyArtifact(VerifyArtifactArgs),
+    Report(CanonicalArgs),
+    Probes(CanonicalArgs),
     Clean {
         #[arg(long, value_enum)]
         scope: CleanScope,
@@ -88,6 +95,32 @@ struct RunArgs {
     engine: Option<Engine>,
     #[arg(long = "case")]
     case_id: Option<String>,
+    #[arg(long, default_value_t = 3600)]
+    timeout_seconds: u64,
+    #[arg(long, default_value_t = 900)]
+    stall_seconds: u64,
+    #[arg(long)]
+    worker_mode: Option<String>,
+}
+
+#[derive(Debug, Args)]
+struct CanonicalArgs {
+    #[arg(long)]
+    canonical: bool,
+}
+
+#[derive(Debug, Args)]
+struct VerifyArtifactArgs {
+    #[arg(long)]
+    output: PathBuf,
+    #[arg(long = "case")]
+    case_id: String,
+    #[arg(long, value_enum)]
+    profile: Profile,
+    #[arg(long, value_enum)]
+    engine: Engine,
+    #[arg(long)]
+    expect_invalid: bool,
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq)]
@@ -204,13 +237,22 @@ fn execute(cli: &Cli) -> AppResult<Value> {
         } => prepare(&root),
         TopCommand::Phase0 {
             command: Phase0Command::Run(args),
-        } => phase0_run(&root, args, cli.json),
+        } => phase0_run(&root, args, cli.json, false),
         TopCommand::Phase0 {
-            command: Phase0Command::Verify,
-        } => phase0_verify(&root),
+            command: Phase0Command::CanonicalRun(args),
+        } => phase0_run(&root, args, cli.json, true),
         TopCommand::Phase0 {
-            command: Phase0Command::Report,
-        } => phase0_report(&root),
+            command: Phase0Command::Verify(args),
+        } => phase0_verify(&root, args.canonical),
+        TopCommand::Phase0 {
+            command: Phase0Command::VerifyArtifact(args),
+        } => phase0_verify_artifact(&root, args),
+        TopCommand::Phase0 {
+            command: Phase0Command::Report(args),
+        } => phase0_report(&root, args.canonical),
+        TopCommand::Phase0 {
+            command: Phase0Command::Probes(args),
+        } => phase0_probes(&root, args.canonical),
         TopCommand::Phase0 {
             command:
                 Phase0Command::Clean {
@@ -367,13 +409,7 @@ fn sync_one(root: &Path, name: &str, upstream: &Upstream, target: &Path) -> AppR
         ],
         EXIT_INVALID_CONFIGURATION,
     )?;
-    let mut sparse = vec![
-        OsString::from("-C"),
-        target.as_os_str().to_owned(),
-        OsString::from("sparse-checkout"),
-        OsString::from("set"),
-    ];
-    sparse.extend(upstream.sparse_paths.iter().map(OsString::from));
+    let sparse = sparse_checkout_set_args(target, upstream);
     checked(root, "git", &sparse, EXIT_INVALID_CONFIGURATION)?;
     checked(
         root,
@@ -389,6 +425,18 @@ fn sync_one(root: &Path, name: &str, upstream: &Upstream, target: &Path) -> AppR
     )?;
     println!("synced {name} at {}", upstream.commit);
     Ok(())
+}
+
+fn sparse_checkout_set_args(target: &Path, upstream: &Upstream) -> Vec<OsString> {
+    let mut sparse = vec![
+        OsString::from("-C"),
+        target.as_os_str().to_owned(),
+        OsString::from("sparse-checkout"),
+        OsString::from("set"),
+        OsString::from("--skip-checks"),
+    ];
+    sparse.extend(upstream.sparse_paths.iter().map(OsString::from));
+    sparse
 }
 
 fn upstream_verify(root: &Path) -> AppResult<Value> {
@@ -415,8 +463,18 @@ fn upstream_verify(root: &Path) -> AppResult<Value> {
         ]))
         .map_err(|error| Failure::new(EXIT_VERIFICATION_FAILURE, error))?;
         let license = target.join(&upstream.license_file);
-        let ok = actual == upstream.commit && license.is_file();
-        values.insert(name.to_owned(), json!({"ok": ok, "expected": upstream.commit, "actual": actual, "license": upstream.license_file, "license_present": license.is_file()}));
+        let tree = output_text(Command::new("git").args([
+            "-C",
+            &target.to_string_lossy(),
+            "rev-parse",
+            "HEAD^{tree}",
+        ]))
+        .map_err(|error| Failure::new(EXIT_VERIFICATION_FAILURE, error))?;
+        let license_hash = hash_file(&license).ok();
+        let ok = actual == upstream.commit
+            && tree == upstream.source_tree_git_sha
+            && license_hash.as_deref() == Some(upstream.license_sha256.as_str());
+        values.insert(name.to_owned(), json!({"ok": ok, "expected": upstream.commit, "actual": actual, "source_tree_expected":upstream.source_tree_git_sha,"source_tree_actual":tree,"release_tag":upstream.release_tag,"release_commit":upstream.release_commit,"source_commits_ahead":upstream.source_commits_ahead,"package_integrity":upstream.package_registry_integrity,"license": upstream.license_file, "license_present": license.is_file(),"license_sha256_expected":upstream.license_sha256,"license_sha256_actual":license_hash}));
         if !ok {
             return Err(Failure::new(
                 EXIT_VERIFICATION_FAILURE,
@@ -453,9 +511,16 @@ fn prepare(root: &Path) -> AppResult<Value> {
     )
 }
 
-fn phase0_run(root: &Path, args: &RunArgs, json_output: bool) -> AppResult<Value> {
+fn phase0_run(root: &Path, args: &RunArgs, json_output: bool, canonical: bool) -> AppResult<Value> {
     let spec = load_benchmark_spec(root)
         .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+    let (implementation_revision, dirty) = git_state(root);
+    if canonical && !canonical_revision_is_eligible(&implementation_revision, dirty) {
+        return Err(Failure::new(
+            EXIT_INVALID_CONFIGURATION,
+            anyhow!("canonical runs require a clean committed worktree; revision={implementation_revision}, dirty={dirty}"),
+        ));
+    }
     let environment = capture_environment(root)
         .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
     let environment_id = environment["environment_id"]
@@ -468,11 +533,14 @@ fn phase0_run(root: &Path, args: &RunArgs, json_output: bool) -> AppResult<Value
     let run_dir = runtime_root(root).join("runs").join(&run_id);
     fs::create_dir_all(&run_dir)
         .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+    let spec_hash = hash_file(&root.join("benchmarks/specs/phase0-cases.json"))
+        .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+    let lock_hash = hash_file(&root.join("benchmarks/upstreams.lock.json"))
+        .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
     let engines: Vec<Engine> = args
         .engine
         .map_or_else(|| Engine::ALL.to_vec(), |engine| vec![engine]);
-    let mut results = Vec::new();
-    let mut failures = 0_u64;
+    let mut groups = Vec::new();
     for engine in engines {
         for case in &spec.cases {
             if args.case_id.as_ref().is_some_and(|id| id != &case.id)
@@ -483,67 +551,196 @@ fn phase0_run(root: &Path, args: &RunArgs, json_output: bool) -> AppResult<Value
             {
                 continue;
             }
-            let repetitions = match args.profile {
-                Profile::Smoke => 1,
-                Profile::Full if case.id == "mixed-2d-3d" => 3,
-                Profile::Full => 5,
-            };
-            if args.profile == Profile::Full {
-                let _ = execute_run(
-                    root,
-                    &run_id,
-                    engine,
-                    args.profile,
-                    case,
-                    0,
-                    &environment_id,
-                    true,
-                    json_output,
-                );
+            let repetitions = repetition_count(args.profile, &case.id);
+            let modes = worker_modes(engine, &case.id, args.profile, args.worker_mode.as_deref())
+                .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+            for mode in modes {
+                groups.push((engine, case, mode, repetitions));
             }
-            for repetition in 1..=repetitions {
-                let result = execute_run(
-                    root,
-                    &run_id,
-                    engine,
-                    args.profile,
-                    case,
-                    repetition,
-                    &environment_id,
-                    false,
-                    json_output,
-                );
-                match result {
-                    Ok(value) => {
-                        if value["exit_code"].as_i64().unwrap_or(1) != 0
-                            || value["verification"]["passed"] != true
-                        {
-                            failures += 1;
-                        }
-                        results.push(value);
-                    }
-                    Err(error) => {
+        }
+    }
+    if groups.is_empty() {
+        return Err(Failure::new(
+            EXIT_INVALID_CONFIGURATION,
+            anyhow!("benchmark selection matched no supported engine/case groups"),
+        ));
+    }
+    let expected_result_count: u64 = groups
+        .iter()
+        .map(|(_, _, _, repetitions)| *repetitions)
+        .sum();
+    let expected_groups: Vec<Value> = groups.iter().map(|(engine, case, mode, repetitions)| json!({
+        "engine":engine.as_str(), "case_id":case.id, "worker_mode":mode, "repetitions":repetitions,
+        "warmups":usize::from(args.profile==Profile::Full),
+        "equivalence_level":case.equivalence.get(engine.as_str()).cloned().unwrap_or_else(||"unsupported".to_owned())
+    })).collect();
+    let manifest_path = run_dir.join("canonical-run-manifest.json");
+    let started_at = Utc::now().to_rfc3339_opts(SecondsFormat::Millis, true);
+    if canonical {
+        write_json(&manifest_path, &json!({
+            "schema_version":"phase0.canonical-run.v1", "canonical_run_id":run_id, "status":"running",
+            "implementation_revision":implementation_revision, "worktree_clean":true, "environment_id":environment_id,
+            "benchmark_spec_sha256":spec_hash, "upstream_lock_sha256":lock_hash, "profile":args.profile.as_str(),
+            "engine_selection":args.engine.map(Engine::as_str).unwrap_or("all"), "case_selection":args.case_id,
+            "timeout_seconds":args.timeout_seconds, "stall_seconds":args.stall_seconds, "heartbeat_seconds":15,
+            "started_at_utc":started_at, "expected_result_count":expected_result_count, "expected_groups":expected_groups,
+        })).map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION,error))?;
+    }
+    let mut results = Vec::new();
+    let mut failures = 0_u64;
+    for (engine, case, mode, repetitions) in groups {
+        if args.profile == Profile::Full {
+            match execute_run(
+                root,
+                &run_id,
+                engine,
+                args.profile,
+                case,
+                0,
+                &mode,
+                &environment_id,
+                &implementation_revision,
+                &spec_hash,
+                &lock_hash,
+                true,
+                canonical,
+                json_output,
+                args.timeout_seconds,
+                args.stall_seconds,
+            ) {
+                Ok(value) if successful_run(&value) => {}
+                Ok(value) => {
+                    failures += 1;
+                    results.push(json!({"warmup_failure":value}));
+                    continue;
+                }
+                Err(error) => {
+                    failures += 1;
+                    results.push(json!({"engine":engine.as_str(),"case_id":case.id,"worker_mode":mode,"warmup":true,"harness_error":format!("{error:#}")}));
+                    continue;
+                }
+            }
+        }
+        for repetition in 1..=repetitions {
+            match execute_run(
+                root,
+                &run_id,
+                engine,
+                args.profile,
+                case,
+                repetition,
+                &mode,
+                &environment_id,
+                &implementation_revision,
+                &spec_hash,
+                &lock_hash,
+                false,
+                canonical,
+                json_output,
+                args.timeout_seconds,
+                args.stall_seconds,
+            ) {
+                Ok(value) => {
+                    if !successful_run(&value) {
                         failures += 1;
-                        results.push(json!({"engine": engine.as_str(), "case_id": case.id, "profile": args.profile.as_str(), "repetition": repetition, "harness_error": format!("{:#}", error)}));
                     }
+                    results.push(value);
+                }
+                Err(error) => {
+                    failures += 1;
+                    results.push(json!({"engine":engine.as_str(),"case_id":case.id,"profile":args.profile.as_str(),"worker_mode":mode,"repetition":repetition,"harness_error":format!("{error:#}")}));
                 }
             }
         }
     }
-    fs::write(
-        run_dir.join("run-summary.json"),
-        serde_json::to_vec_pretty(
-            &json!({"run_id": run_id, "failures": failures, "results": results}),
-        )
-        .unwrap(),
-    )
-    .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
-    if failures > 0 {
-        return Err(Failure::new(EXIT_BENCHMARK_FAILURE, anyhow!("{failures} benchmark repetition(s) failed; raw evidence preserved under .cinekernel/runs/{run_id}")));
+    let summary = json!({"schema_version":"phase0.run-summary.v2","canonical_run_id":run_id,"canonical":canonical,"failures":failures,"result_count":results.iter().filter(|result|result.get("schema_version").is_some()).count(),"expected_result_count":expected_result_count,"results":results});
+    write_json(&run_dir.join("run-summary.json"), &summary)
+        .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+    let actual_result_count = summary["result_count"].as_u64().unwrap_or_default();
+    let canonical_complete =
+        canonical_run_is_complete(failures, actual_result_count, expected_result_count);
+    if canonical {
+        let completed_manifest = json!({
+            "schema_version":"phase0.canonical-run.v1", "canonical_run_id":run_id,
+            "status":if canonical_complete {"complete"} else {"failed"}, "implementation_revision":implementation_revision,
+            "worktree_clean":true, "environment_id":environment_id, "benchmark_spec_sha256":spec_hash,
+            "upstream_lock_sha256":lock_hash, "profile":args.profile.as_str(),
+            "engine_selection":args.engine.map(Engine::as_str).unwrap_or("all"), "case_selection":args.case_id,
+            "timeout_seconds":args.timeout_seconds, "stall_seconds":args.stall_seconds, "heartbeat_seconds":15,
+            "started_at_utc":started_at, "completed_at_utc":Utc::now().to_rfc3339_opts(SecondsFormat::Millis,true),
+            "expected_result_count":expected_result_count, "actual_result_count":actual_result_count, "failure_count":failures,
+            "expected_groups":expected_groups,
+        });
+        write_json(&manifest_path, &completed_manifest)
+            .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+        if canonical_complete {
+            let pointer_dir = runtime_root(root).join("canonical");
+            fs::create_dir_all(&pointer_dir)
+                .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+            write_json(&pointer_dir.join("latest.json"),&json!({"canonical_run_id":run_id,"manifest":format!(".cinekernel/runs/{run_id}/canonical-run-manifest.json")})).map_err(|error|Failure::new(EXIT_INVALID_CONFIGURATION,error))?;
+        }
+    }
+    if failures > 0 || actual_result_count != expected_result_count {
+        return Err(Failure::new(EXIT_BENCHMARK_FAILURE, anyhow!("{failures} benchmark group/repetition failure(s), {actual_result_count}/{expected_result_count} measured results; evidence preserved under .cinekernel/runs/{run_id}")));
     }
     Ok(
-        json!({"ok": true, "run_id": run_id, "result_count": results.len(), "path": format!(".cinekernel/runs/{run_id}")}),
+        json!({"ok":true,"canonical":canonical,"canonical_run_id":run_id,"result_count":summary["result_count"],"expected_result_count":expected_result_count,"path":format!(".cinekernel/runs/{run_id}")}),
     )
+}
+
+fn canonical_run_is_complete(failures: u64, actual: u64, expected: u64) -> bool {
+    failures == 0 && actual == expected
+}
+
+fn canonical_revision_is_eligible(revision: &str, dirty: bool) -> bool {
+    !dirty
+        && revision.len() == 40
+        && revision.bytes().all(|byte| byte.is_ascii_hexdigit())
+        && revision != "UNBORN"
+}
+
+fn repetition_count(profile: Profile, case_id: &str) -> u64 {
+    match profile {
+        Profile::Smoke => 1,
+        Profile::Full if case_id == "mixed-2d-3d" => 3,
+        Profile::Full => 5,
+    }
+}
+
+fn successful_run(value: &Value) -> bool {
+    value["exit_code"].as_i64() == Some(0)
+        && value["timed_out"] != true
+        && value["verification"]["passed"] == true
+}
+
+fn worker_modes(
+    engine: Engine,
+    case_id: &str,
+    profile: Profile,
+    requested: Option<&str>,
+) -> Result<Vec<String>> {
+    if let Some(mode) = requested {
+        if !["default", "auto", "1", "4"].contains(&mode) {
+            bail!("unsupported worker mode {mode}");
+        }
+        return Ok(vec![mode.to_owned()]);
+    }
+    if profile == Profile::Full && case_id == "media-frame-sampling" {
+        return Ok(match engine {
+            Engine::Remotion => ["default", "1", "4"]
+                .into_iter()
+                .map(str::to_owned)
+                .collect(),
+            Engine::Hyperframes => ["auto", "1", "4"].into_iter().map(str::to_owned).collect(),
+            _ => vec!["default".to_owned()],
+        });
+    }
+    Ok(vec![if engine == Engine::Hyperframes {
+        "auto"
+    } else {
+        "default"
+    }
+    .to_owned()])
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -554,9 +751,16 @@ fn execute_run(
     profile: Profile,
     case: &phase0_common::BenchmarkCase,
     repetition: u64,
+    worker_mode: &str,
     environment_id: &str,
+    implementation_revision: &str,
+    benchmark_spec_sha256: &str,
+    upstream_lock_sha256: &str,
     warmup: bool,
+    canonical: bool,
     json_output: bool,
+    timeout_seconds: u64,
+    stall_seconds: u64,
 ) -> Result<Value> {
     let label = if warmup {
         "warmup".to_owned()
@@ -568,6 +772,10 @@ fn execute_run(
         .join(run_id)
         .join(engine.as_str())
         .join(&case.id)
+        .join(format!(
+            "worker-{}",
+            worker_mode.replace(|character: char| !character.is_ascii_alphanumeric(), "-")
+        ))
         .join(label);
     fs::create_dir_all(&directory)?;
     let output = directory.join("output.mp4");
@@ -585,26 +793,62 @@ fn execute_run(
             "CINEKERNEL_FIXTURES",
             runtime_root(root).join("generated/fixtures"),
         );
-    let started = Instant::now();
-    let command_output = command.output().context("start benchmark engine")?;
-    let total_ms = started.elapsed().as_secs_f64() * 1000.0;
-    fs::write(
-        &log_path,
-        format!(
-            "status: {}\nstdout:\n{}\nstderr:\n{}\n",
-            command_output.status,
-            String::from_utf8_lossy(&command_output.stdout),
-            String::from_utf8_lossy(&command_output.stderr)
-        ),
-    )?;
-    if warmup {
-        return Ok(json!({"warmup": true, "exit_code": command_output.status.code()}));
+    match engine {
+        Engine::Remotion if worker_mode != "default" => {
+            command.env("CINEKERNEL_CONCURRENCY", worker_mode);
+        }
+        Engine::Hyperframes if worker_mode != "auto" => {
+            command.env("CINEKERNEL_WORKERS", worker_mode);
+        }
+        _ => {}
     }
+    let outcome = run_supervised(
+        &mut command,
+        Duration::from_secs(timeout_seconds),
+        Duration::from_secs(stall_seconds),
+        Duration::from_secs(15),
+        root,
+        &directory,
+    )?;
+    write_log(log_path, &outcome)?;
+    if outcome.timed_out || outcome.stalled {
+        write_json(
+            &directory.join("failure.json"),
+            &json!({"canonical_run_id":run_id,"engine":engine.as_str(),"case_id":case.id,"worker_mode":worker_mode,"repetition":repetition,"warmup":warmup,"timed_out":outcome.timed_out,"stalled":outcome.stalled,"termination":outcome.termination,"partial_output_present":output.exists(),"partial_output_bytes":fs::metadata(&output).ok().map(|metadata|metadata.len()),"valid":false}),
+        )?;
+        bail!(
+            "benchmark child {} for {}/{}",
+            if outcome.timed_out {
+                "timed out"
+            } else {
+                "stalled"
+            },
+            engine.as_str(),
+            case.id
+        );
+    }
+    let child_json = outcome
+        .child_json
+        .clone()
+        .context("benchmark child did not emit a parseable final JSON object")?;
     let verify_started = Instant::now();
-    let verification = verify_output(&output, duration, 30);
+    let verification = verify(&VerifyRequest {
+        output: &output,
+        fixtures: &runtime_root(root).join("generated/fixtures"),
+        case_id: &case.id,
+        engine: engine.as_str(),
+        width,
+        height,
+        fps: 30,
+        duration_seconds: duration,
+        expected_audio_tracks: case.expected_audio_tracks,
+    });
     let verify_ms = verify_started.elapsed().as_secs_f64() * 1000.0;
+    write_json(
+        &artifact_manifest_path(&directory.join("result.json")),
+        &json!({"schema_version":"phase0.verification-manifest.v1","canonical_run_id":run_id,"engine":engine.as_str(),"case_id":case.id,"worker_mode":worker_mode,"output":"output.mp4","output_sha256":if output.is_file(){hash_file(&output).ok()}else{None},"verification":verification}),
+    )?;
     let lock = load_upstream_lock(root)?;
-    let (revision, dirty) = git_state(root);
     let (engine_version, upstream_commit) = match engine {
         Engine::Remotion => (
             lock.remotion.release_or_package_version,
@@ -617,21 +861,62 @@ fn execute_run(
         Engine::Native2d => (env!("CARGO_PKG_VERSION").to_owned(), None),
         Engine::NativeWgpu => (env!("CARGO_PKG_VERSION").to_owned(), None),
     };
-    let result = json!({
-        "schema_version": "phase0.result.v1", "run_id": run_id, "timestamp_utc": Utc::now().to_rfc3339_opts(SecondsFormat::Millis, true),
-        "cinekernel_revision": revision, "cinekernel_dirty": dirty, "environment_id": environment_id,
-        "engine": engine.as_str(), "engine_version": engine_version, "upstream_commit": upstream_commit,
-        "case_id": case.id, "profile": profile.as_str(), "repetition": repetition,
-        "configuration": {"width": width, "height": height, "fps": "30/1", "duration_seconds": duration, "codec": "h264", "pixel_format": "yuv420p", "worker_mode": std::env::var("CINEKERNEL_CONCURRENCY").or_else(|_| std::env::var("CINEKERNEL_WORKERS")).unwrap_or_else(|_| "default".to_owned())},
-        "timings_ms": {"prepare": null, "compile": null, "initialize": null, "frame_production": null, "encode": null, "verify": verify_ms, "total": total_ms + verify_ms},
-        "resources": {"peak_rss_bytes": null, "temporary_disk_bytes": directory_size(&directory), "output_bytes": fs::metadata(&output).ok().map(|m| m.len())},
-        "capabilities": {"gpu_active": if engine == Engine::NativeWgpu {Some(true)} else {None}, "gpu_backend": null, "software_fallback": null},
-        "verification": verification,
-        "exit_code": command_output.status.code().unwrap_or(-1),
-        "warnings": if command_output.stderr.is_empty() {Vec::<String>::new()} else {vec!["engine emitted stderr; inspect command.log".to_owned()]}
+    let child_timings = &child_json["timings_ms"];
+    let frame_production = child_timings["frame_production"]
+        .as_f64()
+        .or_else(|| child_json["frame_production_ms"].as_f64());
+    let encode = child_timings["encode"]
+        .as_f64()
+        .or_else(|| child_json["encode_ms"].as_f64());
+    let render_command = child_timings["render_command"]
+        .as_f64()
+        .or(Some(outcome.elapsed_ms));
+    let encoder = if child_json["encoder"].is_object() {
+        child_json["encoder"].clone()
+    } else {
+        json!({"container":"mp4","video_codec":"h264","encoder":"libx264","pixel_format":"yuv420p","crf":18,"preset":"medium","audio_codec":if case.expected_audio_tracks>0 {Value::String("aac".to_owned())}else{Value::Null},"audio_bitrate":if case.expected_audio_tracks>0 {Value::String("192k".to_owned())}else{Value::Null},"sample_rate":if case.expected_audio_tracks>0 {Value::from(48000)}else{Value::Null},"channel_layout":if case.expected_audio_tracks>0 {Value::String("mono".to_owned())}else{Value::Null}})
+    };
+    let capabilities = json!({
+        "gpu_active":if engine==Engine::NativeWgpu {Some(true)} else {None},
+        "gpu_backend":child_json["backend"].as_str(),"gpu_adapter":child_json["adapter"].as_str(),
+        "gpu_driver":child_json["driver"].as_str(),"software_fallback":child_json["software_fallback"].as_bool(),
+        "capture_mode":if engine==Engine::Hyperframes {child_json["capture_requested"].as_str().or(Some("auto"))}else{None}
     });
+    let equivalence_level = case
+        .equivalence
+        .get(engine.as_str())
+        .cloned()
+        .unwrap_or_else(|| "unsupported".to_owned());
+    let warnings = if outcome.stderr.trim().is_empty() {
+        Vec::<String>::new()
+    } else {
+        vec!["engine emitted stderr; inspect command.log".to_owned()]
+    };
+    let result = if canonical {
+        json!({
+            "schema_version":"phase0.result.v2","canonical_run_id":run_id,"canonical":true,
+            "timestamp_utc":Utc::now().to_rfc3339_opts(SecondsFormat::Millis,true),"implementation_revision":implementation_revision,
+            "worktree_clean":true,"environment_id":environment_id,"benchmark_spec_sha256":benchmark_spec_sha256,
+            "upstream_lock_sha256":upstream_lock_sha256,"engine":engine.as_str(),"engine_version":engine_version,
+            "upstream_commit":upstream_commit,"case_id":case.id,"profile":profile.as_str(),"repetition":repetition,
+            "warmup":warmup,"equivalence_level":equivalence_level,
+            "configuration":{"width":width,"height":height,"fps":"30/1","duration_seconds":duration,"worker_mode":worker_mode,"frame_order":"sequential"},
+            "timings_ms":{"preflight":child_timings["preflight"],"project_prepare":child_timings["project_prepare"],"engine_startup":child_timings["engine_startup"],"frame_production":frame_production,"encode":encode,"render_command":render_command,"artifact_verify":verify_ms,"end_to_end":outcome.elapsed_ms+verify_ms},
+            "resources":{"peak_rss_bytes":outcome.peak_rss_bytes,"peak_temporary_disk_bytes":outcome.peak_temporary_disk_bytes,"maximum_queued_frame_bytes":Value::Null,"output_bytes":fs::metadata(&output).ok().map(|metadata|metadata.len())},
+            "capabilities":capabilities,"encoder":encoder,"verification":verification,"exit_code":outcome.exit_code.unwrap_or(-1),"timed_out":false,"warnings":warnings
+        })
+    } else {
+        json!({"schema_version":"phase0.result.v1","run_id":run_id,"timestamp_utc":Utc::now().to_rfc3339_opts(SecondsFormat::Millis,true),"cinekernel_revision":implementation_revision,"cinekernel_dirty":git_state(root).1,"environment_id":environment_id,"engine":engine.as_str(),"engine_version":engine_version,"upstream_commit":upstream_commit,"case_id":case.id,"profile":profile.as_str(),"repetition":repetition,"configuration":{"width":width,"height":height,"fps":"30/1","duration_seconds":duration,"worker_mode":worker_mode},"timings_ms":{"prepare":child_timings["project_prepare"],"compile":Value::Null,"initialize":child_timings["engine_startup"],"frame_production":frame_production,"encode":encode,"verify":verify_ms,"total":outcome.elapsed_ms+verify_ms},"resources":{"peak_rss_bytes":outcome.peak_rss_bytes,"temporary_disk_bytes":outcome.peak_temporary_disk_bytes,"output_bytes":fs::metadata(&output).ok().map(|metadata|metadata.len())},"capabilities":capabilities,"encoder":encoder,"verification":verification,"exit_code":outcome.exit_code.unwrap_or(-1),"timed_out":false,"warnings":warnings})
+    };
+    if canonical {
+        validate_canonical_result(root, &result)?;
+    }
     fs::write(
-        directory.join("result.json"),
+        directory.join(if warmup {
+            "warmup-result.json"
+        } else {
+            "result.json"
+        }),
         serde_json::to_vec_pretty(&result)?,
     )?;
     if !json_output {
@@ -641,7 +926,7 @@ fn execute_run(
             case.id,
             profile.as_str(),
             repetition,
-            total_ms.round(),
+            outcome.elapsed_ms.round(),
             result["verification"]["passed"]
         );
     }
@@ -704,63 +989,32 @@ fn engine_command(
     Ok(command)
 }
 
-fn verify_output(path: &Path, expected_duration: f64, fps: u64) -> Value {
-    if !path.is_file() {
-        return json!({"passed": false, "frame_count": null, "audio_tracks": null, "video_tracks": null, "duration_seconds": null, "sampled_frame_hashes": {}, "issues": ["output file missing"]});
-    }
-    let output = Command::new("ffprobe")
-        .args([
-            "-v",
-            "error",
-            "-count_frames",
-            "-show_streams",
-            "-show_format",
-            "-of",
-            "json",
-        ])
-        .arg(path)
-        .output();
-    let Ok(output) = output else {
-        return json!({"passed": false, "issues": ["ffprobe could not start"]});
-    };
-    let parsed: Value = serde_json::from_slice(&output.stdout).unwrap_or(Value::Null);
-    let streams = parsed["streams"].as_array().cloned().unwrap_or_default();
-    let video_tracks = streams
-        .iter()
-        .filter(|s| s["codec_type"] == "video")
-        .count();
-    let audio_tracks = streams
-        .iter()
-        .filter(|s| s["codec_type"] == "audio")
-        .count();
-    let duration = parsed["format"]["duration"]
-        .as_str()
-        .and_then(|value| value.parse::<f64>().ok());
-    let frame_count = streams
-        .iter()
-        .find(|s| s["codec_type"] == "video")
-        .and_then(|s| s["nb_read_frames"].as_str())
-        .and_then(|value| value.parse::<u64>().ok());
-    let expected_frames = (expected_duration * fps as f64).round() as u64;
-    let mut issues = Vec::new();
-    if video_tracks != 1 {
-        issues.push(format!("expected one video track, found {video_tracks}"));
-    }
-    if duration.is_none_or(|actual| (actual - expected_duration).abs() > 0.12) {
-        issues.push(format!(
-            "duration mismatch: expected {expected_duration:.3}, found {duration:?}"
-        ));
-    }
-    if frame_count.is_none_or(|actual| actual.abs_diff(expected_frames) > 1) {
-        issues.push(format!(
-            "frame count mismatch: expected {expected_frames}, found {frame_count:?}"
-        ));
-    }
-    json!({"passed": issues.is_empty(), "frame_count": frame_count, "audio_tracks": audio_tracks, "video_tracks": video_tracks, "duration_seconds": duration, "sampled_frame_hashes": {}, "issues": issues, "ffprobe": parsed})
+fn validate_canonical_result(root: &Path, result: &Value) -> Result<()> {
+    let schema: Value = serde_json::from_slice(&fs::read(
+        root.join("schemas/phase0/benchmark-result.schema.json"),
+    )?)?;
+    let validator =
+        jsonschema::validator_for(&schema).context("compile canonical result schema")?;
+    validator
+        .validate(result)
+        .map_err(|error| anyhow!("canonical result schema validation failed: {error}"))
 }
 
-fn phase0_verify(root: &Path) -> AppResult<Value> {
-    let runs = runtime_root(root).join("runs");
+fn write_json(path: &Path, value: &Value) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::write(path, serde_json::to_vec_pretty(value)?)?;
+    Ok(())
+}
+
+fn phase0_verify(root: &Path, canonical: bool) -> AppResult<Value> {
+    let runs = if canonical {
+        latest_canonical_directory(root)
+            .map_err(|error| Failure::new(EXIT_VERIFICATION_FAILURE, error))?
+    } else {
+        runtime_root(root).join("runs")
+    };
     let mut result_files = Vec::new();
     collect_named(&runs, "result.json", &mut result_files)
         .map_err(|error| Failure::new(EXIT_VERIFICATION_FAILURE, error))?;
@@ -771,6 +1025,83 @@ fn phase0_verify(root: &Path) -> AppResult<Value> {
         ));
     }
     result_files.sort();
+    if canonical {
+        let manifest: Value = serde_json::from_slice(
+            &fs::read(runs.join("canonical-run-manifest.json"))
+                .map_err(|error| Failure::new(EXIT_VERIFICATION_FAILURE, error))?,
+        )
+        .map_err(|error| Failure::new(EXIT_VERIFICATION_FAILURE, error))?;
+        if manifest["status"] != "complete" || manifest["failure_count"] != 0 {
+            return Err(Failure::new(
+                EXIT_VERIFICATION_FAILURE,
+                anyhow!("canonical manifest is not complete and failure-free"),
+            ));
+        }
+        let expected = manifest["expected_result_count"]
+            .as_u64()
+            .unwrap_or_default() as usize;
+        if result_files.len() != expected {
+            return Err(Failure::new(
+                EXIT_VERIFICATION_FAILURE,
+                anyhow!(
+                    "canonical matrix incomplete: expected {expected} results, found {}",
+                    result_files.len()
+                ),
+            ));
+        }
+        let mut groups = std::collections::BTreeMap::<String, usize>::new();
+        for path in &result_files {
+            let value: Value = serde_json::from_slice(
+                &fs::read(path).map_err(|error| Failure::new(EXIT_VERIFICATION_FAILURE, error))?,
+            )
+            .map_err(|error| Failure::new(EXIT_VERIFICATION_FAILURE, error))?;
+            validate_canonical_result(root, &value)
+                .map_err(|error| Failure::new(EXIT_VERIFICATION_FAILURE, error))?;
+            if value["canonical_run_id"] != manifest["canonical_run_id"]
+                || value["implementation_revision"] != manifest["implementation_revision"]
+                || value["worktree_clean"] != true
+                || value["implementation_revision"] == "UNBORN"
+            {
+                return Err(Failure::new(
+                    EXIT_VERIFICATION_FAILURE,
+                    anyhow!("canonical identity mismatch in {}", path.display()),
+                ));
+            }
+            if value["verification"]["passed"] != true
+                || value["exit_code"] != 0
+                || value["timed_out"] != false
+            {
+                return Err(Failure::new(
+                    EXIT_VERIFICATION_FAILURE,
+                    anyhow!("canonical result failed in {}", path.display()),
+                ));
+            }
+            let key = format!(
+                "{}/{}/{}",
+                value["engine"].as_str().unwrap_or("?"),
+                value["case_id"].as_str().unwrap_or("?"),
+                value["configuration"]["worker_mode"]
+                    .as_str()
+                    .unwrap_or("?")
+            );
+            *groups.entry(key).or_default() += 1;
+        }
+        for group in manifest["expected_groups"].as_array().into_iter().flatten() {
+            let key = format!(
+                "{}/{}/{}",
+                group["engine"].as_str().unwrap_or("?"),
+                group["case_id"].as_str().unwrap_or("?"),
+                group["worker_mode"].as_str().unwrap_or("?")
+            );
+            let expected_repetitions = group["repetitions"].as_u64().unwrap_or_default() as usize;
+            if groups.get(&key).copied() != Some(expected_repetitions) {
+                return Err(Failure::new(EXIT_VERIFICATION_FAILURE,anyhow!("canonical group {key} expected {expected_repetitions} repetitions, found {:?}",groups.get(&key))));
+            }
+        }
+        return Ok(
+            json!({"ok":true,"canonical":true,"canonical_run_id":manifest["canonical_run_id"],"implementation_revision":manifest["implementation_revision"],"result_count":result_files.len(),"group_count":groups.len(),"matrix_complete":true}),
+        );
+    }
     let mut latest = std::collections::BTreeMap::<String, (PathBuf, Value)>::new();
     let mut retained_failures = 0_usize;
     for path in &result_files {
@@ -814,12 +1145,68 @@ fn phase0_verify(root: &Path) -> AppResult<Value> {
         ));
     }
     Ok(
-        json!({"ok": true, "latest_groups_verified": latest.len(), "retained_result_count": result_files.len(), "retained_failed_attempts": retained_failures}),
+        json!({"ok": true, "canonical":false,"latest_groups_verified": latest.len(), "retained_result_count": result_files.len(), "retained_failed_attempts": retained_failures}),
     )
 }
 
-fn phase0_report(root: &Path) -> AppResult<Value> {
-    let runs = runtime_root(root).join("runs");
+fn phase0_verify_artifact(root: &Path, args: &VerifyArtifactArgs) -> AppResult<Value> {
+    let spec = load_benchmark_spec(root)
+        .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+    let case = spec
+        .cases
+        .iter()
+        .find(|case| case.id == args.case_id)
+        .ok_or_else(|| {
+            Failure::new(
+                EXIT_INVALID_CONFIGURATION,
+                anyhow!("unknown benchmark case {}", args.case_id),
+            )
+        })?;
+    if !case
+        .supported_engines
+        .iter()
+        .any(|engine| engine == args.engine.as_str())
+    {
+        return Err(Failure::new(
+            EXIT_UNSUPPORTED_CAPABILITY,
+            anyhow!("{} does not support {}", args.engine.as_str(), args.case_id),
+        ));
+    }
+    let (width, height) = args.profile.dimensions();
+    let duration = (case.duration_seconds * args.profile.duration_scale()).max(1.0 / 30.0);
+    let report = verify(&VerifyRequest {
+        output: &args.output,
+        fixtures: &runtime_root(root).join("generated/fixtures"),
+        case_id: &case.id,
+        engine: args.engine.as_str(),
+        width,
+        height,
+        fps: 30,
+        duration_seconds: duration,
+        expected_audio_tracks: case.expected_audio_tracks,
+    });
+    let rejected = !report.passed;
+    let value = json!({"ok":if args.expect_invalid{rejected}else{report.passed},"expect_invalid":args.expect_invalid,"rejected":rejected,"output":args.output,"verification":report});
+    if (args.expect_invalid && rejected) || (!args.expect_invalid && !rejected) {
+        Ok(value)
+    } else {
+        Err(Failure::new(
+            EXIT_VERIFICATION_FAILURE,
+            anyhow!(
+                "artifact verification expectation failed: {}",
+                serde_json::to_string(&value).unwrap_or_default()
+            ),
+        ))
+    }
+}
+
+fn phase0_report(root: &Path, canonical: bool) -> AppResult<Value> {
+    let runs = if canonical {
+        latest_canonical_directory(root)
+            .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?
+    } else {
+        runtime_root(root).join("runs")
+    };
     let mut paths = Vec::new();
     collect_named(&runs, "result.json", &mut paths)
         .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
@@ -840,10 +1227,18 @@ fn phase0_report(root: &Path) -> AppResult<Value> {
             result["engine"].as_str(),
             result["case_id"].as_str(),
             result["profile"].as_str(),
-            result["timings_ms"]["total"].as_f64(),
+            result["timings_ms"][if canonical { "render_command" } else { "total" }].as_f64(),
         ) {
+            if canonical && result["equivalence_level"] != "equivalent" {
+                continue;
+            }
             groups
-                .entry(format!("{engine}/{case_id}/{profile}"))
+                .entry(format!(
+                    "{engine}/{case_id}/{profile}/{}",
+                    result["configuration"]["worker_mode"]
+                        .as_str()
+                        .unwrap_or("default")
+                ))
                 .or_default()
                 .push(total);
         }
@@ -860,13 +1255,31 @@ fn phase0_report(root: &Path) -> AppResult<Value> {
     let report_dir = root.join("reports/phase0");
     fs::create_dir_all(&report_dir)
         .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
-    let payload = json!({"schema_version":"phase0.aggregate.v1","generated_at_utc":Utc::now().to_rfc3339_opts(SecondsFormat::Millis,true),"result_count":results.len(),"successful_result_count":successful_result_count,"failed_result_count":failed_result_count,"summaries":summaries,"raw_results":results});
+    let manifest = if canonical {
+        serde_json::from_slice::<Value>(
+            &fs::read(runs.join("canonical-run-manifest.json")).unwrap_or_default(),
+        )
+        .unwrap_or(Value::Null)
+    } else {
+        Value::Null
+    };
+    let payload = json!({"schema_version":if canonical{"phase0.canonical-aggregate.v1"}else{"phase0.aggregate.v1"},"canonical":canonical,"canonical_run_id":manifest["canonical_run_id"],"implementation_revision":manifest["implementation_revision"],"generated_at_utc":Utc::now().to_rfc3339_opts(SecondsFormat::Millis,true),"timing_view":"render_command (preflight and artifact verification excluded)","equivalent_workloads_only":canonical,"result_count":results.len(),"successful_result_count":successful_result_count,"failed_result_count":failed_result_count,"summaries":summaries,"raw_results":results});
+    let json_name = if canonical {
+        "CANONICAL_BASELINE_RESULTS.json"
+    } else {
+        "BASELINE_RESULTS.json"
+    };
+    let markdown_name = if canonical {
+        "CANONICAL_BASELINE_RESULTS.md"
+    } else {
+        "BASELINE_RESULTS.md"
+    };
     fs::write(
-        report_dir.join("BASELINE_RESULTS.json"),
+        report_dir.join(json_name),
         serde_json::to_vec_pretty(&payload).unwrap(),
     )
     .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
-    let mut markdown = format!("# Phase 0 baseline results\n\nGenerated from all retained `result.json` files under `.cinekernel/runs/`. Timing summaries include only verified successful attempts; all {failed_result_count} failed attempts remain in `BASELINE_RESULTS.json` under `raw_results`. Successful attempts: {successful_result_count}. Total retained attempts: {}.\n\n| Engine / case / profile | n | min ms | median ms | mean ms | max ms | stddev ms |\n|---|---:|---:|---:|---:|---:|---:|\n", results.len());
+    let mut markdown = format!("# Phase 0.1 {}baseline results\n\n{} Timing view: render-command elapsed time; HyperFrames lint/check and all artifact verification are reported separately. Direct rows include only `equivalence_level: equivalent`. Failed attempts: {failed_result_count}. Successful attempts: {successful_result_count}. Total retained attempts in this evidence set: {}.\n\n| Engine / case / profile / worker | n | min ms | median ms | mean ms | max ms | stddev ms |\n|---|---:|---:|---:|---:|---:|---:|\n",if canonical{"canonical "}else{""},if canonical{format!("Canonical run `{}` at implementation `{}`.",manifest["canonical_run_id"].as_str().unwrap_or("unknown"),manifest["implementation_revision"].as_str().unwrap_or("unknown"))}else{"Historical retained results; not canonical.".to_owned()}, results.len());
     for summary in payload["summaries"].as_array().unwrap_or(&Vec::new()) {
         markdown.push_str(&format!(
             "| {} | {} | {:.1} | {:.1} | {:.1} | {:.1} | {:.1} |\n",
@@ -879,11 +1292,100 @@ fn phase0_report(root: &Path) -> AppResult<Value> {
             summary["standard_deviation_ms"].as_f64().unwrap_or(0.0)
         ));
     }
-    fs::write(report_dir.join("BASELINE_RESULTS.md"), markdown)
+    fs::write(report_dir.join(markdown_name), markdown)
         .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+    if canonical {
+        fs::copy(
+            runs.join("canonical-run-manifest.json"),
+            report_dir.join("CANONICAL_RUN_MANIFEST.json"),
+        )
+        .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+        let historical = historical_summary(root)
+            .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+        fs::write(report_dir.join("HISTORICAL_RESULTS_SUMMARY.md"), historical)
+            .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+    }
     Ok(
-        json!({"ok":true,"result_count":payload["result_count"],"json":"reports/phase0/BASELINE_RESULTS.json","markdown":"reports/phase0/BASELINE_RESULTS.md"}),
+        json!({"ok":true,"canonical":canonical,"canonical_run_id":payload["canonical_run_id"],"result_count":payload["result_count"],"json":format!("reports/phase0/{json_name}"),"markdown":format!("reports/phase0/{markdown_name}")}),
     )
+}
+
+fn latest_canonical_directory(root: &Path) -> Result<PathBuf> {
+    let pointer: Value = serde_json::from_slice(
+        &fs::read(runtime_root(root).join("canonical/latest.json"))
+            .context("no canonical run pointer; run canonical-run first")?,
+    )?;
+    let id = pointer["canonical_run_id"]
+        .as_str()
+        .context("canonical run id missing")?;
+    Ok(runtime_root(root).join("runs").join(id))
+}
+
+fn historical_summary(root: &Path) -> Result<String> {
+    let mut paths = Vec::new();
+    collect_named(&runtime_root(root).join("runs"), "result.json", &mut paths)?;
+    let mut v1 = 0;
+    let mut v2 = 0;
+    let mut failed = 0;
+    for path in paths {
+        if let Ok(value) = serde_json::from_slice::<Value>(&fs::read(path)?) {
+            match value["schema_version"].as_str() {
+                Some("phase0.result.v1") => v1 += 1,
+                Some("phase0.result.v2") => v2 += 1,
+                _ => {}
+            };
+            if value["verification"]["passed"] != true || value["exit_code"] != 0 {
+                failed += 1;
+            }
+        }
+    }
+    Ok(format!("# Historical results summary\n\nRetained historical results are never merged into canonical aggregates.\n\n- Phase 0 v1 retained attempts: {v1}\n- Phase 0.1 v2 attempts across all local canonical runs: {v2}\n- Retained failed attempts: {failed}\n- Canonical selection source: `.cinekernel/canonical/latest.json` only.\n"))
+}
+
+fn phase0_probes(root: &Path, canonical: bool) -> AppResult<Value> {
+    if !canonical {
+        return Err(Failure::new(
+            EXIT_INVALID_CONFIGURATION,
+            anyhow!("Phase 0.1 probes require --canonical"),
+        ));
+    }
+    let directory = latest_canonical_directory(root)
+        .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+    let id = directory
+        .file_name()
+        .and_then(OsStr::to_str)
+        .context("canonical id missing")
+        .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+    let output = Command::new(pnpm_program())
+        .current_dir(root)
+        .args([
+            "--filter",
+            "@cinekernel/phase0-common",
+            "probes",
+            "--",
+            "--canonical-run-id",
+            id,
+        ])
+        .output()
+        .map_err(|error| Failure::new(EXIT_BENCHMARK_FAILURE, error))?;
+    if !output.status.success() {
+        return Err(Failure::new(
+            EXIT_BENCHMARK_FAILURE,
+            anyhow!(
+                "probe suite failed with {}\nstdout:\n{}\nstderr:\n{}",
+                output.status,
+                String::from_utf8_lossy(&output.stdout),
+                String::from_utf8_lossy(&output.stderr)
+            ),
+        ));
+    }
+    let value = String::from_utf8_lossy(&output.stdout)
+        .lines()
+        .rev()
+        .find_map(|line| serde_json::from_str::<Value>(line).ok())
+        .context("probe suite emitted no JSON")
+        .map_err(|error| Failure::new(EXIT_BENCHMARK_FAILURE, error))?;
+    Ok(value)
 }
 
 fn clean_generated(root: &Path) -> AppResult<Value> {
@@ -956,4 +1458,191 @@ fn collect_named(directory: &Path, name: &str, output: &mut Vec<PathBuf>) -> Res
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn workspace_root() -> PathBuf {
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .and_then(Path::parent)
+            .expect("workspace root")
+            .to_path_buf()
+    }
+
+    fn temporary_root(label: &str) -> PathBuf {
+        let nonce = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("clock")
+            .as_nanos();
+        let path =
+            std::env::temp_dir().join(format!("cinekernel-{label}-{}-{nonce}", std::process::id()));
+        fs::create_dir_all(&path).expect("create test root");
+        path
+    }
+
+    #[test]
+    fn canonical_revision_enforcement_rejects_dirty_unborn_and_malformed_state() {
+        let revision = "a".repeat(40);
+        assert!(canonical_revision_is_eligible(&revision, false));
+        assert!(!canonical_revision_is_eligible(&revision, true));
+        assert!(!canonical_revision_is_eligible("UNBORN", false));
+        assert!(!canonical_revision_is_eligible("not-a-full-sha", false));
+    }
+
+    #[test]
+    fn canonical_pointer_requires_zero_failures_and_exact_inventory() {
+        assert!(canonical_run_is_complete(0, 109, 109));
+        assert!(!canonical_run_is_complete(1, 109, 109));
+        assert!(!canonical_run_is_complete(0, 108, 109));
+        assert!(!canonical_run_is_complete(0, 110, 109));
+    }
+
+    #[test]
+    fn repetition_and_worker_matrix_matches_phase_0_1_contract() {
+        assert_eq!(repetition_count(Profile::Smoke, "mixed-2d-3d"), 1);
+        assert_eq!(repetition_count(Profile::Full, "mixed-2d-3d"), 3);
+        assert_eq!(repetition_count(Profile::Full, "typography-layout"), 5);
+        assert_eq!(
+            worker_modes(
+                Engine::Remotion,
+                "media-frame-sampling",
+                Profile::Full,
+                None
+            )
+            .expect("modes"),
+            ["default", "1", "4"]
+        );
+        assert_eq!(
+            worker_modes(
+                Engine::Hyperframes,
+                "media-frame-sampling",
+                Profile::Full,
+                None
+            )
+            .expect("modes"),
+            ["auto", "1", "4"]
+        );
+        assert!(worker_modes(
+            Engine::Remotion,
+            "media-frame-sampling",
+            Profile::Full,
+            Some("unbounded")
+        )
+        .is_err());
+    }
+
+    #[test]
+    fn required_full_matrix_has_109_measured_results() {
+        let spec = load_benchmark_spec(&workspace_root()).expect("benchmark spec");
+        let mut count = 0_u64;
+        for engine in Engine::ALL {
+            for case in &spec.cases {
+                if case
+                    .supported_engines
+                    .iter()
+                    .any(|candidate| candidate == engine.as_str())
+                {
+                    let modes =
+                        worker_modes(engine, &case.id, Profile::Full, None).expect("worker modes");
+                    count += modes.len() as u64 * repetition_count(Profile::Full, &case.id);
+                }
+            }
+        }
+        assert_eq!(count, 109);
+    }
+
+    #[test]
+    fn sparse_checkout_allows_tracked_file_paths_on_repeat_sync() {
+        let lock = load_upstream_lock(&workspace_root()).expect("upstream lock");
+        let target = Path::new("upstream checkout");
+        let args = sparse_checkout_set_args(target, &lock.remotion);
+        let rendered = args
+            .iter()
+            .map(|value| value.to_string_lossy().into_owned())
+            .collect::<Vec<_>>();
+        assert_eq!(
+            &rendered[..5],
+            [
+                "-C",
+                "upstream checkout",
+                "sparse-checkout",
+                "set",
+                "--skip-checks"
+            ]
+        );
+        assert!(rendered.iter().any(|value| value == "README.md"));
+        assert!(rendered.iter().any(|value| value == "LICENSE.md"));
+    }
+
+    #[test]
+    fn warmup_and_measured_success_require_verifier_and_no_timeout() {
+        assert!(successful_run(
+            &json!({"exit_code":0,"timed_out":false,"verification":{"passed":true}})
+        ));
+        assert!(!successful_run(
+            &json!({"exit_code":0,"timed_out":true,"verification":{"passed":true}})
+        ));
+        assert!(!successful_run(
+            &json!({"exit_code":0,"timed_out":false,"verification":{"passed":false}})
+        ));
+    }
+
+    #[test]
+    fn canonical_pointer_selects_only_the_named_run() {
+        let root = temporary_root("canonical-selection");
+        let pointer = runtime_root(&root).join("canonical/latest.json");
+        write_json(
+            &pointer,
+            &json!({"canonical_run_id":"selected","manifest":"ignored"}),
+        )
+        .expect("pointer");
+        fs::create_dir_all(runtime_root(&root).join("runs/older")).expect("older");
+        let selected = latest_canonical_directory(&root).expect("selected directory");
+        assert_eq!(selected, runtime_root(&root).join("runs/selected"));
+        fs::remove_dir_all(root).expect("cleanup test root");
+    }
+
+    #[test]
+    fn historical_summary_separates_v1_v2_and_failures() {
+        let root = temporary_root("historical-separation");
+        write_json(
+            &runtime_root(&root).join("runs/a/result.json"),
+            &json!({"schema_version":"phase0.result.v1","exit_code":0,"verification":{"passed":true}}),
+        )
+        .expect("v1");
+        write_json(
+            &runtime_root(&root).join("runs/b/result.json"),
+            &json!({"schema_version":"phase0.result.v2","exit_code":3,"verification":{"passed":false}}),
+        )
+        .expect("v2");
+        let summary = historical_summary(&root).expect("summary");
+        assert!(summary.contains("v1 retained attempts: 1"));
+        assert!(summary.contains("v2 attempts across all local canonical runs: 1"));
+        assert!(summary.contains("Retained failed attempts: 1"));
+        fs::remove_dir_all(root).expect("cleanup test root");
+    }
+
+    #[test]
+    fn result_v2_serialization_is_schema_compatible() {
+        let result = json!({
+            "schema_version":"phase0.result.v2","canonical_run_id":"run","canonical":true,
+            "timestamp_utc":"2026-08-14T00:00:00.000Z","implementation_revision":"a".repeat(40),
+            "worktree_clean":true,"environment_id":"b".repeat(64),"benchmark_spec_sha256":"c".repeat(64),
+            "upstream_lock_sha256":"d".repeat(64),"engine":"native-2d","engine_version":"0.0.0",
+            "upstream_commit":null,"case_id":"typography-layout","profile":"smoke","repetition":1,
+            "warmup":false,"equivalence_level":"equivalent","configuration":{},
+            "timings_ms":{"preflight":null,"project_prepare":null,"engine_startup":null,"frame_production":1,"encode":1,"render_command":2,"artifact_verify":1,"end_to_end":3},
+            "resources":{"peak_rss_bytes":null,"peak_temporary_disk_bytes":1,"maximum_queued_frame_bytes":null,"output_bytes":1},
+            "capabilities":{"gpu_active":null,"gpu_backend":null,"gpu_adapter":null,"gpu_driver":null,"software_fallback":null,"capture_mode":null},
+            "encoder":{},"verification":{"passed":true,"issues":[]},"exit_code":0,"timed_out":false,"warnings":[]
+        });
+        validate_canonical_result(&workspace_root(), &result).expect("schema compatible");
+        let mut dirty = result;
+        dirty["worktree_clean"] = Value::Bool(false);
+        assert!(validate_canonical_result(&workspace_root(), &dirty).is_err());
+    }
 }

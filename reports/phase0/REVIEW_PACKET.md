@@ -1,112 +1,69 @@
-# CineKernel Phase 0 reviewer packet
+# CineKernel Phase 0.1 reviewer packet
 
-Phase status: **PASS**. Acceptance authority: `reports/phase0/PHASE0_ACCEPTANCE_REPORT.md`.
+Status: **CONDITIONAL PASS**. Implementation revision A: `0249b40ec41673ed8ac2f22c23583ddc3629a320`. Evidence revision B: `b12e6c74a519fa693a49f50cd23df6dddc910b88`. Canonical run: `20260814T144948Z-c6e0a98a-b94a-48e9-a26e-f69faf10f048`.
 
-## Five architectural conclusions
+Normal CI: [run 31810436296](https://github.com/Kkb113/CineKernel/actions/runs/31810436296), all three OS jobs green at implementation A. Post-evidence CI: [run 31817123555](https://github.com/Kkb113/CineKernel/actions/runs/31817123555), all three OS jobs green at attestation `8b4825e`. Manual benchmark workflow path: `.github/workflows/phase0-benchmarks.yml`; no run URL exists because GitHub returns 404 until the workflow is registered on the default branch.
 
-1. CineKernel must own semantic state and rational-time evaluation; neither React nor HTML is the authoritative IR.
-2. Remotion and HyperFrames are useful wrapped compatibility backends with different strengths: ecosystem maturity versus explicit seek/validation instrumentation.
-3. Native wgpu is the leading accelerated 2D/3D candidate, paired with a deterministic software 2D reference.
-4. Media, audio, muxing, concurrency, and cache behavior require CineKernel-owned contracts and mechanical oracles.
-5. 3D should be first-class; Blender remains optional and external rather than part of the core runtime.
+## Five largest changes
 
-## Five benchmark findings
+1. Replaced blocking child execution with supervised process trees, heartbeat/stall/wall timeouts, recovery, resource sampling, and canonical selection.
+2. Added a permanent decoded artifact verifier and 109 SHA-bound measured sidecars.
+3. Made native typography and mixed 2D/3D semantically equivalent, including glyphs, four scenes, textured 3D, transitions, overlay, CTA, and audio.
+4. Split preflight/render/verification timing and introduced strict v2 schemas, clean-revision provenance, exact matrices, and historical isolation.
+5. Deepened pinned upstream archaeology/provenance and repaired three-OS CI, licenses, fixtures, tests, and manual evidence workflows.
 
-1. Full mixed median: native wgpu 10.17 s, Remotion 23.94 s, HyperFrames 38.93 s.
-2. Full 3D median: native wgpu 5.83 s, HyperFrames 27.80 s, Remotion 42.09 s.
-3. Full typography median: native 2D 4.36 s, Remotion 19.19 s, HyperFrames 25.41 s.
-4. Full HyperFrames micro-cases were relatively stable after warmup (for example chart stddev 0.41 s), but strict validation contributes material fixed overhead.
-5. Smoke/cold-start samples are noisy; repeated full-profile medians, not smoke totals, should guide architecture decisions.
+## Five important benchmark findings
 
-Every finding is supported by `reports/phase0/BASELINE_RESULTS.md` and `reports/phase0/BASELINE_RESULTS.json`. The implementations are not visual-quality-equivalent, so these are directional architecture findings.
+1. One aggregate full command completed 109/109 measured attempts and 23 warm-ups without manual engine switching.
+2. On this Intel Arc/Vulkan host, mixed median render-command time was native wgpu 10,624.9 ms (`n=3`), HyperFrames 24,132.6 ms (`n=3`), Remotion 35,470.6 ms (`n=3`).
+3. Native 3D median was 5,123.0 ms (`n=5`), HyperFrames 15,357.4 ms (`n=5`), Remotion 20,082.3 ms (`n=5`); this is candidate evidence, not cross-platform certification.
+4. HyperFrames preflight is material (roughly 9.9-12.7 s median by workload) and is now excluded from direct render-command comparisons but retained separately.
+5. Repeated decoded output is exact for all scoped rows except documented Remotion mixed WebGL variance, which passes bounded PSNR/SSIM thresholds.
 
-## Five largest risks
+## Five important limitations
 
-1. Native scope expansion before text/media contracts stabilize.
-2. Production text shaping, internationalization, and golden-corpus selection.
-3. Cross-driver/cross-OS GPU conformance beyond the single Intel Arc/Vulkan result.
-4. Certified render-time network isolation and dependency freezing.
-5. FFmpeg distribution, codec capability, and license variation.
+1. The manual three-OS full/all workflow has not run because it is not registered on `master`.
+2. Strong render-time network isolation (Probe G) is therefore not executed; a static scan is not counted as equivalent evidence.
+3. Local GPU evidence covers one Intel Arc/Vulkan adapter and cannot establish driver/backend conformance.
+4. The deterministic bitmap glyph path is benchmark infrastructure, not a production international text stack.
+5. Phase 0 micro/mixed workloads do not replace a five-to-ten-minute production corpus or final VideoIR evaluation.
 
-Full register: `reports/phase0/RISK_REGISTER.md`.
+## Review artifacts and order
 
-## Key document paths
+1. `reports/phase0/PHASE0_ACCEPTANCE_REPORT.md` — authoritative status and all 25 required sections.
+2. `reports/phase0/REVIEW_FINDINGS_RESOLUTION.md` — ten reviewer findings and traceability.
+3. `reports/phase0/CANONICAL_BASELINE_RESULTS.md` / `.json` — 23 summaries and 109 raw measured results.
+4. `reports/phase0/EQUIVALENCE_REPORT.md` and `reports/phase0/artifacts/EQUIVALENT_RENDER_MEDIANS.svg` — eligibility and selected timing view.
+5. `reports/phase0/VERIFIER_REPORT.md`, `VERIFICATION_MANIFEST_INDEX.json`, and `CORRECTNESS_PROBES.md` — verification and adversarial evidence.
+6. `reports/phase0/ARCHITECTURE_BAKEOFF.md` — proposed architecture direction.
+7. `reports/phase0/SOURCE_ARCHAEOLOGY_SUMMARY.md` and `docs/research/{remotion,hyperframes}/` — pinned source analysis.
+8. `reports/phase0/RISK_REGISTER.md`, `OPEN_DECISIONS.md`, and `CI_EVIDENCE.md` — limitations, decisions, and remote gate state.
+9. `reports/phase0/ARTIFACT_INDEX.md` and `ARTIFACT_SHA256.txt` — inventory and integrity.
 
-- Acceptance: `reports/phase0/PHASE0_ACCEPTANCE_REPORT.md`
-- Baselines: `reports/phase0/BASELINE_RESULTS.md`, `reports/phase0/BASELINE_RESULTS.json`
-- Correctness: `reports/phase0/CORRECTNESS_PROBES.md`, `reports/phase0/CORRECTNESS_PROBES.json`
-- Bakeoff: `reports/phase0/ARCHITECTURE_BAKEOFF.md`
-- Archaeology: `reports/phase0/SOURCE_ARCHAEOLOGY_SUMMARY.md`, `docs/research/remotion/`, `docs/research/hyperframes/`
-- Reuse: `reports/phase0/REUSE_RECOMMENDATIONS.md`, `docs/research/comparison/CINEKERNEL_REUSE_MATRIX.md`
-- Decisions/risks: `reports/phase0/OPEN_DECISIONS.md`, `reports/phase0/RISK_REGISTER.md`, `docs/decisions/`
-- Lineage: `docs/source-lineage/`, `benchmarks/upstreams.lock.json`
-- Renderer roles: `docs/architecture/renderer-roles.md`
+Tracked visual artifacts are `MIXED_EQUIVALENCE_CONTACT_SHEET.png`, `MEDIA_ORACLE_CONTACT_SHEET.png`, `EQUIVALENT_RENDER_MEDIANS.svg`, and `HYPERFRAMES_PHASE_MEDIANS.svg`. Runtime videos/logs/manifests are ignored locally and configured for 90-day workflow retention.
 
-## Reviewer commands
+## Exact reviewer commands
 
 ```text
-cargo xtask doctor --json
-cargo xtask upstream verify --json
-pnpm install --frozen-lockfile
+corepack pnpm install --frozen-lockfile
 cargo fmt --all --check
+cargo check --workspace --all-targets --all-features
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace --all-features
-pnpm typecheck
-pnpm test
+corepack pnpm typecheck
+corepack pnpm test
+corepack pnpm --filter @cinekernel/phase0-common lineage:validate
+cargo xtask doctor --json
+cargo xtask environment capture --json
+cargo xtask upstream sync
+cargo xtask upstream verify --json
 cargo xtask phase0 prepare --json
-cargo xtask phase0 run --profile smoke --json
-cargo xtask phase0 verify --json
-pnpm --filter @cinekernel/phase0-common probes
-cargo xtask phase0 report --json
+cargo xtask phase0 canonical-run --profile smoke --json
+cargo xtask phase0 verify --canonical --json
+cargo xtask phase0 canonical-run --profile full --json
+cargo xtask phase0 probes --canonical --json
+cargo xtask phase0 verify --canonical --json
+cargo xtask phase0 report --canonical --json
 ```
 
-Run the full profile engine-by-engine for isolation:
-
-```text
-cargo xtask phase0 run --profile full --engine remotion --json
-cargo xtask phase0 run --profile full --engine hyperframes --json
-cargo xtask phase0 run --profile full --engine native-2d --json
-cargo xtask phase0 run --profile full --engine native-wgpu --json
-```
-
-## Visual and output evidence
-
-- Contact sheet: `docs/assets/phase0/contact-sheet.png`
-- Deterministic benchmark chart: `docs/assets/phase0/benchmark-chart.svg`
-- Renderer diagram: `docs/architecture/renderer-roles.md`
-- Comparison diagram: `docs/research/comparison/REMOTION_HYPERFRAMES_COMPARISON.md`
-- All videos/logs/results: `.cinekernel/runs/`
-- Representative Remotion mixed video: `.cinekernel/runs/20260814T040942Z-ea33f321-9c62-4b3a-9c4f-72f066f771b7/remotion/mixed-2d-3d/rep-3/output.mp4`
-- Representative HyperFrames mixed video: `.cinekernel/runs/20260814T042952Z-04f5e721-fd2c-41d5-8284-21690c051e39/hyperframes/mixed-2d-3d/rep-3/output.mp4`
-- Representative native wgpu mixed video: `.cinekernel/runs/20260814T045624Z-3c89234d-70d4-4638-8b76-d11719a534ce/native-wgpu/mixed-2d-3d/rep-3/output.mp4`
-
-## Commit list
-
-- `a72cdd64e5813b17bcb94640379238d8ebc690d0` — `feat: establish CineKernel Phase 0 baselines`
-- `97d176318ad297cfaeb914b288e1fb46690c4356` — `docs: finalize Phase 0 acceptance packet`
-
-The metadata-only commit that records these hashes cannot include its own content-addressed hash; use `git log --oneline --decorate -3` to inspect it.
-
-## Changed-file summary
-
-The foundation commit adds 119 files: Rust workspace and xtask, pnpm workspace and two browser baselines, two native experiments, schemas/specs/probes, upstream lineage, CI, 39 research/architecture/decision documents, machine-readable reports, and small visual evidence. The follow-up adds the two mandated review documents, benchmark SVG, Mermaid diagrams, final risk/bakeoff corrections, and portable-path test.
-
-## Proposed decisions needing approval
-
-1. Advance native wgpu plus software reference as the Phase 1 renderer architecture, without accepting it as final until cross-platform conformance.
-2. Keep Remotion and HyperFrames behind compatibility adapters.
-3. Select a production native text shaping/raster stack.
-4. Define media-parser adoption boundaries and certified FFmpeg policy.
-5. Approve the longer representative workload and its quality/correctness thresholds.
-
-## Questions Phase 1 must resolve
-
-- Which text stack meets shaping, fallback, variable-font, and i18n requirements?
-- Which GPU backends/adapters define the certification matrix and tolerances?
-- How is network denial enforced at render time across supported operating systems?
-- Which decoded-media operations are adopted, wrapped, or reimplemented?
-- What is the canonical long workload, and which metrics exclude cold-start noise?
-
-## Explicit non-goals and omissions
-
-Phase 0 did not implement the final VideoIR, production editor/player, distributed scheduler, production text engine, broad codec matrix, certified network sandbox, Blender integration, multi-adapter GPU conformance, or five-to-ten-minute production workload. The native renderers are bounded experiments; the browser integrations are compatibility baselines, not authoritative state.
+Canonical commands reject dirty or unborn revisions. `node_modules`, `target`, `.cinekernel`, and `Remotion-Hyperframe-SourceCode` are excluded from Git.

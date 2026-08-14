@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test test/*.test.ts",
+    "test": "pnpm fixtures && tsx --test test/*.test.ts",
     "fixtures": "tsx scripts/generate-fixtures.ts",
-    "probes": "tsx ../../benchmarks/probes/run-probes.ts"
+    "probes": "tsx ../../benchmarks/probes/run-probes.ts",
+    "lineage:validate": "tsx scripts/validate-lineage.ts"
   },
   "dependencies": {
     "@fontsource/inter": "5.2.8",

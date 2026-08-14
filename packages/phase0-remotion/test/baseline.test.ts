@@ -1,6 +1,46 @@
 import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import {resolve} from "node:path";
 import test from "node:test";
 
-test("Remotion baseline is pinned",()=>{assert.equal("4.0.509","4.0.509")});
-test("canonical mixed timing totals fifteen seconds",()=>{assert.equal(3+4+5+3,15)});
+const packageRoot = resolve(import.meta.dirname, "..");
 
+test("Remotion dependency pin matches the upstream lock package version", () => {
+  const manifest = JSON.parse(readFileSync(resolve(packageRoot, "package.json"), "utf8")) as {dependencies: Record<string,string>};
+  const lock = JSON.parse(readFileSync(resolve(packageRoot, "../../benchmarks/upstreams.lock.json"), "utf8")) as {remotion: {release_or_package_version: string}};
+  assert.equal(manifest.dependencies.remotion, lock.remotion.release_or_package_version);
+  assert.equal(manifest.dependencies["@remotion/cli"], lock.remotion.release_or_package_version);
+});
+
+test("audio workload registers three independent local clips at scaled intervals", () => {
+  const source = readFileSync(resolve(packageRoot, "src/video.tsx"), "utf8");
+  for (const clip of ["clip-a.wav", "clip-b.wav", "clip-c.wav"]) {
+    assert.match(source, new RegExp(`staticFile\\(\"${clip.replace(".", "\\.")}\"\\)`));
+  }
+  assert.doesNotMatch(source, /tone-windows\.wav/);
+  assert.match(source, /from=\{at\(3\)\}/);
+  assert.match(source, /from=\{at\(6\)\}/);
+});
+
+test("mixed workload retains exact four-scene proportions and textured 3D", () => {
+  const source = readFileSync(resolve(packageRoot, "src/video.tsx"), "utf8");
+  assert.match(source, /durationInFrames\*\.2/);
+  assert.match(source, /durationInFrames\*4\/15/);
+  assert.match(source, /durationInFrames\/3/);
+  assert.match(source, /map=\{texture\}/);
+  assert.match(source, /Render\. Verify\. Trust\./);
+  assert.match(source, /const labels=\["Parse","Seek","Capture","Encode"\]/);
+});
+
+test("Remotion render-time sources contain no remote asset URLs", () => {
+  const source=readFileSync(resolve(packageRoot,"src/video.tsx"),"utf8");
+  const renderer=readFileSync(resolve(packageRoot,"scripts/render.ts"),"utf8");
+  assert.doesNotMatch(`${source}\n${renderer}`,/https?:\/\//);
+});
+
+test("audio renders are padded and trimmed to the declared composition duration", () => {
+  const renderer=readFileSync(resolve(packageRoot,"scripts/render.ts"),"utf8");
+  assert.match(renderer,/apad,atrim=duration=/);
+  assert.match(renderer,/["']-t["'],String\(durationSeconds\)/);
+  assert.match(renderer,/["']--timeout["'],["']120000["']/);
+});

@@ -1,0 +1,207 @@
+{
+  "actual_result_count": 109,
+  "benchmark_spec_sha256": "61e6e1eb1ca264b1c013f01896a91cbb759e67a4873d159874a6a68e48a90a1b",
+  "canonical_run_id": "20260814T144948Z-c6e0a98a-b94a-48e9-a26e-f69faf10f048",
+  "case_selection": null,
+  "completed_at_utc": "2026-08-14T15:38:33.902Z",
+  "engine_selection": "all",
+  "environment_id": "d3e630b8b937aa97c4e37c2360ce8a61b9a9436d9235e181c312228ba9998c2f",
+  "expected_groups": [
+    {
+      "case_id": "typography-layout",
+      "engine": "remotion",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "default"
+    },
+    {
+      "case_id": "vector-effects",
+      "engine": "remotion",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "default"
+    },
+    {
+      "case_id": "chart-diagram",
+      "engine": "remotion",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "default"
+    },
+    {
+      "case_id": "media-frame-sampling",
+      "engine": "remotion",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "default"
+    },
+    {
+      "case_id": "media-frame-sampling",
+      "engine": "remotion",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "1"
+    },
+    {
+      "case_id": "media-frame-sampling",
+      "engine": "remotion",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "4"
+    },
+    {
+      "case_id": "audio-captions",
+      "engine": "remotion",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "default"
+    },
+    {
+      "case_id": "3d-scene",
+      "engine": "remotion",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "default"
+    },
+    {
+      "case_id": "mixed-2d-3d",
+      "engine": "remotion",
+      "equivalence_level": "equivalent",
+      "repetitions": 3,
+      "warmups": 1,
+      "worker_mode": "default"
+    },
+    {
+      "case_id": "typography-layout",
+      "engine": "hyperframes",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "auto"
+    },
+    {
+      "case_id": "vector-effects",
+      "engine": "hyperframes",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "auto"
+    },
+    {
+      "case_id": "chart-diagram",
+      "engine": "hyperframes",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "auto"
+    },
+    {
+      "case_id": "media-frame-sampling",
+      "engine": "hyperframes",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "auto"
+    },
+    {
+      "case_id": "media-frame-sampling",
+      "engine": "hyperframes",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "1"
+    },
+    {
+      "case_id": "media-frame-sampling",
+      "engine": "hyperframes",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "4"
+    },
+    {
+      "case_id": "audio-captions",
+      "engine": "hyperframes",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "auto"
+    },
+    {
+      "case_id": "3d-scene",
+      "engine": "hyperframes",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "auto"
+    },
+    {
+      "case_id": "mixed-2d-3d",
+      "engine": "hyperframes",
+      "equivalence_level": "equivalent",
+      "repetitions": 3,
+      "warmups": 1,
+      "worker_mode": "auto"
+    },
+    {
+      "case_id": "typography-layout",
+      "engine": "native-2d",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "default"
+    },
+    {
+      "case_id": "vector-effects",
+      "engine": "native-2d",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "default"
+    },
+    {
+      "case_id": "chart-diagram",
+      "engine": "native-2d",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "default"
+    },
+    {
+      "case_id": "3d-scene",
+      "engine": "native-wgpu",
+      "equivalence_level": "equivalent",
+      "repetitions": 5,
+      "warmups": 1,
+      "worker_mode": "default"
+    },
+    {
+      "case_id": "mixed-2d-3d",
+      "engine": "native-wgpu",
+      "equivalence_level": "equivalent",
+      "repetitions": 3,
+      "warmups": 1,
+      "worker_mode": "default"
+    }
+  ],
+  "expected_result_count": 109,
+  "failure_count": 0,
+  "heartbeat_seconds": 15,
+  "implementation_revision": "0249b40ec41673ed8ac2f22c23583ddc3629a320",
+  "profile": "full",
+  "schema_version": "phase0.canonical-run.v1",
+  "stall_seconds": 900,
+  "started_at_utc": "2026-08-14T14:49:48.190Z",
+  "status": "complete",
+  "timeout_seconds": 3600,
+  "upstream_lock_sha256": "1c6da0d9d27697c270429cdb50d0942ee1b07171808e7024e0a932d312f9faa9",
+  "worktree_clean": true
+}

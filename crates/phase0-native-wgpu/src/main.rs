@@ -3,6 +3,7 @@ use bytemuck::{Pod, Zeroable};
 use clap::{Parser, ValueEnum};
 use glam::{Mat4, Vec3};
 use image::{ImageBuffer, Rgba};
+use phase0_native_font::{draw_rgba, TextStyle};
 use std::env;
 use std::fs;
 use std::path::PathBuf;
@@ -21,6 +22,8 @@ struct Args {
     output: PathBuf,
     #[arg(long, value_enum, default_value_t = FrameOrder::Sequential)]
     frame_order: FrameOrder,
+    #[arg(long, default_value_t = 2_654_435_761_u32)]
+    shuffle_seed: u32,
 }
 
 #[derive(Clone, Copy, ValueEnum)]
@@ -427,7 +430,7 @@ async fn run() -> Result<()> {
     let started = Instant::now();
     let mut evaluation_order: Vec<u32> = (0..frame_count).collect();
     if matches!(args.frame_order, FrameOrder::Shuffled) {
-        evaluation_order.sort_by_key(|frame| frame.wrapping_mul(2_654_435_761));
+        evaluation_order.sort_by_key(|frame| frame.wrapping_mul(args.shuffle_seed | 1));
     }
     for frame in evaluation_order {
         let time = f64::from(frame) / f64::from(fps);
@@ -550,10 +553,33 @@ async fn run() -> Result<()> {
         ])
         .arg(frames.join("frame-%06d.png"));
     if args.case_id == "mixed-2d-3d" {
-        ffmpeg
-            .args(["-i"])
-            .arg(fixtures.join("tone-windows.wav"))
-            .args(["-shortest", "-c:a", "aac", "-b:a", "192k"]);
+        for clip in ["clip-a.wav", "clip-b.wav", "clip-c.wav"] {
+            ffmpeg.args(["-i"]).arg(fixtures.join(clip));
+        }
+        let scale = duration / 15.0;
+        let clip_duration = 2.0 * scale;
+        let delay_b = (6_000.0 * scale).round() as u64;
+        let delay_c = (12_000.0 * scale).round() as u64;
+        let filter = format!(
+            "[1:a]atrim=0:{clip_duration},asetpts=PTS-STARTPTS[a1];[2:a]atrim=0:{clip_duration},asetpts=PTS-STARTPTS,adelay={delay_b}:all=1[a2];[3:a]atrim=0:{clip_duration},asetpts=PTS-STARTPTS,adelay={delay_c}:all=1[a3];[a1][a2][a3]amix=inputs=3:normalize=0:dropout_transition=0[mix];[mix]apad,atrim=0:{duration}[a]"
+        );
+        ffmpeg.args([
+            "-filter_complex",
+            &filter,
+            "-map",
+            "0:v:0",
+            "-map",
+            "[a]",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "192k",
+            "-ar",
+            "48000",
+            "-ac",
+            "1",
+            "-shortest",
+        ]);
     }
     let status = ffmpeg
         .args([
@@ -574,25 +600,239 @@ async fn run() -> Result<()> {
 }
 
 fn composite_overlay(pixels: &mut [u8], width: u32, height: u32, progress: f32, mixed: bool) {
-    let header = (height / 9).max(18);
-    let progress_width = (width as f32 * progress) as u32;
-    for y in 0..header {
-        for x in 0..width {
-            let i = ((y * width + x) * 4) as usize;
-            let alpha = if mixed { 0.72 } else { 0.45 };
-            pixels[i] = ((pixels[i] as f32) * (1.0 - alpha) + (10.0 * alpha)) as u8;
-            pixels[i + 1] = ((pixels[i + 1] as f32) * (1.0 - alpha) + (20.0 * alpha)) as u8;
-            pixels[i + 2] = ((pixels[i + 2] as f32) * (1.0 - alpha) + (40.0 * alpha)) as u8;
-        }
+    if !mixed {
+        blend_rect(
+            pixels,
+            width,
+            height,
+            0,
+            0,
+            width,
+            (height / 9).max(18),
+            [10, 20, 40, 150],
+        );
+        draw_rgba(
+            pixels,
+            width,
+            height,
+            (width / 20) as i32,
+            (height / 28) as i32,
+            "EXACT-TIME 3D",
+            TextStyle {
+                scale: (height / 240).max(1),
+                rgba: [232, 247, 255, 255],
+                letter_spacing: 1,
+            },
+        );
+    } else if progress < 0.2 {
+        blend_rect(pixels, width, height, 0, 0, width, height, [5, 12, 28, 255]);
+        draw_rgba(
+            pixels,
+            width,
+            height,
+            (width * 12 / 100) as i32,
+            (height * 28 / 100) as i32,
+            "DETERMINISM\nIS A FEATURE.",
+            TextStyle {
+                scale: (height / 120).max(2),
+                rgba: [232, 247, 255, 255],
+                letter_spacing: 2,
+            },
+        );
+        blend_rect(
+            pixels,
+            width,
+            height,
+            width * 12 / 100,
+            height * 61 / 100,
+            width * 62 / 100,
+            (height / 90).max(3),
+            [101, 214, 255, 255],
+        );
+        draw_rgba(
+            pixels,
+            width,
+            height,
+            (width * 12 / 100) as i32,
+            (height * 68 / 100) as i32,
+            "EXACT TIME IN. VERIFIED FRAMES OUT.",
+            TextStyle {
+                scale: (height / 280).max(1),
+                rgba: [145, 167, 189, 255],
+                letter_spacing: 1,
+            },
+        );
+    } else if progress < 7.0 / 15.0 {
+        let transition = ((7.0 / 15.0 - progress) / 0.025).clamp(0.0, 1.0);
+        blend_rect(
+            pixels,
+            width,
+            height,
+            0,
+            0,
+            width,
+            height,
+            [7, 16, 34, (255.0 * transition) as u8],
+        );
+        draw_chart(
+            pixels,
+            width,
+            height,
+            ((progress - 0.2) / (4.0 / 15.0)).clamp(0.0, 1.0),
+            (255.0 * transition) as u8,
+        );
+    } else if progress < 0.8 {
+        blend_rect(
+            pixels,
+            width,
+            height,
+            width / 24,
+            height / 18,
+            width / 3,
+            height / 10,
+            [5, 12, 28, 190],
+        );
+        draw_rgba(
+            pixels,
+            width,
+            height,
+            (width / 18) as i32,
+            (height / 12) as i32,
+            "EXACT-TIME 3D",
+            TextStyle {
+                scale: (height / 250).max(1),
+                rgba: [232, 247, 255, 255],
+                letter_spacing: 1,
+            },
+        );
+    } else {
+        blend_rect(
+            pixels,
+            width,
+            height,
+            0,
+            0,
+            width,
+            height,
+            [10, 28, 54, 245],
+        );
+        draw_rgba(
+            pixels,
+            width,
+            height,
+            (width * 18 / 100) as i32,
+            (height * 42 / 100) as i32,
+            "RENDER. VERIFY. TRUST.",
+            TextStyle {
+                scale: (height / 105).max(2),
+                rgba: [232, 247, 255, 255],
+                letter_spacing: 2,
+            },
+        );
+        draw_rgba(
+            pixels,
+            width,
+            height,
+            (width * 38 / 100) as i32,
+            (height * 60 / 100) as i32,
+            "CINEKERNEL PHASE 0.1",
+            TextStyle {
+                scale: (height / 300).max(1),
+                rgba: [101, 214, 255, 255],
+                letter_spacing: 1,
+            },
+        );
     }
-    let start = height.saturating_sub((height / 30).max(4));
-    for y in start..height {
-        for x in 0..progress_width {
-            let i = ((y * width + x) * 4) as usize;
-            pixels[i] = 101;
-            pixels[i + 1] = 214;
-            pixels[i + 2] = 255;
-            pixels[i + 3] = 255;
+    blend_rect(
+        pixels,
+        width,
+        height,
+        0,
+        height.saturating_sub((height / 30).max(4)),
+        (width as f32 * progress) as u32,
+        (height / 30).max(4),
+        [101, 214, 255, 255],
+    );
+}
+
+fn draw_chart(pixels: &mut [u8], width: u32, height: u32, progress: f32, alpha: u8) {
+    draw_rgba(
+        pixels,
+        width,
+        height,
+        (width / 10) as i32,
+        (height / 10) as i32,
+        "MEASURED PIPELINE STAGES",
+        TextStyle {
+            scale: (height / 220).max(1),
+            rgba: [232, 247, 255, alpha],
+            letter_spacing: 1,
+        },
+    );
+    for (index, value) in [42_u32, 76, 61, 88].into_iter().enumerate() {
+        let local = (progress * 1.5 - index as f32 * 0.12).clamp(0.0, 1.0);
+        let bar_height = (height as f32 * 0.5 * value as f32 / 100.0 * local) as u32;
+        let x = width * (16 + index as u32 * 19) / 100;
+        blend_rect(
+            pixels,
+            width,
+            height,
+            x,
+            height * 78 / 100 - bar_height,
+            width * 11 / 100,
+            bar_height.max(1),
+            [101 + index as u8 * 18, 214 - index as u8 * 20, 255, alpha],
+        );
+        draw_rgba(
+            pixels,
+            width,
+            height,
+            x as i32,
+            (height * 84 / 100) as i32,
+            ["PARSE", "SEEK", "CAPTURE", "ENCODE"][index],
+            TextStyle {
+                scale: (height / 320).max(1),
+                rgba: [232, 247, 255, alpha],
+                letter_spacing: 1,
+            },
+        );
+        draw_rgba(
+            pixels,
+            width,
+            height,
+            x as i32,
+            (height * 78 / 100 - bar_height - height / 18) as i32,
+            &value.to_string(),
+            TextStyle {
+                scale: (height / 320).max(1),
+                rgba: [232, 247, 255, alpha],
+                letter_spacing: 1,
+            },
+        );
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn blend_rect(
+    pixels: &mut [u8],
+    width: u32,
+    height: u32,
+    x: u32,
+    y: u32,
+    rect_width: u32,
+    rect_height: u32,
+    rgba: [u8; 4],
+) {
+    let alpha = f32::from(rgba[3]) / 255.0;
+    for py in y..y.saturating_add(rect_height).min(height) {
+        for px in x..x.saturating_add(rect_width).min(width) {
+            let index = ((py * width + px) * 4) as usize;
+            for channel in 0..3 {
+                pixels[index + channel] = (f32::from(rgba[channel]) * alpha
+                    + f32::from(pixels[index + channel]) * (1.0 - alpha))
+                    .round() as u8;
+            }
+            pixels[index + 3] = 255;
         }
     }
 }

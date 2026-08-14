@@ -1,9 +1,15 @@
 name: CI
+
 on:
   push:
   pull_request:
+
+permissions:
+  contents: read
+
 jobs:
   verify:
+    name: verify (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
@@ -11,17 +17,86 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with: {components: rustfmt, clippy}
-      - uses: actions/setup-node@v4
-        with: {node-version-file: .node-version, cache: pnpm}
-      - run: corepack enable
-      - run: pnpm install --frozen-lockfile
-      - run: cargo fmt --all --check
-      - run: cargo clippy --workspace --all-targets --all-features -- -D warnings
-      - run: cargo test --workspace --all-features
-      - run: pnpm typecheck
-      - run: pnpm test
-      - run: cargo xtask phase0 prepare
-      - run: cargo xtask phase0 run --engine native-2d --case typography-layout --profile smoke
 
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Install FFmpeg (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install --yes ffmpeg
+
+      - name: Install FFmpeg (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ffmpeg
+
+      - name: Install FFmpeg (Windows)
+        if: runner.os == 'Windows'
+        run: choco install ffmpeg --yes --no-progress
+
+      - name: Install JavaScript dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Rust formatting
+        run: cargo fmt --all --check
+
+      - name: Rust lint
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+      - name: Rust tests
+        run: cargo test --workspace --all-features
+
+      - name: TypeScript typecheck
+        run: pnpm typecheck
+
+      - name: JavaScript tests and schema validation
+        run: pnpm test
+
+      - name: Source-lineage validation
+        run: pnpm --filter @cinekernel/phase0-common lineage:validate
+
+      - name: Prepare deterministic fixtures
+        run: cargo xtask phase0 prepare --json
+
+      - name: Native software smoke render
+        run: cargo xtask phase0 run --engine native-2d --case typography-layout --profile smoke --timeout-seconds 300 --json
+
+      - name: Smoke artifact verification
+        run: cargo xtask phase0 verify --json
+
+      - name: Native wgpu smoke capability
+        shell: pwsh
+        run: |
+          $output = & cargo xtask phase0 run --engine native-wgpu --case 3d-scene --profile smoke --timeout-seconds 900 --json 2>&1
+          $code = $LASTEXITCODE
+          $output | ForEach-Object { Write-Host $_ }
+          if ($code -eq 0) {
+            "native-wgpu: SUPPORTED and verified" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            exit 0
+          }
+          if (($output -join "`n") -match "no wgpu adapter available") {
+            "native-wgpu: UNSUPPORTED (no adapter available on this runner)" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            exit 0
+          }
+          exit $code
+
+      - name: Upload smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-smoke-${{ github.sha }}-${{ matrix.os }}
+          retention-days: 90
+          if-no-files-found: warn
+          path: |
+            .cinekernel/runs/
+            .cinekernel/environments/
+            .cinekernel/generated/fixtures/manifest.json

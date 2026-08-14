@@ -16,3 +16,13 @@ A[exact time] --> B[adapter dispatch] --> C[Three render]
 B --> D[TypeGPU]
 B --> E[GSAP]
 ```
+
+## Concrete trace and ownership
+
+The runtime seek dispatcher emits exact time and awaits adapter completion. The Three adapter discovers registered Three scenes, applies time, renders, and participates in the barrier. TypeGPU performs analogous seek/update work for WebGPU. The GSAP adapter seeks paused timelines rather than relying on wall-clock playback. Other adapters follow the same protocol capability boundary.
+
+Composition code owns deterministic camera/object/animation parameters. Adapters own library-specific state; browser contexts own GPU devices and canvases. Readiness promises and seek completion propagate errors. Adapter registration/dedup behaves as a page cache and must reset per session. Continuous preview may accumulate animation history; final capture must be correct under arbitrary seeks.
+
+Phase 0.1's HyperFrames 3D and mixed cases use a real Three.js canvas, generated local `CanvasTexture`, directional/ambient lighting, camera motion, depth, a 2D overlay, and exact scene checkpoints. GPU mode/backend is captured from renderer logs; snapshots and final extracts are compared numerically. Native wgpu separately supplies adapter/device/driver evidence.
+
+Decision: **derive** adapter protocol and explicit readiness, **wrap** Three/TypeGPU for web compatibility, **reimplement** native scene evaluation, and **reject** elapsed-time-only animation. Confidence: **medium-high** for Three/GSAP; **medium** for TypeGPU/WebGPU portability.

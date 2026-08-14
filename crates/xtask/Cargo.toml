@@ -8,10 +8,13 @@ license.workspace = true
 anyhow.workspace = true
 chrono.workspace = true
 clap.workspace = true
+jsonschema.workspace = true
 phase0-common = {path = "../phase0-common"}
+phase0-verifier = {path = "../phase0-verifier"}
 serde.workspace = true
 serde_json.workspace = true
+sha2.workspace = true
+sysinfo.workspace = true
 
 [lints]
 workspace = true
-

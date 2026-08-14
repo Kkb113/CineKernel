@@ -1,10 +1,9 @@
-# Source archaeology summary
+# Phase 0.1 source archaeology summary
 
-Verified detached sources are under `.cinekernel/upstreams/` at the commits in
-`benchmarks/upstreams.lock.json`. Remotion separates authoring/core, bundling,
-browser renderer, media parsing, web rendering, Lambda, Player/Studio, and R3F.
-HyperFrames separates parsing, seekable runtime adapters, capture engine,
-producer/encoding, validation, Studio/Player, and AWS/GCP paths. Exact immutable
-links and diagrams are under `docs/research/remotion/` and
-`docs/research/hyperframes/`.
+Research is tied to verified detached source commits, source-tree hashes, package integrity, release relationships, and license hashes in `benchmarks/upstreams.lock.json` and `docs/source-lineage/upstream-inventory.yaml`.
 
+Remotion is pinned at source commit `4e459b8b3aeec12ac8346666773ea28892a30e31` (tree `26ad029579076f7eedb87b0aca57a997846dfda1`) and package `4.0.509`. Its critical paths trace `renderMedia`, `renderFrames`, retry, `seekToFrame`, `OffthreadVideo`, media parsing/materialization, audio collection, FFmpeg argument construction, stitching/mux, `ThreeCanvas`/WebGPU completion, Player/Studio, tests, and Lambda chunking. The conclusion is to wrap the ecosystem, derive explicit progress/readiness/bounded retry, and keep React/browser state outside authoritative CineKernel state.
+
+HyperFrames is pinned at source commit `532caf7aa24fef382cb103013f6414bb547a4129` (tree `9c8c...`) and package `0.7.108`. Its critical paths trace runtime protocol inspection, adapter seek completion, capture rollback, drawElement/BeginFrame/screenshot choice, static anchor reuse, extraction cache publication, audio mixing, bounded streaming reorder, FFmpeg encode/mux, layered validation, Three/TypeGPU adapters, and distributed assembly. The conclusion is to derive versioned exact-time protocols, bounded backpressure, atomic caches, and explicit failure classes while wrapping compatibility behavior.
+
+All 17 required critical-path topics are present across 31 validated documents. Each records module, public entry, important functions/types, call sequence, time/state/resource owners, concurrency, error/retry/cache behavior, preview/final differences, relevant tests/issues, adopt/derive/reimplement/wrap/reject decision, and confidence. Validation passed for 31 documents and four inventory entries at the pinned commits. Sparse upstream sync was also run twice after the `--skip-checks` file-path fix, proving idempotency.

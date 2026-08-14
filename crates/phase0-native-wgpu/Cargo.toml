@@ -10,10 +10,10 @@ bytemuck.workspace = true
 clap.workspace = true
 glam.workspace = true
 image.workspace = true
+phase0-native-font = {path = "../phase0-native-font"}
 pollster.workspace = true
 serde_json.workspace = true
 wgpu.workspace = true
 
 [lints]
 workspace = true
-

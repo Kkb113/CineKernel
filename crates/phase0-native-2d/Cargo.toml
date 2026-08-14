@@ -7,10 +7,10 @@ license.workspace = true
 [dependencies]
 anyhow.workspace = true
 clap.workspace = true
+phase0-native-font = {path = "../phase0-native-font"}
 resvg.workspace = true
 serde_json.workspace = true
 tiny-skia.workspace = true
 
 [lints]
 workspace = true
-

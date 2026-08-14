@@ -1,5 +1,6 @@
 use anyhow::{bail, Context, Result};
 use clap::{Parser, ValueEnum};
+use phase0_native_font::{draw_rgba, TextStyle};
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -20,6 +21,8 @@ struct Args {
     output: PathBuf,
     #[arg(long, value_enum, default_value_t = FrameOrder::Sequential)]
     frame_order: FrameOrder,
+    #[arg(long, default_value_t = 2_654_435_761_u32)]
+    shuffle_seed: u32,
 }
 
 #[derive(Clone, Copy, ValueEnum)]
@@ -36,6 +39,12 @@ enum FrameOrder {
 
 fn main() -> Result<()> {
     let args = Args::parse();
+    if let Some(seconds) = env::var("CINEKERNEL_TEST_HANG_SECONDS")
+        .ok()
+        .and_then(|value| value.parse::<u64>().ok())
+    {
+        std::thread::sleep(std::time::Duration::from_secs(seconds));
+    }
     if !["typography-layout", "vector-effects", "chart-diagram"].contains(&args.case_id.as_str()) {
         bail!("case {} is unsupported by native-2d", args.case_id);
     }
@@ -70,7 +79,7 @@ fn main() -> Result<()> {
     let started = Instant::now();
     let mut evaluation_order: Vec<u32> = (0..frame_count).collect();
     if matches!(args.frame_order, FrameOrder::Shuffled) {
-        evaluation_order.sort_by_key(|frame| frame.wrapping_mul(2_654_435_761));
+        evaluation_order.sort_by_key(|frame| frame.wrapping_mul(args.shuffle_seed | 1));
     }
     for frame in evaluation_order {
         let exact_time = f64::from(frame) / f64::from(fps);
@@ -159,29 +168,45 @@ fn typography(pixmap: &mut Pixmap, progress: f32) {
     let width = pixmap.width() as f32;
     let height = pixmap.height() as f32;
     let eased = 1.0 - (1.0 - progress).powi(3);
+    let title_scale = ((height / 130.0).round() as u32).max(2);
+    draw_rgba(
+        pixmap.data_mut(),
+        width as u32,
+        height as u32,
+        (width * 0.12) as i32,
+        (height * (0.27 + (1.0 - eased) * 0.08)) as i32,
+        "DETERMINISM\nIS A FEATURE.",
+        TextStyle {
+            scale: title_scale,
+            rgba: [225, 247, 255, (255.0 * eased) as u8],
+            letter_spacing: title_scale,
+        },
+    );
     let mut paint = Paint::default();
-    paint.set_color_rgba8(225, 247, 255, (255.0 * eased) as u8);
-    let title_width = width * 0.62 * eased;
+    paint.set_color_rgba8(101, 214, 255, (230.0 * eased) as u8);
     if let Some(rect) = Rect::from_xywh(
         width * 0.12,
-        height * 0.30,
-        title_width.max(0.1),
-        height * 0.10,
+        height * 0.58,
+        width * 0.62 * eased,
+        (height * 0.012).max(3.0),
     ) {
         pixmap.fill_rect(rect, &paint, Transform::identity(), None);
     }
-    paint.set_color_rgba8(101, 214, 255, (230.0 * eased) as u8);
-    for line in 0..3 {
-        let factor = 0.72 - line as f32 * 0.11;
-        if let Some(rect) = Rect::from_xywh(
-            width * 0.12,
-            height * (0.50 + line as f32 * 0.07),
-            width * factor * eased,
-            height * 0.025,
-        ) {
-            pixmap.fill_rect(rect, &paint, Transform::identity(), None);
-        }
-    }
+    let copy_alpha = (((progress - 0.18) / 0.35).clamp(0.0, 1.0) * 255.0) as u8;
+    let copy_scale = ((height / 250.0).round() as u32).max(1);
+    draw_rgba(
+        pixmap.data_mut(),
+        width as u32,
+        height as u32,
+        (width * 0.12) as i32,
+        (height * 0.66) as i32,
+        "EXACT TIME IN. VERIFIED FRAMES OUT.",
+        TextStyle {
+            scale: copy_scale,
+            rgba: [145, 167, 189, copy_alpha],
+            letter_spacing: copy_scale,
+        },
+    );
 }
 
 fn vector(pixmap: &mut Pixmap, progress: f32, tree: &resvg::usvg::Tree) {
@@ -222,6 +247,34 @@ fn chart(pixmap: &mut Pixmap, progress: f32) {
         ) {
             pixmap.fill_rect(rect, &paint, Transform::identity(), None);
         }
+        let label_scale = ((height / 300.0).round() as u32).max(1);
+        let label = ["PARSE", "SEEK", "CAPTURE", "ENCODE"][index];
+        draw_rgba(
+            pixmap.data_mut(),
+            width as u32,
+            height as u32,
+            x as i32,
+            (height * 0.84) as i32,
+            label,
+            TextStyle {
+                scale: label_scale,
+                rgba: [225, 247, 255, 255],
+                letter_spacing: 1,
+            },
+        );
+        draw_rgba(
+            pixmap.data_mut(),
+            width as u32,
+            height as u32,
+            x as i32,
+            (height * 0.78 - bar_height - height * 0.055) as i32,
+            &format!("{}", (value * 100.0).round() as u32),
+            TextStyle {
+                scale: label_scale,
+                rgba: [225, 247, 255, 255],
+                letter_spacing: 1,
+            },
+        );
     }
     let mut path = PathBuilder::new();
     path.move_to(width * 0.16, height * 0.82);
