@@ -53,4 +53,5 @@ jobs:
           path: |
             .cinekernel/probes/network-isolation/
             .cinekernel/runs/
+            .cinekernel/logs/
             reports/phase0/NETWORK_ISOLATION_PROBE.*

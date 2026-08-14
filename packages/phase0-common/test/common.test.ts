@@ -109,10 +109,12 @@ test("Probe G has a dedicated Linux-only driver and workflow", () => {
   const source=readFileSync(resolve(root,"benchmarks/probes/run-network-isolation.ts"),"utf8");
   const workflow=readFileSync(resolve(root,".github/workflows/phase0-network-isolation.yml"),"utf8");
   assert.match(source,/process\.platform!==\"linux\"/);
+  assert.match(source,/`PATH=\$\{runnerPath\}`/);
   assert.match(source,/\"unshare\",\"--net\"/);
   assert.match(source,/\[\"remotion\",\"hyperframes\"\]/);
   assert.match(workflow,/runs-on: ubuntu-latest/);
   assert.match(workflow,/network-probe/);
+  assert.match(workflow,/\.cinekernel\/logs\//);
 });
 
 test("manual evidence workflow is GPU capability-aware and excludes Probe G", () => {
