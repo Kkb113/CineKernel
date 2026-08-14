@@ -83,7 +83,9 @@ cargo xtask phase0 run --profile full --engine native-wgpu --json
 ## Commit list
 
 - `a72cdd64e5813b17bcb94640379238d8ebc690d0` — `feat: establish CineKernel Phase 0 baselines`
-- Acceptance/reviewer material and final evidence corrections are staged as the follow-up documentation commit.
+- `97d176318ad297cfaeb914b288e1fb46690c4356` — `docs: finalize Phase 0 acceptance packet`
+
+The metadata-only commit that records these hashes cannot include its own content-addressed hash; use `git log --oneline --decorate -3` to inspect it.
 
 ## Changed-file summary
 

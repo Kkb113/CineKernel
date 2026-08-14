@@ -6,7 +6,7 @@
 
 ## 2. CineKernel revision
 
-Implementation revision used for final clean-checkout validation: `a72cdd64e5813b17bcb94640379238d8ebc690d0`. Benchmark records captured before the repository's root commit correctly record `UNBORN` plus `cinekernel_dirty: true`; this provenance is preserved rather than rewritten.
+Implementation revision used for final clean-checkout validation: `a72cdd64e5813b17bcb94640379238d8ebc690d0`. Acceptance/reviewer artifact revision: `97d176318ad297cfaeb914b288e1fb46690c4356`. Benchmark records captured before the repository's root commit correctly record `UNBORN` plus `cinekernel_dirty: true`; this provenance is preserved rather than rewritten.
 
 ## 3. Branch
 
