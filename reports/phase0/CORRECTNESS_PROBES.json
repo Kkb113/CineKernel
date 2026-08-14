@@ -1,67 +1,746 @@
 {
-  "schema_version": "phase0.probes.v1",
-  "generated_at_utc": "2026-08-14T05:20:35.249Z",
+  "schema_version": "phase0.probes.v2",
+  "canonical_run_id": "20260814T144948Z-c6e0a98a-b94a-48e9-a26e-f69faf10f048",
+  "generated_at_utc": "2026-08-14T15:42:01.171Z",
+  "passed": true,
+  "failed_count": 0,
+  "unsupported_count": 1,
   "results": [
     {
       "id": "A",
       "title": "Repeated render stability",
       "status": "PASS",
-      "evidence": "native-2d/typography-layout/smoke decoded framemd5 SHA-256 values 6a33df14dfd78a320bee14ba40c7516116c7b00e7489929bf7e920c21613c8e2 / 6a33df14dfd78a320bee14ba40c7516116c7b00e7489929bf7e920c21613c8e2."
+      "evidence": [
+        {
+          "engine": "remotion",
+          "case_id": "media-frame-sampling",
+          "worker_mode": "default",
+          "repetitions": 3,
+          "classification": "exact match",
+          "decoded_framemd5_sha256": [
+            "51c13fb03b5e3710f57d51c1747cf653aa56e93a42418f6bb3f08e7dfdf1ad3e",
+            "51c13fb03b5e3710f57d51c1747cf653aa56e93a42418f6bb3f08e7dfdf1ad3e",
+            "51c13fb03b5e3710f57d51c1747cf653aa56e93a42418f6bb3f08e7dfdf1ad3e"
+          ],
+          "similarities": []
+        },
+        {
+          "engine": "remotion",
+          "case_id": "mixed-2d-3d",
+          "worker_mode": "default",
+          "repetitions": 3,
+          "classification": "bounded WebGL pixel variance",
+          "decoded_framemd5_sha256": [
+            "b373ba73b31ff9e96c636919545eab0f969b642ad56a974aaf4f2f09d37bf54a",
+            "f967911a3441152aeb9f5fcb9e91aeee135f43e0336b0b02634ce4b62dac4fdb",
+            "a51a7fe4b3c6d0cd6fcb064921ee0f8530f4f95f7fd8888c9c6c4fee6dea0b30"
+          ],
+          "similarities": [
+            {
+              "psnr_average_db": 37.184885,
+              "ssim_all": 0.98721,
+              "minimum_psnr_average_db": 35,
+              "minimum_ssim_all": 0.98,
+              "passed": true
+            },
+            {
+              "psnr_average_db": 37.398819,
+              "ssim_all": 0.987746,
+              "minimum_psnr_average_db": 35,
+              "minimum_ssim_all": 0.98,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "engine": "hyperframes",
+          "case_id": "media-frame-sampling",
+          "worker_mode": "auto",
+          "repetitions": 3,
+          "classification": "exact match",
+          "decoded_framemd5_sha256": [
+            "54cd7d21e9b2e6a3501fd39ef31c82f4a5ea4b308567b78e8f36f7a6b217cd21",
+            "54cd7d21e9b2e6a3501fd39ef31c82f4a5ea4b308567b78e8f36f7a6b217cd21",
+            "54cd7d21e9b2e6a3501fd39ef31c82f4a5ea4b308567b78e8f36f7a6b217cd21"
+          ],
+          "similarities": []
+        },
+        {
+          "engine": "hyperframes",
+          "case_id": "mixed-2d-3d",
+          "worker_mode": "auto",
+          "repetitions": 3,
+          "classification": "exact match",
+          "decoded_framemd5_sha256": [
+            "175f4057763c29ba2d44322985d7d8836c28df5ed98f290a3b7ebc9e322552f1",
+            "175f4057763c29ba2d44322985d7d8836c28df5ed98f290a3b7ebc9e322552f1",
+            "175f4057763c29ba2d44322985d7d8836c28df5ed98f290a3b7ebc9e322552f1"
+          ],
+          "similarities": []
+        },
+        {
+          "engine": "native-2d",
+          "case_id": "typography-layout",
+          "worker_mode": "default",
+          "repetitions": 3,
+          "classification": "exact match",
+          "decoded_framemd5_sha256": [
+            "e60030f25a6aa95880d7b8dffceb4778fce74d7e0d8f3157246ac3f95dcdaaeb",
+            "e60030f25a6aa95880d7b8dffceb4778fce74d7e0d8f3157246ac3f95dcdaaeb",
+            "e60030f25a6aa95880d7b8dffceb4778fce74d7e0d8f3157246ac3f95dcdaaeb"
+          ],
+          "similarities": []
+        },
+        {
+          "engine": "native-2d",
+          "case_id": "chart-diagram",
+          "worker_mode": "default",
+          "repetitions": 3,
+          "classification": "exact match",
+          "decoded_framemd5_sha256": [
+            "94eac9f77d0bb66ee64bd6ac07cefdb741c0c8bf1ab680134eeae13d4246e307",
+            "94eac9f77d0bb66ee64bd6ac07cefdb741c0c8bf1ab680134eeae13d4246e307",
+            "94eac9f77d0bb66ee64bd6ac07cefdb741c0c8bf1ab680134eeae13d4246e307"
+          ],
+          "similarities": []
+        },
+        {
+          "engine": "native-wgpu",
+          "case_id": "3d-scene",
+          "worker_mode": "default",
+          "repetitions": 3,
+          "classification": "exact match",
+          "decoded_framemd5_sha256": [
+            "cfc374454ff338d9afd22dd7da139543f1d7cabf34e7e7bead01d8434e772fb6",
+            "cfc374454ff338d9afd22dd7da139543f1d7cabf34e7e7bead01d8434e772fb6",
+            "cfc374454ff338d9afd22dd7da139543f1d7cabf34e7e7bead01d8434e772fb6"
+          ],
+          "similarities": []
+        },
+        {
+          "engine": "native-wgpu",
+          "case_id": "mixed-2d-3d",
+          "worker_mode": "default",
+          "repetitions": 3,
+          "classification": "exact match",
+          "decoded_framemd5_sha256": [
+            "fe4a538779a0d6750295624c4e0d0afa47f354ee7411648e53643b590efdc769",
+            "fe4a538779a0d6750295624c4e0d0afa47f354ee7411648e53643b590efdc769",
+            "fe4a538779a0d6750295624c4e0d0afa47f354ee7411648e53643b590efdc769"
+          ],
+          "similarities": []
+        }
+      ]
     },
     {
       "id": "B",
-      "title": "Sequential versus parallel media sampling",
+      "title": "Complete sequential/parallel media oracle",
       "status": "PASS",
-      "evidence": "remotion:default=ok[15,25,35,45 vs 15,25,35,45]; remotion:1=ok[15,25,35,45 vs 15,25,35,45]; remotion:4=ok[15,25,35,45 vs 15,25,35,45]; hyperframes:default=ok[15,25,35,45 vs 15,25,35,45]; hyperframes:1=ok[15,25,35,45 vs 15,25,35,45]; hyperframes:4=ok[15,25,35,45 vs 15,25,35,45]"
+      "evidence": [
+        {
+          "engine": "remotion",
+          "worker_mode": "default",
+          "repetitions": 5,
+          "required_repetitions": 5,
+          "frames_checked": [
+            180,
+            180,
+            180,
+            180,
+            180
+          ],
+          "all_match": true,
+          "first_mismatches": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "engine": "remotion",
+          "worker_mode": "1",
+          "repetitions": 5,
+          "required_repetitions": 5,
+          "frames_checked": [
+            180,
+            180,
+            180,
+            180,
+            180
+          ],
+          "all_match": true,
+          "first_mismatches": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "engine": "remotion",
+          "worker_mode": "4",
+          "repetitions": 5,
+          "required_repetitions": 5,
+          "frames_checked": [
+            180,
+            180,
+            180,
+            180,
+            180
+          ],
+          "all_match": true,
+          "first_mismatches": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "engine": "hyperframes",
+          "worker_mode": "auto",
+          "repetitions": 5,
+          "required_repetitions": 5,
+          "frames_checked": [
+            180,
+            180,
+            180,
+            180,
+            180
+          ],
+          "all_match": true,
+          "first_mismatches": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "engine": "hyperframes",
+          "worker_mode": "1",
+          "repetitions": 5,
+          "required_repetitions": 5,
+          "frames_checked": [
+            180,
+            180,
+            180,
+            180,
+            180
+          ],
+          "all_match": true,
+          "first_mismatches": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "engine": "hyperframes",
+          "worker_mode": "4",
+          "repetitions": 5,
+          "required_repetitions": 5,
+          "frames_checked": [
+            180,
+            180,
+            180,
+            180,
+            180
+          ],
+          "all_match": true,
+          "first_mismatches": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
     },
     {
       "id": "C",
       "title": "Random-access versus sequential native evaluation",
       "status": "PASS",
-      "evidence": "native-2d=identical 220bb8829981/220bb8829981; native-wgpu=identical 719fad08d58d/719fad08d58d"
+      "evidence": [
+        {
+          "engine": "native-2d",
+          "case_id": "chart-diagram",
+          "profile": "full",
+          "sequential_sha256": "94eac9f77d0bb66ee64bd6ac07cefdb741c0c8bf1ab680134eeae13d4246e307",
+          "shuffled_orders": [
+            {
+              "seed": 2246822519,
+              "exit_code": 0,
+              "decoded_framemd5_sha256": "94eac9f77d0bb66ee64bd6ac07cefdb741c0c8bf1ab680134eeae13d4246e307",
+              "matches_sequential": true
+            },
+            {
+              "seed": 3266489917,
+              "exit_code": 0,
+              "decoded_framemd5_sha256": "94eac9f77d0bb66ee64bd6ac07cefdb741c0c8bf1ab680134eeae13d4246e307",
+              "matches_sequential": true
+            }
+          ]
+        },
+        {
+          "engine": "native-wgpu",
+          "case_id": "3d-scene",
+          "profile": "full",
+          "sequential_sha256": "cfc374454ff338d9afd22dd7da139543f1d7cabf34e7e7bead01d8434e772fb6",
+          "shuffled_orders": [
+            {
+              "seed": 2246822519,
+              "exit_code": 0,
+              "decoded_framemd5_sha256": "cfc374454ff338d9afd22dd7da139543f1d7cabf34e7e7bead01d8434e772fb6",
+              "matches_sequential": true
+            },
+            {
+              "seed": 3266489917,
+              "exit_code": 0,
+              "decoded_framemd5_sha256": "cfc374454ff338d9afd22dd7da139543f1d7cabf34e7e7bead01d8434e772fb6",
+              "matches_sequential": true
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "D",
-      "title": "Preview/snapshot versus final frame",
+      "title": "Preview/snapshot versus final",
       "status": "PASS",
-      "evidence": "remotion=MAE 0.723 (ok); hyperframes=MAE 1.933 (ok)"
+      "evidence": [
+        {
+          "engine": "remotion",
+          "case_id": "media-frame-sampling",
+          "comparisons": [
+            {
+              "frame": 18,
+              "time_seconds": 0.6,
+              "exit_code": 0,
+              "mae": 1.175313303755144,
+              "threshold": 9,
+              "passed": true
+            },
+            {
+              "frame": 90,
+              "time_seconds": 3,
+              "exit_code": 0,
+              "mae": 0.9873223701131687,
+              "threshold": 9,
+              "passed": true
+            },
+            {
+              "frame": 162,
+              "time_seconds": 5.4,
+              "exit_code": 0,
+              "mae": 1.3231187307098766,
+              "threshold": 9,
+              "passed": true
+            },
+            {
+              "frame": 0,
+              "time_seconds": 0,
+              "exit_code": 0,
+              "mae": 0.8183540702160493,
+              "threshold": 9,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "engine": "remotion",
+          "case_id": "mixed-2d-3d",
+          "comparisons": [
+            {
+              "frame": 45,
+              "time_seconds": 1.5,
+              "exit_code": 0,
+              "mae": 1.3109172453703704,
+              "threshold": 15,
+              "passed": true
+            },
+            {
+              "frame": 225,
+              "time_seconds": 7.5,
+              "exit_code": 0,
+              "mae": 5.414373070987654,
+              "threshold": 15,
+              "passed": true
+            },
+            {
+              "frame": 405,
+              "time_seconds": 13.5,
+              "exit_code": 0,
+              "mae": 1.2242467206790124,
+              "threshold": 15,
+              "passed": true
+            },
+            {
+              "frame": 90,
+              "time_seconds": 3,
+              "exit_code": 0,
+              "mae": 1.187590663580247,
+              "threshold": 15,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "engine": "remotion",
+          "case_id": "3d-scene",
+          "comparisons": [
+            {
+              "frame": 24,
+              "time_seconds": 0.8,
+              "exit_code": 0,
+              "mae": 8.702744502314815,
+              "threshold": 20,
+              "passed": true
+            },
+            {
+              "frame": 120,
+              "time_seconds": 4,
+              "exit_code": 0,
+              "mae": 15.379403935185184,
+              "threshold": 20,
+              "passed": true
+            },
+            {
+              "frame": 216,
+              "time_seconds": 7.2,
+              "exit_code": 0,
+              "mae": 13.01270206404321,
+              "threshold": 20,
+              "passed": true
+            },
+            {
+              "frame": 0,
+              "time_seconds": 0,
+              "exit_code": 0,
+              "mae": 1.2911670524691359,
+              "threshold": 20,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "engine": "hyperframes",
+          "case_id": "media-frame-sampling",
+          "comparisons": [
+            {
+              "frame": 18,
+              "time_seconds": 0.6,
+              "exit_code": 0,
+              "mae": 3.00897762345679,
+              "threshold": 9,
+              "passed": true
+            },
+            {
+              "frame": 90,
+              "time_seconds": 3,
+              "exit_code": 0,
+              "mae": 2.266626478909465,
+              "threshold": 9,
+              "passed": true
+            },
+            {
+              "frame": 162,
+              "time_seconds": 5.4,
+              "exit_code": 0,
+              "mae": 2.577848347479424,
+              "threshold": 9,
+              "passed": true
+            },
+            {
+              "frame": 0,
+              "time_seconds": 0,
+              "exit_code": 0,
+              "mae": 2.512028999485597,
+              "threshold": 9,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "engine": "hyperframes",
+          "case_id": "mixed-2d-3d",
+          "comparisons": [
+            {
+              "frame": 45,
+              "time_seconds": 1.5,
+              "exit_code": 0,
+              "mae": 2.8740885416666666,
+              "threshold": 15,
+              "passed": true
+            },
+            {
+              "frame": 225,
+              "time_seconds": 7.5,
+              "exit_code": 0,
+              "mae": 3.397895447530864,
+              "threshold": 15,
+              "passed": true
+            },
+            {
+              "frame": 405,
+              "time_seconds": 13.5,
+              "exit_code": 0,
+              "mae": 2.82768856095679,
+              "threshold": 15,
+              "passed": true
+            },
+            {
+              "frame": 90,
+              "time_seconds": 3,
+              "exit_code": 0,
+              "mae": 2.877553208590535,
+              "threshold": 15,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "engine": "hyperframes",
+          "case_id": "3d-scene",
+          "comparisons": [
+            {
+              "frame": 24,
+              "time_seconds": 0.8,
+              "exit_code": 0,
+              "mae": 3.4415390303497944,
+              "threshold": 15,
+              "passed": true
+            },
+            {
+              "frame": 120,
+              "time_seconds": 4,
+              "exit_code": 0,
+              "mae": 3.401496752829218,
+              "threshold": 15,
+              "passed": true
+            },
+            {
+              "frame": 216,
+              "time_seconds": 7.2,
+              "exit_code": 0,
+              "mae": 3.2822694830246912,
+              "threshold": 15,
+              "passed": true
+            },
+            {
+              "frame": 0,
+              "time_seconds": 0,
+              "exit_code": 0,
+              "mae": 3.3258066486625513,
+              "threshold": 15,
+              "passed": true
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "E",
-      "title": "Audio presence",
+      "title": "Audio presence and registration",
       "status": "PASS",
-      "evidence": "Decoded full-profile mono RMS tone=0.08995, silence windows=0.00000/0.00000; 24 audio-bearing outputs retained."
+      "evidence": {
+        "valid_clip_signatures": [
+          {
+            "end_seconds": 1.8,
+            "expected_frequency_hz": 440,
+            "goertzel": 0.11305384038884919,
+            "present": true,
+            "rms": 0.15988240534902093,
+            "start_seconds": 0.1
+          },
+          {
+            "end_seconds": 4.8,
+            "expected_frequency_hz": 660,
+            "goertzel": 0.11306046139460042,
+            "present": true,
+            "rms": 0.15989182238096888,
+            "start_seconds": 3.1
+          },
+          {
+            "end_seconds": 7.8,
+            "expected_frequency_hz": 880,
+            "goertzel": 0.11306711927773663,
+            "present": true,
+            "rms": 0.15990115778792144,
+            "start_seconds": 6.1
+          }
+        ],
+        "valid_silence_windows": [
+          {
+            "end_seconds": 3,
+            "rms": 0,
+            "start_seconds": 2.08
+          },
+          {
+            "end_seconds": 6,
+            "rms": 0,
+            "start_seconds": 5.08
+          }
+        ],
+        "valid_seams": [
+          {
+            "maximum_jump": 0.013048183172941208,
+            "time_seconds": 2
+          },
+          {
+            "maximum_jump": 0.000004188545062788762,
+            "time_seconds": 3
+          },
+          {
+            "maximum_jump": 0.01955995336174965,
+            "time_seconds": 5
+          },
+          {
+            "maximum_jump": 0.000003970563739130739,
+            "time_seconds": 6
+          }
+        ],
+        "missing_mux_exit": 0,
+        "missing_rejected": true,
+        "overlap_mux_exit": 0,
+        "overlap_rejected": true
+      }
     },
     {
       "id": "F",
-      "title": "Audio seam and overlap",
+      "title": "Audio seams and overlap rejection",
       "status": "PASS",
-      "evidence": "Encoded max adjacent-sample jumps at 2/3/5/6s=0.00737/0.00000/0.01100/0.00001; required <0.08 with silent gap RMS <0.01."
+      "evidence": {
+        "valid_clip_signatures": [
+          {
+            "end_seconds": 1.8,
+            "expected_frequency_hz": 440,
+            "goertzel": 0.11305384038884919,
+            "present": true,
+            "rms": 0.15988240534902093,
+            "start_seconds": 0.1
+          },
+          {
+            "end_seconds": 4.8,
+            "expected_frequency_hz": 660,
+            "goertzel": 0.11306046139460042,
+            "present": true,
+            "rms": 0.15989182238096888,
+            "start_seconds": 3.1
+          },
+          {
+            "end_seconds": 7.8,
+            "expected_frequency_hz": 880,
+            "goertzel": 0.11306711927773663,
+            "present": true,
+            "rms": 0.15990115778792144,
+            "start_seconds": 6.1
+          }
+        ],
+        "valid_silence_windows": [
+          {
+            "end_seconds": 3,
+            "rms": 0,
+            "start_seconds": 2.08
+          },
+          {
+            "end_seconds": 6,
+            "rms": 0,
+            "start_seconds": 5.08
+          }
+        ],
+        "valid_seams": [
+          {
+            "maximum_jump": 0.013048183172941208,
+            "time_seconds": 2
+          },
+          {
+            "maximum_jump": 0.000004188545062788762,
+            "time_seconds": 3
+          },
+          {
+            "maximum_jump": 0.01955995336174965,
+            "time_seconds": 5
+          },
+          {
+            "maximum_jump": 0.000003970563739130739,
+            "time_seconds": 6
+          }
+        ],
+        "missing_mux_exit": 0,
+        "missing_rejected": true,
+        "overlap_mux_exit": 0,
+        "overlap_rejected": true
+      }
     },
     {
       "id": "G",
       "title": "Render-time network isolation",
-      "status": "PASS",
-      "evidence": "Static audit found no HTTP(S) render dependencies in either baseline composition; OS-level blocked-network rerun remains desirable."
+      "status": "UNSUPPORTED",
+      "evidence": {
+        "host": "win32",
+        "required_evidence": "Ubuntu manual workflow must execute sudo unshare --net for both browser baselines"
+      }
     },
     {
       "id": "H",
-      "title": "Final mux integrity",
+      "title": "Final mux integrity through central verifier",
       "status": "PASS",
-      "evidence": "121 retained output(s) passed ffprobe track/frame/duration verification."
+      "evidence": {
+        "canonical_results": 109,
+        "all_have_timestamps_hashes_codec_and_case_checks": true
+      }
     },
     {
       "id": "I",
-      "title": "Process failure and cleanup",
+      "title": "Harness timeout and process-tree cleanup",
       "status": "PASS",
-      "evidence": "terminated=true; tracked_pids=28320,23744,13288; surviving_pids=none; partial_files=11; success_record=false; next_run_exit=0."
+      "evidence": {
+        "timeout_exit": 3,
+        "failure_record": {
+          "canonical_run_id": "20260814T154154Z-ac4f3c8a-75e3-4bee-b75a-a8ee8566e8b2",
+          "case_id": "typography-layout",
+          "engine": "native-2d",
+          "partial_output_bytes": null,
+          "partial_output_present": false,
+          "repetition": 1,
+          "stalled": false,
+          "termination": "timeout: taskkill tree graceful=[] forced=[SUCCESS: The process with PID 33468 (child process of PID 28400) has been terminated.\r\nSUCCESS: The process with PID 28400 (child process of PID 37104) has been terminated.\r\nSUCCESS: The process with PID 37104 (child process of PID 9824) has been terminated.]",
+          "timed_out": true,
+          "valid": false,
+          "warmup": false,
+          "worker_mode": "default"
+        },
+        "successful_result_written": false,
+        "recovery_exit": 0,
+        "timeout_stderr": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.25s\n     Running `target\\debug\\xtask.exe phase0 run --engine native-2d --case typography-layout --profile smoke --timeout-seconds 1 --stall-seconds 10 --json`\n    Finished `release` profile [optimized] target(s) in 0.14s\n     Running `target\\release\\phase0-native-2d.exe --case typography-layout --profile smoke --output C:\\CineKernel\\.cinekernel\\worktrees\\phase01-evidence-final-sync\\.cinekernel\\runs\\20260814T154154Z-ac4f3c8a-75e3-4bee-b75a-a8ee8566e8b2\\native-2d\\typography-layout\\worker-default\\rep-1\\output.mp4`\nerror: process didn't exit successfully: `target\\debug\\xtask.exe phase0 run --engine native-2d --case typography-layout --profile smoke --timeout-seconds 1 --stall-seconds 10 --json` (exit code: 3)\n"
+      }
     },
     {
       "id": "J",
-      "title": "Controlled slow consumer",
+      "title": "Real bounded frame backpressure",
       "status": "PASS",
-      "evidence": "Bounded queue capacity=4, observed max=4, produced=100, consumed=100."
+      "evidence": {
+        "passed": true,
+        "queue_capacity": 3,
+        "frame_bytes": 8294400,
+        "maximum_queued_frame_count": 3,
+        "maximum_queued_frame_bytes": 24883200,
+        "peak_rss_bytes": 212586496,
+        "produced_frames": 12,
+        "consumed_frames": 12,
+        "consumer": "real ffmpeg libx264 subprocess with 25ms delay",
+        "encoder_exit_code": 0,
+        "encoder_stderr": ""
+      }
     }
-  ],
-  "source_result_count": 135
+  ]
 }
