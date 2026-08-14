@@ -409,13 +409,7 @@ fn sync_one(root: &Path, name: &str, upstream: &Upstream, target: &Path) -> AppR
         ],
         EXIT_INVALID_CONFIGURATION,
     )?;
-    let mut sparse = vec![
-        OsString::from("-C"),
-        target.as_os_str().to_owned(),
-        OsString::from("sparse-checkout"),
-        OsString::from("set"),
-    ];
-    sparse.extend(upstream.sparse_paths.iter().map(OsString::from));
+    let sparse = sparse_checkout_set_args(target, upstream);
     checked(root, "git", &sparse, EXIT_INVALID_CONFIGURATION)?;
     checked(
         root,
@@ -431,6 +425,18 @@ fn sync_one(root: &Path, name: &str, upstream: &Upstream, target: &Path) -> AppR
     )?;
     println!("synced {name} at {}", upstream.commit);
     Ok(())
+}
+
+fn sparse_checkout_set_args(target: &Path, upstream: &Upstream) -> Vec<OsString> {
+    let mut sparse = vec![
+        OsString::from("-C"),
+        target.as_os_str().to_owned(),
+        OsString::from("sparse-checkout"),
+        OsString::from("set"),
+        OsString::from("--skip-checks"),
+    ];
+    sparse.extend(upstream.sparse_paths.iter().map(OsString::from));
+    sparse
 }
 
 fn upstream_verify(root: &Path) -> AppResult<Value> {
@@ -1547,6 +1553,29 @@ mod tests {
             }
         }
         assert_eq!(count, 109);
+    }
+
+    #[test]
+    fn sparse_checkout_allows_tracked_file_paths_on_repeat_sync() {
+        let lock = load_upstream_lock(&workspace_root()).expect("upstream lock");
+        let target = Path::new("upstream checkout");
+        let args = sparse_checkout_set_args(target, &lock.remotion);
+        let rendered = args
+            .iter()
+            .map(|value| value.to_string_lossy().into_owned())
+            .collect::<Vec<_>>();
+        assert_eq!(
+            &rendered[..5],
+            [
+                "-C",
+                "upstream checkout",
+                "sparse-checkout",
+                "set",
+                "--skip-checks"
+            ]
+        );
+        assert!(rendered.iter().any(|value| value == "README.md"));
+        assert!(rendered.iter().any(|value| value == "LICENSE.md"));
     }
 
     #[test]
