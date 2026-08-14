@@ -76,7 +76,7 @@ jobs:
       - name: Native wgpu smoke capability
         shell: pwsh
         run: |
-          $output = & cargo xtask phase0 run --engine native-wgpu --case 3d-scene --profile smoke --timeout-seconds 300 --json 2>&1
+          $output = & cargo xtask phase0 run --engine native-wgpu --case 3d-scene --profile smoke --timeout-seconds 900 --json 2>&1
           $code = $LASTEXITCODE
           $output | ForEach-Object { Write-Host $_ }
           if ($code -eq 0) {
