@@ -650,31 +650,40 @@ fn phase0_run(root: &Path, args: &RunArgs, json_output: bool, canonical: bool) -
     let summary = json!({"schema_version":"phase0.run-summary.v2","canonical_run_id":run_id,"canonical":canonical,"failures":failures,"result_count":results.iter().filter(|result|result.get("schema_version").is_some()).count(),"expected_result_count":expected_result_count,"results":results});
     write_json(&run_dir.join("run-summary.json"), &summary)
         .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+    let actual_result_count = summary["result_count"].as_u64().unwrap_or_default();
+    let canonical_complete =
+        canonical_run_is_complete(failures, actual_result_count, expected_result_count);
     if canonical {
         let completed_manifest = json!({
             "schema_version":"phase0.canonical-run.v1", "canonical_run_id":run_id,
-            "status":if failures==0 {"complete"} else {"failed"}, "implementation_revision":implementation_revision,
+            "status":if canonical_complete {"complete"} else {"failed"}, "implementation_revision":implementation_revision,
             "worktree_clean":true, "environment_id":environment_id, "benchmark_spec_sha256":spec_hash,
             "upstream_lock_sha256":lock_hash, "profile":args.profile.as_str(),
             "engine_selection":args.engine.map(Engine::as_str).unwrap_or("all"), "case_selection":args.case_id,
             "timeout_seconds":args.timeout_seconds, "stall_seconds":args.stall_seconds, "heartbeat_seconds":15,
             "started_at_utc":started_at, "completed_at_utc":Utc::now().to_rfc3339_opts(SecondsFormat::Millis,true),
-            "expected_result_count":expected_result_count, "actual_result_count":summary["result_count"], "failure_count":failures,
+            "expected_result_count":expected_result_count, "actual_result_count":actual_result_count, "failure_count":failures,
             "expected_groups":expected_groups,
         });
         write_json(&manifest_path, &completed_manifest)
             .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
-        let pointer_dir = runtime_root(root).join("canonical");
-        fs::create_dir_all(&pointer_dir)
-            .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
-        write_json(&pointer_dir.join("latest.json"),&json!({"canonical_run_id":run_id,"manifest":format!(".cinekernel/runs/{run_id}/canonical-run-manifest.json")})).map_err(|error|Failure::new(EXIT_INVALID_CONFIGURATION,error))?;
+        if canonical_complete {
+            let pointer_dir = runtime_root(root).join("canonical");
+            fs::create_dir_all(&pointer_dir)
+                .map_err(|error| Failure::new(EXIT_INVALID_CONFIGURATION, error))?;
+            write_json(&pointer_dir.join("latest.json"),&json!({"canonical_run_id":run_id,"manifest":format!(".cinekernel/runs/{run_id}/canonical-run-manifest.json")})).map_err(|error|Failure::new(EXIT_INVALID_CONFIGURATION,error))?;
+        }
     }
-    if failures > 0 {
-        return Err(Failure::new(EXIT_BENCHMARK_FAILURE, anyhow!("{failures} benchmark group/repetition failure(s); evidence preserved under .cinekernel/runs/{run_id}")));
+    if failures > 0 || actual_result_count != expected_result_count {
+        return Err(Failure::new(EXIT_BENCHMARK_FAILURE, anyhow!("{failures} benchmark group/repetition failure(s), {actual_result_count}/{expected_result_count} measured results; evidence preserved under .cinekernel/runs/{run_id}")));
     }
     Ok(
         json!({"ok":true,"canonical":canonical,"canonical_run_id":run_id,"result_count":summary["result_count"],"expected_result_count":expected_result_count,"path":format!(".cinekernel/runs/{run_id}")}),
     )
+}
+
+fn canonical_run_is_complete(failures: u64, actual: u64, expected: u64) -> bool {
+    failures == 0 && actual == expected
 }
 
 fn canonical_revision_is_eligible(revision: &str, dirty: bool) -> bool {
@@ -1476,6 +1485,14 @@ mod tests {
         assert!(!canonical_revision_is_eligible(&revision, true));
         assert!(!canonical_revision_is_eligible("UNBORN", false));
         assert!(!canonical_revision_is_eligible("not-a-full-sha", false));
+    }
+
+    #[test]
+    fn canonical_pointer_requires_zero_failures_and_exact_inventory() {
+        assert!(canonical_run_is_complete(0, 109, 109));
+        assert!(!canonical_run_is_complete(1, 109, 109));
+        assert!(!canonical_run_is_complete(0, 108, 109));
+        assert!(!canonical_run_is_complete(0, 110, 109));
     }
 
     #[test]

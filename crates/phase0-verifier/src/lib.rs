@@ -342,11 +342,7 @@ fn decode_analysis(
     if black_ratio > 0.05 {
         issues.push(format!("black-frame ratio {black_ratio:.4} exceeds 0.05"));
     }
-    let maximum_allowed_frozen = match request.case_id {
-        "media-frame-sampling" => 2,
-        "3d-scene" | "mixed-2d-3d" => request.fps as usize * 2,
-        _ => request.fps as usize * 4,
-    };
+    let maximum_allowed_frozen = maximum_allowed_frozen_run(request.case_id, request.fps);
     if longest_frozen_run > maximum_allowed_frozen {
         issues.push(format!(
             "frozen-frame run {longest_frozen_run} exceeds {maximum_allowed_frozen}"
@@ -368,6 +364,18 @@ fn decode_analysis(
         "analysis_resolution": "64x36",
         "media_oracle": media_oracle,
     }))
+}
+
+fn maximum_allowed_frozen_run(case_id: &str, fps: u32) -> usize {
+    let seconds = match case_id {
+        "media-frame-sampling" => return 2,
+        "3d-scene" => 2,
+        // Full-profile chart and mixed workloads intentionally hold their final
+        // chart/CTA state for up to four seconds after the authored motion ends.
+        "chart-diagram" | "mixed-2d-3d" => 5,
+        _ => 4,
+    };
+    fps as usize * seconds
 }
 
 fn verify_media_oracle(
@@ -843,6 +851,15 @@ mod tests {
         assert_eq!(indices.first(), Some(&0));
         assert_eq!(indices.last(), Some(&179));
         assert!(indices.contains(&90));
+    }
+
+    #[test]
+    fn frozen_run_limits_allow_authored_full_profile_holds_without_becoming_unbounded() {
+        assert_eq!(maximum_allowed_frozen_run("media-frame-sampling", 30), 2);
+        assert_eq!(maximum_allowed_frozen_run("3d-scene", 30), 60);
+        assert_eq!(maximum_allowed_frozen_run("chart-diagram", 30), 150);
+        assert_eq!(maximum_allowed_frozen_run("mixed-2d-3d", 30), 150);
+        assert!(maximum_allowed_frozen_run("mixed-2d-3d", 30) < 15 * 30);
     }
 
     #[test]
