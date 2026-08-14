@@ -267,8 +267,8 @@ fn decode_analysis(
         .args([
             "-vf",
             "scale=64:36:flags=area,format=rgb24",
-            "-vsync",
-            "0",
+            "-fps_mode",
+            "passthrough",
             "-f",
             "rawvideo",
             "-",
@@ -396,8 +396,8 @@ fn verify_media_oracle(
         .args([
             "-vf",
             "crop=2:2:159:89,format=rgb24",
-            "-vsync",
-            "0",
+            "-fps_mode",
+            "passthrough",
             "-f",
             "rawvideo",
             "-",
@@ -426,7 +426,15 @@ fn verify_media_oracle(
     let output = Command::new("ffmpeg")
         .args(["-v", "error", "-i"])
         .arg(request.output)
-        .args(["-vf", &filter, "-vsync", "0", "-f", "rawvideo", "-"])
+        .args([
+            "-vf",
+            &filter,
+            "-fps_mode",
+            "passthrough",
+            "-f",
+            "rawvideo",
+            "-",
+        ])
         .output()?;
     ensure_success("ffmpeg media oracle decode", &output)?;
     let decoded: Vec<&[u8]> = output.stdout.chunks_exact(12).collect();
@@ -915,6 +923,33 @@ mod tests {
         .expect("missing audio report");
         assert_eq!(report["track_count"], 0);
         assert!(issues.iter().any(|issue| issue.contains("missing")));
+    }
+
+    #[test]
+    fn installed_ffmpeg_accepts_per_output_fps_mode() {
+        let output = Command::new("ffmpeg")
+            .args([
+                "-v",
+                "error",
+                "-f",
+                "lavfi",
+                "-i",
+                "color=size=16x16:rate=30:duration=0.04",
+                "-frames:v",
+                "1",
+                "-fps_mode",
+                "passthrough",
+                "-f",
+                "null",
+                "-",
+            ])
+            .output()
+            .expect("run ffmpeg fps-mode compatibility probe");
+        assert!(
+            output.status.success(),
+            "ffmpeg rejected -fps_mode passthrough: {}",
+            String::from_utf8_lossy(&output.stderr)
+        );
     }
 
     #[test]

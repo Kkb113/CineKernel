@@ -55,7 +55,7 @@ for(const item of [{engine:"native-2d",pkg:"phase0-native-2d",caseId:"chart-diag
 }
 probes.push(probe("C","Random-access versus sequential native evaluation",randomPass?"PASS":"FAIL",randomEvidence));
 
-const decodeRgb=(source:string,frame?:number)=>{const args=["-v","error","-i",source];if(frame!==undefined)args.push("-vf",`select=eq(n\\,${frame})`,"-vsync","0","-frames:v","1");args.push("-pix_fmt","rgb24","-f","rawvideo","-");const output=spawnSync("ffmpeg",args,{encoding:"buffer",maxBuffer:256*1024*1024});return output.stdout as Buffer};
+const decodeRgb=(source:string,frame?:number)=>{const args=["-v","error","-i",source];if(frame!==undefined)args.push("-vf",`select=eq(n\\,${frame})`,"-fps_mode","passthrough","-frames:v","1");args.push("-pix_fmt","rgb24","-f","rawvideo","-");const output=spawnSync("ffmpeg",args,{encoding:"buffer",maxBuffer:256*1024*1024});return output.stdout as Buffer};
 const mae=(left:Buffer,right:Buffer)=>{if(!left.length||left.length!==right.length)return Number.POSITIVE_INFINITY;let difference=0;for(let index=0;index<left.length;index++)difference+=Math.abs(left[index]-right[index]);return difference/left.length};
 const snapshotDir=resolve(probeRoot,"preview-final");mkdirSync(snapshotDir,{recursive:true});
 const snapshotEvidence=[];let snapshotPass=true;
