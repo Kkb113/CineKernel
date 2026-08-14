@@ -24,6 +24,8 @@ struct Args {
     frame_order: FrameOrder,
     #[arg(long, default_value_t = 2_654_435_761_u32)]
     shuffle_seed: u32,
+    #[arg(long)]
+    capability_only: bool,
 }
 
 #[derive(Clone, Copy, ValueEnum)]
@@ -181,6 +183,30 @@ const INDICES: &[u16] = &[
     16, 18, 19, 20, 21, 22, 20, 22, 23,
 ];
 
+const FLOOR_VERTICES: &[Vertex] = &[
+    Vertex {
+        position: [-4.5, -1.35, -4.5],
+        normal: [0.0, 1.0, 0.0],
+        uv: [0.0, 0.0],
+    },
+    Vertex {
+        position: [4.5, -1.35, -4.5],
+        normal: [0.0, 1.0, 0.0],
+        uv: [4.0, 0.0],
+    },
+    Vertex {
+        position: [4.5, -1.35, 4.5],
+        normal: [0.0, 1.0, 0.0],
+        uv: [4.0, 4.0],
+    },
+    Vertex {
+        position: [-4.5, -1.35, 4.5],
+        normal: [0.0, 1.0, 0.0],
+        uv: [0.0, 4.0],
+    },
+];
+const FLOOR_INDICES: &[u16] = &[0, 2, 1, 0, 3, 2];
+
 fn main() -> Result<()> {
     pollster::block_on(run())
 }
@@ -207,9 +233,6 @@ async fn run() -> Result<()> {
     let duration = env_f64("CINEKERNEL_DURATION_SECONDS", 1.0);
     let fps = env_u32("CINEKERNEL_FPS", 30);
     let frame_count = (duration * f64::from(fps)).round() as u32;
-    let fixtures = env::var_os("CINEKERNEL_FIXTURES")
-        .map(PathBuf::from)
-        .context("CINEKERNEL_FIXTURES is required")?;
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
         backends: wgpu::Backends::all(),
         ..Default::default()
@@ -223,7 +246,27 @@ async fn run() -> Result<()> {
         .await
         .context("no wgpu adapter available")?;
     let info = adapter.get_info();
-    let software_fallback = matches!(info.device_type, wgpu::DeviceType::Cpu);
+    let gpu_active = hardware_gpu_active(info.device_type);
+    let software_fallback = !gpu_active;
+    if args.capability_only {
+        println!(
+            "{}",
+            serde_json::json!({
+                "ok": true,
+                "gpu_active": gpu_active,
+                "adapter": info.name,
+                "backend": format!("{:?}", info.backend),
+                "device_type": format!("{:?}", info.device_type),
+                "driver": info.driver,
+                "driver_info": info.driver_info,
+                "software_fallback": software_fallback
+            })
+        );
+        return Ok(());
+    }
+    let fixtures = env::var_os("CINEKERNEL_FIXTURES")
+        .map(PathBuf::from)
+        .context("CINEKERNEL_FIXTURES is required")?;
     let (device, queue) = adapter
         .request_device(
             &wgpu::DeviceDescriptor {
@@ -279,6 +322,16 @@ async fn run() -> Result<()> {
         contents: bytemuck::cast_slice(INDICES),
         usage: wgpu::BufferUsages::INDEX,
     });
+    let floor_vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        label: Some("floor-vertices"),
+        contents: bytemuck::cast_slice(FLOOR_VERTICES),
+        usage: wgpu::BufferUsages::VERTEX,
+    });
+    let floor_index_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        label: Some("floor-indices"),
+        contents: bytemuck::cast_slice(FLOOR_INDICES),
+        usage: wgpu::BufferUsages::INDEX,
+    });
     let texture_image = image::open(fixtures.join("texture.png"))?.to_rgba8();
     let texture_size = wgpu::Extent3d {
         width: texture_image.width(),
@@ -312,12 +365,20 @@ async fn run() -> Result<()> {
     );
     let material_view = material.create_view(&wgpu::TextureViewDescriptor::default());
     let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+        address_mode_u: wgpu::AddressMode::Repeat,
+        address_mode_v: wgpu::AddressMode::Repeat,
         mag_filter: wgpu::FilterMode::Linear,
         min_filter: wgpu::FilterMode::Linear,
         ..Default::default()
     });
     let uniform_buffer = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("uniforms"),
+        size: std::mem::size_of::<Uniforms>() as u64,
+        usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let floor_uniform_buffer = device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("floor-uniforms"),
         size: std::mem::size_of::<Uniforms>() as u64,
         usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         mapped_at_creation: false,
@@ -360,6 +421,24 @@ async fn run() -> Result<()> {
             wgpu::BindGroupEntry {
                 binding: 0,
                 resource: uniform_buffer.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: wgpu::BindingResource::TextureView(&material_view),
+            },
+            wgpu::BindGroupEntry {
+                binding: 2,
+                resource: wgpu::BindingResource::Sampler(&sampler),
+            },
+        ],
+    });
+    let floor_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: Some("floor-bind-group"),
+        layout: &layout,
+        entries: &[
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: floor_uniform_buffer.as_entire_binding(),
             },
             wgpu::BindGroupEntry {
                 binding: 1,
@@ -446,12 +525,23 @@ async fn run() -> Result<()> {
         );
         let model = Mat4::from_rotation_y(phase * std::f32::consts::TAU)
             * Mat4::from_rotation_x(phase * 0.7);
+        let view_proj = (projection * view).to_cols_array_2d();
         let uniforms = Uniforms {
-            view_proj: (projection * view).to_cols_array_2d(),
+            view_proj,
             model: model.to_cols_array_2d(),
             light_dir: [-0.6, -1.0, -0.4, 0.0],
         };
+        let floor_uniforms = Uniforms {
+            view_proj,
+            model: Mat4::IDENTITY.to_cols_array_2d(),
+            light_dir: [-0.6, -1.0, -0.4, 0.0],
+        };
         queue.write_buffer(&uniform_buffer, 0, bytemuck::bytes_of(&uniforms));
+        queue.write_buffer(
+            &floor_uniform_buffer,
+            0,
+            bytemuck::bytes_of(&floor_uniforms),
+        );
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("frame-encoder"),
         });
@@ -487,6 +577,10 @@ async fn run() -> Result<()> {
             pass.set_vertex_buffer(0, vertex_buffer.slice(..));
             pass.set_index_buffer(index_buffer.slice(..), wgpu::IndexFormat::Uint16);
             pass.draw_indexed(0..INDICES.len() as u32, 0, 0..1);
+            pass.set_bind_group(0, &floor_bind_group, &[]);
+            pass.set_vertex_buffer(0, floor_vertex_buffer.slice(..));
+            pass.set_index_buffer(floor_index_buffer.slice(..), wgpu::IndexFormat::Uint16);
+            pass.draw_indexed(0..FLOOR_INDICES.len() as u32, 0, 0..1);
         }
         encoder.copy_texture_to_buffer(
             wgpu::ImageCopyTexture {
@@ -594,7 +688,7 @@ async fn run() -> Result<()> {
     fs::remove_dir_all(&frames)?;
     println!(
         "{}",
-        serde_json::json!({"ok":true,"engine":"native-wgpu","case":args.case_id,"frames":frame_count,"frame_order":match args.frame_order {FrameOrder::Sequential=>"sequential",FrameOrder::Shuffled=>"shuffled"},"adapter":info.name,"backend":format!("{:?}",info.backend),"device_type":format!("{:?}",info.device_type),"driver":info.driver,"driver_info":info.driver_info,"software_fallback":software_fallback,"gpu_completion":"device.poll(Maintain::Wait)","frame_production_ms":frame_ms,"encode_ms":encode_ms})
+        serde_json::json!({"ok":true,"engine":"native-wgpu","case":args.case_id,"frames":frame_count,"frame_order":match args.frame_order {FrameOrder::Sequential=>"sequential",FrameOrder::Shuffled=>"shuffled"},"adapter":info.name,"backend":format!("{:?}",info.backend),"device_type":format!("{:?}",info.device_type),"driver":info.driver,"driver_info":info.driver_info,"software_fallback":software_fallback,"gpu_completion":"device.poll(Maintain::Wait)","scene_features":["lit-textured-cube","depth-tested-floor","camera-motion","2d-overlay"],"frame_production_ms":frame_ms,"encode_ms":encode_ms})
     );
     Ok(())
 }
@@ -847,4 +941,59 @@ fn env_f64(name: &str, fallback: f64) -> f64 {
         .ok()
         .and_then(|value| value.parse().ok())
         .unwrap_or(fallback)
+}
+
+fn hardware_gpu_active(device_type: wgpu::DeviceType) -> bool {
+    matches!(
+        device_type,
+        wgpu::DeviceType::IntegratedGpu | wgpu::DeviceType::DiscreteGpu
+    )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{hardware_gpu_active, Args, FLOOR_INDICES, FLOOR_VERTICES};
+    use clap::Parser;
+    use glam::Vec3;
+
+    #[test]
+    fn floor_is_planar_and_upward_facing() {
+        assert_eq!(FLOOR_VERTICES.len(), 4);
+        assert_eq!(FLOOR_INDICES.len(), 6);
+        let expected_y = FLOOR_VERTICES[0].position[1];
+        assert!(FLOOR_VERTICES
+            .iter()
+            .all(|vertex| vertex.position[1] == expected_y && vertex.normal == [0.0, 1.0, 0.0]));
+        for triangle in FLOOR_INDICES.chunks_exact(3) {
+            let a = Vec3::from_array(FLOOR_VERTICES[triangle[0] as usize].position);
+            let b = Vec3::from_array(FLOOR_VERTICES[triangle[1] as usize].position);
+            let c = Vec3::from_array(FLOOR_VERTICES[triangle[2] as usize].position);
+            assert!((b - a).cross(c - a).y > 0.0);
+        }
+    }
+
+    #[test]
+    fn capability_probe_is_explicit_and_render_free() {
+        let args = Args::try_parse_from([
+            "phase0-native-wgpu",
+            "--case",
+            "3d-scene",
+            "--profile",
+            "smoke",
+            "--output",
+            "unused.mp4",
+            "--capability-only",
+        ])
+        .expect("parse capability probe");
+        assert!(args.capability_only);
+    }
+
+    #[test]
+    fn only_explicit_hardware_gpu_classes_are_active() {
+        assert!(hardware_gpu_active(wgpu::DeviceType::IntegratedGpu));
+        assert!(hardware_gpu_active(wgpu::DeviceType::DiscreteGpu));
+        assert!(!hardware_gpu_active(wgpu::DeviceType::Cpu));
+        assert!(!hardware_gpu_active(wgpu::DeviceType::VirtualGpu));
+        assert!(!hardware_gpu_active(wgpu::DeviceType::Other));
+    }
 }

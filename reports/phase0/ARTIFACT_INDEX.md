@@ -14,7 +14,8 @@ Tracked review artifacts are durable summaries from evidence commit `b12e6c74a51
 | `artifacts/HYPERFRAMES_PHASE_MEDIANS.svg` | separated HyperFrames preflight/render/verify medians | canonical raw v2 timings |
 | `REVIEW_FINDINGS_RESOLUTION.md` | ten findings mapped to fixes and gates | final attestation |
 | `CI_EVIDENCE.md` | actual CI records and manual-dispatch blocker | normal CI green; manual blocked |
+| `PHASE0_1_CLOSURE_EVIDENCE.md` | focused reruns required by the native 3D floor change | 24/24 verified at closure implementation `907a2551` |
 | `SOURCE_ARCHAEOLOGY_SUMMARY.md` | critical-path conclusions and immutable source links | validator PASS |
-| `ARTIFACT_SHA256.txt` | review-artifact integrity manifest | 26 entries, regenerated and verified after report finalization |
+| `ARTIFACT_SHA256.txt` | review-artifact integrity manifest | 27 entries, regenerated and verified after closure evidence |
 
 No `node_modules`, Rust `target`, `.cinekernel`, or `Remotion-Hyperframe-SourceCode` path is tracked.

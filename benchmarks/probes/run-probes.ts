@@ -9,11 +9,14 @@ type ResultEntry={path:string;value:Record<string,any>};
 type Probe={id:string;title:string;status:"PASS"|"FAIL"|"UNSUPPORTED";evidence:unknown};
 
 async function main(){
-const {values}=parseArgs({args:process.argv.slice(2).filter(value=>value!=="--"),options:{"canonical-run-id":{type:"string"}}});
+const {values}=parseArgs({args:process.argv.slice(2).filter(value=>value!=="--"),options:{"canonical-run-id":{type:"string"},exclude:{type:"string",multiple:true}}});
 if(!values["canonical-run-id"])throw new Error("--canonical-run-id is required");
 const canonicalRunId=values["canonical-run-id"];
 const root=resolve(dirname(fileURLToPath(import.meta.url)),"../..");
 const runDir=resolve(root,".cinekernel/runs",canonicalRunId);
+const manifest=JSON.parse(readFileSync(resolve(runDir,"canonical-run-manifest.json"),"utf8"));
+const expectedEngines=new Set((manifest.expected_groups??[]).map((group:any)=>group.engine));
+const excludedProbes=new Set(values.exclude??[]);
 const probeRoot=resolve(root,".cinekernel/probes",canonicalRunId);
 const fixtures=resolve(root,".cinekernel/generated/fixtures");
 mkdirSync(probeRoot,{recursive:true});
@@ -36,7 +39,7 @@ const stabilityGroups:[string,string,string][]=[
   ["native-wgpu","3d-scene","default"],["native-wgpu","mixed-2d-3d","default"],
 ];
 const stabilityEvidence=[];let stabilityPass=true;
-for(const [engine,caseId,mode] of stabilityGroups){const candidates=group(engine,caseId,mode);if(candidates.length<3){stabilityPass=false;stabilityEvidence.push({engine,case_id:caseId,worker_mode:mode,status:"missing",repetitions:candidates.length});continue}const selected=candidates.slice(0,3);const hashes=selected.map(entry=>frameStreamHash(outputFor(entry)));const exact=hashes.every(hash=>hash===hashes[0]);const gpuToleranceEligible=engine==="remotion"&&caseId==="mixed-2d-3d";const similarities=gpuToleranceEligible&&!exact?selected.slice(1).map(entry=>videoSimilarity(outputFor(selected[0]),outputFor(entry))):[];const stable=exact||(gpuToleranceEligible&&similarities.length===2&&similarities.every(item=>item.passed));stabilityPass&&=stable;stabilityEvidence.push({engine,case_id:caseId,worker_mode:mode,repetitions:3,classification:exact?"exact match":stable?"bounded WebGL pixel variance":"failure",decoded_framemd5_sha256:hashes,similarities})}
+for(const [engine,caseId,mode] of stabilityGroups){if(!expectedEngines.has(engine)){stabilityEvidence.push({engine,case_id:caseId,worker_mode:mode,status:"UNSUPPORTED by canonical environment",repetitions:0});continue}const candidates=group(engine,caseId,mode);if(candidates.length<3){stabilityPass=false;stabilityEvidence.push({engine,case_id:caseId,worker_mode:mode,status:"missing",repetitions:candidates.length});continue}const selected=candidates.slice(0,3);const hashes=selected.map(entry=>frameStreamHash(outputFor(entry)));const exact=hashes.every(hash=>hash===hashes[0]);const gpuToleranceEligible=engine==="remotion"&&caseId==="mixed-2d-3d";const similarities=gpuToleranceEligible&&!exact?selected.slice(1).map(entry=>videoSimilarity(outputFor(selected[0]),outputFor(entry))):[];const stable=exact||(gpuToleranceEligible&&similarities.length===2&&similarities.every(item=>item.passed));stabilityPass&&=stable;stabilityEvidence.push({engine,case_id:caseId,worker_mode:mode,repetitions:3,classification:exact?"exact match":stable?"bounded WebGL pixel variance":"failure",decoded_framemd5_sha256:hashes,similarities})}
 probes.push(probe("A","Repeated render stability",stabilityPass?"PASS":"FAIL",stabilityEvidence));
 
 // Probe B: every frame was decoded/classified by the permanent verifier for five repetitions in all six modes.
@@ -48,6 +51,7 @@ probes.push(probe("B","Complete sequential/parallel media oracle",mediaPass?"PAS
 const randomDir=resolve(probeRoot,"random-access");mkdirSync(randomDir,{recursive:true});
 const randomEvidence=[];let randomPass=true;
 for(const item of [{engine:"native-2d",pkg:"phase0-native-2d",caseId:"chart-diagram",duration:6},{engine:"native-wgpu",pkg:"phase0-native-wgpu",caseId:"3d-scene",duration:8}]){
+  if(!expectedEngines.has(item.engine)){randomEvidence.push({...item,status:"UNSUPPORTED by canonical environment"});continue}
   const canonical=group(item.engine,item.caseId,"default")[0];if(!canonical){randomPass=false;randomEvidence.push({...item,status:"missing canonical sequential"});continue}
   const reference=frameStreamHash(outputFor(canonical));const orders=[];
   for(const seed of [2246822519,3266489917]){const output=resolve(randomDir,`${item.engine}-${item.caseId}-${seed}.mp4`);const execution=run(cargo,["run","--release","--package",item.pkg,"--","--case",item.caseId,"--profile","full","--output",output,"--frame-order","shuffled","--shuffle-seed",String(seed)],{env:{...process.env,CINEKERNEL_WIDTH:"1920",CINEKERNEL_HEIGHT:"1080",CINEKERNEL_FPS:"30",CINEKERNEL_DURATION_SECONDS:String(item.duration),CINEKERNEL_FIXTURES:fixtures}});const hash=execution.status===0?frameStreamHash(output):null;const match=hash===reference;randomPass&&=execution.status===0&&match;orders.push({seed,exit_code:execution.status,decoded_framemd5_sha256:hash,matches_sequential:match})}
@@ -85,11 +89,11 @@ probes.push(probe("E","Audio presence and registration",audioPresencePass?"PASS"
 probes.push(probe("F","Audio seams and overlap rejection",seamPass?"PASS":"FAIL",audioEvidence));
 
 // Probe G: OS-enforced Linux network namespace. Other hosts record UNSUPPORTED and rely on the Ubuntu workflow artifact.
-if(process.platform==="linux"){
+if(!excludedProbes.has("G")&&process.platform==="linux"){
   const isolated=[];let isolatedPass=true;
   for(const engine of ["remotion","hyperframes"]){const execution=run("sudo",["-E","unshare","--net","--","sh","-c",'ip link set lo up && exec "$@"',"cinekernel-network-isolation",cargo,"xtask","phase0","run","--engine",engine,"--case","media-frame-sampling","--profile","smoke","--timeout-seconds","900","--json"],{env:{...process.env}});isolatedPass&&=execution.status===0;isolated.push({engine,mechanism:"sudo unshare --net with loopback-only namespace",exit_code:execution.status,command:`sudo -E unshare --net -- sh -c 'ip link set lo up; exec cargo xtask phase0 run ...'`,stderr:(execution.stderr??"").slice(-4000)})}
   probes.push(probe("G","Render-time network isolation",isolatedPass?"PASS":"FAIL",isolated));
-}else probes.push(probe("G","Render-time network isolation","UNSUPPORTED",{host:process.platform,required_evidence:"Ubuntu manual workflow must execute sudo unshare --net for both browser baselines"}));
+}else if(!excludedProbes.has("G")) probes.push(probe("G","Render-time network isolation","UNSUPPORTED",{host:process.platform,required_evidence:"Dedicated Ubuntu network-isolation workflow must execute sudo unshare --net for both browser baselines"}));
 
 const richVerification=entries.every(entry=>entry.value.verification?.timestamps?.monotonic===true&&Array.isArray(entry.value.verification?.decoded?.selected_frame_hashes)&&entry.value.verification.decoded.selected_frame_hashes.length>=3&&entry.value.verification?.video?.codec==="h264");
 probes.push(probe("H","Final mux integrity through central verifier",richVerification?"PASS":"FAIL",{canonical_results:entries.length,all_have_timestamps_hashes_codec_and_case_checks:richVerification}));
