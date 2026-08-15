@@ -207,7 +207,18 @@ fn inventory(root: &Path) -> Result<Outcome> {
             if !p.is_file() {
                 bail!("source {id} missing: {rel}")
             }
-            let actual = sha256(&fs::read(&p)?);
+            let spec = format!("{ONDA_PIN}:{rel}");
+            let out = Command::new("git")
+                .args(["cat-file", "blob", &spec])
+                .current_dir(&upstream)
+                .output()?;
+            if !out.status.success() {
+                bail!(
+                    "cannot read pinned blob for {id}: {}",
+                    String::from_utf8_lossy(&out.stderr)
+                )
+            }
+            let actual = sha256(&out.stdout);
             if s["file_sha256"].as_str() != Some(&actual) {
                 bail!("source hash mismatch for {id}")
             }

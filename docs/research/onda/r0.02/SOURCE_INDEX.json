@@ -8,7 +8,7 @@
         "facts": [
           "Publicly described authoring and rendering surfaces."
         ],
-        "file_sha256": "2da2f4bd3ef9b974e51a34a9b991999b13ff58afa53eaa0b88156fe1174c6077",
+        "file_sha256": "c3ff5ac038bf442a5668ebf4b246f6254cd04b0bf24f6b418f4c3b194d1d9e16",
         "id": "S-README",
         "line_ranges": [
           [
@@ -28,7 +28,7 @@
         "facts": [
           "Rust package and renderer boundaries."
         ],
-        "file_sha256": "0334ccfff382f497d87acfe47c3e45be5e8257fee56848c84631230c6ef1e2f7",
+        "file_sha256": "0f5acde0a9466c4f166109584c7cb00c860e26494dc664df63342d126482199e",
         "id": "S-ROOT-CARGO",
         "line_ranges": [
           [
@@ -48,7 +48,7 @@
         "facts": [
           "JavaScript package and test boundaries."
         ],
-        "file_sha256": "c0af4239572c3d7025dd20098ab0fc6771dc0362b965c8c2ddde0ff9e4b225cb",
+        "file_sha256": "ce04a081b16017bd3b6ec5ed030b9a9e877e6d742fc654753a36b58a61b32f59",
         "id": "S-ROOT-PKG",
         "line_ranges": [
           [
@@ -69,7 +69,7 @@
           "Custom reconciler uses mutable HostNode children.",
           "Persistence and hydration are disabled."
         ],
-        "file_sha256": "f3d5852ed481cc4174e84d469e84e574e3e4f2c6779ddfd30f5a1b9ce9b37007",
+        "file_sha256": "a6c04b25b4570333741f3ccff8b145dd04f73ad9d21f19fed4e3acc417153a01",
         "id": "S-REACT-HOST",
         "line_ranges": [
           [
@@ -89,7 +89,7 @@
         "facts": [
           "Frame and video configuration are context values."
         ],
-        "file_sha256": "e75cd9c3adf592105d44f0216af774fca49e08fa7a06e6d6b68e803a6589e5ad",
+        "file_sha256": "04906fcf50c774136c9e902de69ae1dc56117d75a4d3e132b71f9aa45354e21e",
         "id": "S-REACT-FRAME",
         "line_ranges": [
           [
@@ -110,7 +110,7 @@
           "Sequences translate global frame to local frame.",
           "Series calculates cumulative offsets."
         ],
-        "file_sha256": "11e259b37c0afd210b4c357cf01932d4cc303708b3fcdcfce4a6a05ad2c13bd2",
+        "file_sha256": "e43e78ffa7fc2b924d24602604f01c625820fe33d6e110e04fadd1f7f91b4292",
         "id": "S-REACT-SEQUENCE",
         "line_ranges": [
           [
@@ -132,7 +132,7 @@
           "Motion blur evaluates fractional subframes.",
           "Full export materializes a Scene array."
         ],
-        "file_sha256": "07b882793476185be433ef905c5a19e28cb708b60aa756f0c870401a0c0d4d83",
+        "file_sha256": "4d59f24e5201b9c4ef1986d1dd8c10a12d4c46436d9a9acdd8d3947208443aa7",
         "id": "S-REACT-LOWER",
         "line_ranges": [
           [
@@ -152,7 +152,7 @@
         "facts": [
           "Registered font bytes are process-global mutable state."
         ],
-        "file_sha256": "49b3632681444e9db52626e2e42d404a25f33b5515d6406d6190370373f17884",
+        "file_sha256": "62dd867092a45e2d76ec81ab0581b451a1a536aa009b8bae979ba897c92759c0",
         "id": "S-REACT-STATE",
         "line_ranges": [
           [
@@ -172,7 +172,7 @@
         "facts": [
           "Warmers are process-global and failures are best-effort."
         ],
-        "file_sha256": "c52f79f3a1a1a8a3969765a08d027a6a38b5437e064db19ae4641dc8ed4a4a0d",
+        "file_sha256": "4860a682c88fde481fc5cb92f360b7c0658d31a6366a0ad6df120177174eced1",
         "id": "S-REACT-WARM",
         "line_ranges": [
           [
@@ -192,7 +192,7 @@
         "facts": [
           "Tests establish frame evaluation and lowering behavior."
         ],
-        "file_sha256": "08cf96c78756d3d46d1fc5a1a9e71ce7f1c97a1433754e29370bc74e1472cb93",
+        "file_sha256": "8264478f134c26e631385c2aaa36f3fabf0823b6b0edd1312f20eda2b90fe9d1",
         "id": "S-REACT-TEST",
         "line_ranges": [
           [
@@ -212,7 +212,7 @@
         "facts": [
           "Cinema preserves scene, track, entry, role, component, choreography, transition, brand, and finish semantics before lowering."
         ],
-        "file_sha256": "51dd0c96d7aa2037c4260c5f68fa4ffbd9cd6675c7e539baf2f9b9f4b9c2d8a7",
+        "file_sha256": "07b3bdf0874067c54d92b2d1b6fcebb6be395172335c63f72a2b2207fd2f10df",
         "id": "S-CINEMA-TYPES",
         "line_ranges": [
           [
@@ -233,7 +233,7 @@
           "Time specifications become rounded frames.",
           "Scene overlaps shorten accumulated placement."
         ],
-        "file_sha256": "b4a172193dd8774af8377374b4aff71cf0196178447faf56b31bc7c52967a68f",
+        "file_sha256": "f6a12b1f7e19e2230659a47d7b84f39be81ee7963b5706cd8eea7b5ad78ed2d5",
         "id": "S-CINEMA-TIME",
         "line_ranges": [
           [
@@ -255,7 +255,7 @@
           "A caller may supply a custom component registry.",
           "Unknown components produce a visible placeholder."
         ],
-        "file_sha256": "bf86be86ca3cc8ba477274c02eecfd9569089eb37f91957fb373b497f0a47460",
+        "file_sha256": "5a37d1489b77a77faa540510834483c72d053de7ca79f08dda4edd1f7cac6487",
         "id": "S-CINEMA-COMPILER",
         "line_ranges": [
           [
@@ -275,7 +275,7 @@
         "facts": [
           "Inspection runs over the high-level Cinema payload rather than the lowered Scene."
         ],
-        "file_sha256": "045d552da4677490a566c2477289660d3cb9eb79841bd51af3ec3b3731a44150",
+        "file_sha256": "ae03a67186b0a3713e4557d263ec96d7b0ff37d3447b0fd38a81b35460390104",
         "id": "S-CINEMA-INSPECT",
         "line_ranges": [
           [
@@ -295,7 +295,7 @@
         "facts": [
           "Inspector identities derive from entry id or payload path and retain role labels."
         ],
-        "file_sha256": "58cd85638cf5a71270c35ecd8fc328faabbc157e072875092c9c3fdab44155d9",
+        "file_sha256": "85c135cd9eef651386a6bfd66835d1792df4b0d012b1446b37cc6fc93fdba0d6",
         "id": "S-CINEMA-RESOLVE",
         "line_ranges": [
           [
@@ -315,7 +315,7 @@
         "facts": [
           "Tests distinguish unknown component errors from unknown choreography warnings."
         ],
-        "file_sha256": "4422135f911dc0dbc192df8ceadb1c271cf69d3e1c8d6449f368d04271630aa7",
+        "file_sha256": "3cdbe9b651943f922b29abc1b8e89533cc4d4925a573c2fda5cd66d602eb4dca",
         "id": "S-CINEMA-TEST",
         "line_ranges": [
           [
@@ -338,7 +338,7 @@
           "Timeline nodes resolve an active clip for a requested frame.",
           "Current scene version is one."
         ],
-        "file_sha256": "2b06ffcd81e4cb0b927782c71ed0ee8821cb0589fe11441814a673614bdb87d2",
+        "file_sha256": "eaec06397ba05e92f5192643c83ce495d6917320b73572311c68812c68207d35",
         "id": "S-SCENE",
         "line_ranges": [
           [
@@ -359,7 +359,7 @@
           "Rust animation stores keyframe time in seconds and evaluates a cloned scene by NodeId.",
           "Missing targets are unchanged."
         ],
-        "file_sha256": "6116cd48e217bdc532a321b83d7725ad6c78fa4209dc12124d72e534ca27f120",
+        "file_sha256": "041bc23b67d2e8c9d4d99ec87b2188b033bc93cf0124858d0e14dfad934c5ad1",
         "id": "S-ANIMATION",
         "line_ranges": [
           [
@@ -379,7 +379,7 @@
         "facts": [
           "Layout is a clone-and-rewrite prepass that materializes absolute child translations."
         ],
-        "file_sha256": "469e126c759af1a2877506a6e3f9bf2c5455083b3baddd3c1e3d3e7233a0be1c",
+        "file_sha256": "edb986f05d129dc0fdd45764887fce00822ca77adde49cbfffa4a088c3d963fd",
         "id": "S-LAYOUT",
         "line_ranges": [
           [
@@ -400,7 +400,7 @@
           "Image decoding attaches skipped pixel data and may downscale.",
           "Remote URLs remain unresolved and are skipped by renderers."
         ],
-        "file_sha256": "258b4914d4fee35aa147ea4352d78abb87c6ec7a0e5e27d9d52b51142f4410d8",
+        "file_sha256": "9f903d801b6186942f8ef7cf442447a698a91deef8f66ce581a98403ab9f582c",
         "id": "S-IMAGE",
         "line_ranges": [
           [
@@ -421,7 +421,7 @@
           "SVG is parsed and lowered to supported scene shapes.",
           "Unsupported SVG features are not preserved as authoring semantics."
         ],
-        "file_sha256": "99dc1d71af5b34474d990646e316a0a3b21fc960317d8d275399331e8731ab0c",
+        "file_sha256": "7f6573aabd8cd287724c31234c751a79d25aad9c187b21703f5fd75a23a47498",
         "id": "S-SVG",
         "line_ranges": [
           [
@@ -441,7 +441,7 @@
         "facts": [
           "Node export materializes all React scenes into a temporary JSON array and invokes the native CLI."
         ],
-        "file_sha256": "c7019388693961e376658e95b5751ff484f8e042352717033c87edf457439fec",
+        "file_sha256": "4f3c888f45b60cd02c3911acc622c93f5eb87e5d365cc64cf9f80c359f2d0167",
         "id": "S-NODE-EXPORT",
         "line_ranges": [
           [
@@ -463,7 +463,7 @@
           "GPU work is serialized per engine and intermediate frames may be dropped.",
           "Runtime renderer failure demotes to a fallback."
         ],
-        "file_sha256": "b45f3a5aceb041acb85d562e2c0ab4fa75332d5b79cad524fb70726297e5e137",
+        "file_sha256": "be84195324d0dbbadf41ecef6cac844d62b4d59900ae8418be4ce1725c839847",
         "id": "S-PLAYER",
         "line_ranges": [
           [
@@ -484,7 +484,7 @@
           "Preview audio has an instance clock mapping and is muted off-speed.",
           "Decode failures warn and skip."
         ],
-        "file_sha256": "b2e7b3c8138325543c14f8097fa7a9fdfb50e4ab732478e67d837bd087a8a2d2",
+        "file_sha256": "3cdb79c33fda6e27df41832229569380de201978407555658b04fb5fcdb6e418",
         "id": "S-AUDIO",
         "line_ranges": [
           [
@@ -505,7 +505,7 @@
           "Preview video is bucketed at thirty source frames per second and may hold the last good decoded frame.",
           "A DOM overlay fallback is preview-only."
         ],
-        "file_sha256": "65f253906fccc2d794bd66d6e138962bf99a8e9212b7cc033acf66568f159351",
+        "file_sha256": "7f81bfa87bf2378ef2f43d1a772e1b539ba64e17ad8469693740bcdefdbaa2ea",
         "id": "S-VIDEO",
         "line_ranges": [
           [
@@ -525,7 +525,7 @@
         "facts": [
           "Canvas fallback omits image and SVG nodes and approximates text and procedural gradients."
         ],
-        "file_sha256": "b3b87cd9ea8e1e04c4349bcb8d80451cc32c778bd86c1a17dcb726ea8baa8643",
+        "file_sha256": "ca2e85f68e08e88558edabf559b1fcdf193f4de8914b719bd02c42561fc8b1c6",
         "id": "S-CANVAS",
         "line_ranges": [
           [
@@ -545,7 +545,7 @@
         "facts": [
           "CPU WASM parses Scene JSON then conditionally runs image and layout prepasses before rendering."
         ],
-        "file_sha256": "26b1338d6e123b37ea91df2ea05f09f23530f0bd5eab61788473208da8d486c0",
+        "file_sha256": "e5188c952cd7812c37dfbb9097229e7572d86fb289cf69c591fafd469961361c",
         "id": "S-WASM",
         "line_ranges": [
           [
@@ -565,7 +565,7 @@
         "facts": [
           "GPU WASM follows the same JSON, image, and layout boundary before asynchronous rendering."
         ],
-        "file_sha256": "c0378bdc979f522a24931be7b7129601e48f135671a6806974abb947622ac145",
+        "file_sha256": "28a429dc0a01580fdd6915e1fc0ec387b5bbba15d8502c1dfe193b5ac21396f8",
         "id": "S-WASM-VELLO",
         "line_ranges": [
           [
@@ -586,7 +586,7 @@
           "Native commands parse scene JSON and run ordered source, timeline, SVG, image, layout, and render stages.",
           "Auto backend may choose GPU or CPU."
         ],
-        "file_sha256": "09f7d6dbb7165845f904bbe3a01be0ac59aa427b057d59a0eafd79a53f77e8b7",
+        "file_sha256": "e58aff89cd79b842f470992de290a50ffc82c139a0d326ec4677c2544b50a8b9",
         "id": "S-CLI",
         "line_ranges": [
           [
@@ -614,7 +614,7 @@
         "facts": [
           "The packaged component catalog is finite and schema-described."
         ],
-        "file_sha256": "48d4d99b9af35e189ad70b97a83da7d8f18f34f0cd86218f7681bd6eeb4733aa",
+        "file_sha256": "580fde84594dbbbbf359491848125b7d1978adac72987913ae0178160f933ee7",
         "id": "S-COMPONENTS",
         "line_ranges": [
           [
