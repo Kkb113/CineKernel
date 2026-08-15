@@ -1,0 +1,186 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/architecture-graph.schema.json",
+  "data": {
+    "architecture_edges": [
+      {
+        "from": "N-CINEMA",
+        "id": "AE-01",
+        "kind": "lowers",
+        "source_refs": [
+          "S-CINEMA-COMPILER"
+        ],
+        "to": "N-REACT"
+      },
+      {
+        "from": "N-CINEMA",
+        "id": "AE-02",
+        "kind": "inspects",
+        "source_refs": [
+          "S-CINEMA-INSPECT",
+          "S-CINEMA-RESOLVE"
+        ],
+        "to": "N-INSPECT"
+      },
+      {
+        "from": "N-REACT",
+        "id": "AE-03",
+        "kind": "reconciles",
+        "source_refs": [
+          "S-REACT-HOST",
+          "S-REACT-LOWER"
+        ],
+        "to": "N-HOST"
+      },
+      {
+        "from": "N-HOST",
+        "id": "AE-04",
+        "kind": "lowers",
+        "source_refs": [
+          "S-REACT-LOWER"
+        ],
+        "to": "N-SCENE"
+      },
+      {
+        "from": "N-TIMELINE",
+        "id": "AE-05",
+        "kind": "evaluates",
+        "source_refs": [
+          "S-ANIMATION"
+        ],
+        "to": "N-SCENE"
+      },
+      {
+        "from": "N-SCENE",
+        "id": "AE-06",
+        "kind": "normalizes",
+        "source_refs": [
+          "S-CLI",
+          "S-WASM",
+          "S-WASM-VELLO"
+        ],
+        "to": "N-PREPASSES"
+      },
+      {
+        "from": "N-PREPASSES",
+        "id": "AE-07",
+        "kind": "feeds",
+        "source_refs": [
+          "S-WASM",
+          "S-CLI"
+        ],
+        "to": "N-CPU"
+      },
+      {
+        "from": "N-PREPASSES",
+        "id": "AE-08",
+        "kind": "feeds",
+        "source_refs": [
+          "S-WASM-VELLO",
+          "S-CLI"
+        ],
+        "to": "N-GPU"
+      },
+      {
+        "from": "N-SCENE",
+        "id": "AE-09",
+        "kind": "approximates",
+        "source_refs": [
+          "S-CANVAS"
+        ],
+        "to": "N-CANVAS"
+      },
+      {
+        "from": "N-CPU",
+        "id": "AE-10",
+        "kind": "rasterizes",
+        "source_refs": [
+          "S-CLI"
+        ],
+        "to": "N-ENCODER"
+      },
+      {
+        "from": "N-GPU",
+        "id": "AE-11",
+        "kind": "rasterizes",
+        "source_refs": [
+          "S-CLI"
+        ],
+        "to": "N-ENCODER"
+      },
+      {
+        "from": "N-PLAYER",
+        "id": "AE-12",
+        "kind": "requests-frame",
+        "source_refs": [
+          "S-PLAYER"
+        ],
+        "to": "N-REACT"
+      }
+    ],
+    "architecture_nodes": [
+      {
+        "id": "N-CINEMA",
+        "kind": "authoring",
+        "label": "Cinema payload"
+      },
+      {
+        "id": "N-REACT",
+        "kind": "authoring",
+        "label": "React program"
+      },
+      {
+        "id": "N-HOST",
+        "kind": "intermediate",
+        "label": "mutable HostNode tree"
+      },
+      {
+        "id": "N-SCENE",
+        "kind": "intermediate",
+        "label": "per-frame Scene"
+      },
+      {
+        "id": "N-TIMELINE",
+        "kind": "intermediate",
+        "label": "Rust timeline"
+      },
+      {
+        "id": "N-PREPASSES",
+        "kind": "prepass",
+        "label": "source, timeline, SVG, image, layout prepasses"
+      },
+      {
+        "id": "N-CPU",
+        "kind": "renderer",
+        "label": "CPU renderer"
+      },
+      {
+        "id": "N-GPU",
+        "kind": "renderer",
+        "label": "Vello GPU renderer"
+      },
+      {
+        "id": "N-CANVAS",
+        "kind": "fallback",
+        "label": "Canvas2D preview"
+      },
+      {
+        "id": "N-ENCODER",
+        "kind": "sink",
+        "label": "image or media encoder"
+      },
+      {
+        "id": "N-INSPECT",
+        "kind": "analysis",
+        "label": "Cinema inspector"
+      },
+      {
+        "id": "N-PLAYER",
+        "kind": "scheduler",
+        "label": "browser player clock"
+      }
+    ]
+  },
+  "generated_at": "2026-08-15T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.1"
+}

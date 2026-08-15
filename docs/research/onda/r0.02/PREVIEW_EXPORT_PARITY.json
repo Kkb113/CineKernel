@@ -1,0 +1,60 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/preview-export-parity.schema.json",
+  "data": {
+    "preview_export_parity": [
+      {
+        "export": "shared core renderer",
+        "feature": "Scene geometry through CPU or GPU engine",
+        "parity": "strong-conditional",
+        "preview": "shared core renderer",
+        "source_refs": [
+          "S-WASM",
+          "S-WASM-VELLO",
+          "S-CLI"
+        ]
+      },
+      {
+        "export": "not used",
+        "feature": "Canvas2D",
+        "parity": "none",
+        "preview": "approximate and incomplete",
+        "source_refs": [
+          "S-CANVAS"
+        ]
+      },
+      {
+        "export": "native media decoding",
+        "feature": "video",
+        "parity": "conditional",
+        "preview": "browser decode, thirty-Hz bucket, last-good hold or DOM overlay",
+        "source_refs": [
+          "S-VIDEO",
+          "S-CLI"
+        ]
+      },
+      {
+        "export": "offline mux",
+        "feature": "audio",
+        "parity": "conditional",
+        "preview": "AudioContext scheduling; muted off-speed",
+        "source_refs": [
+          "S-AUDIO",
+          "S-CLI"
+        ]
+      },
+      {
+        "export": "every authored frame or subframe",
+        "feature": "scheduling",
+        "parity": "semantic-output-only",
+        "preview": "wall-clock requests may skip intermediate frames",
+        "source_refs": [
+          "S-PLAYER",
+          "S-NODE-EXPORT"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-08-15T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.1"
+}

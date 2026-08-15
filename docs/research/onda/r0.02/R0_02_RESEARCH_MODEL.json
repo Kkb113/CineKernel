@@ -1,0 +1,199 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/research-model.schema.json",
+  "model_version": "r0.02.1",
+  "generated_at": "2026-08-15T00:00:00Z",
+  "cinekernel_base": "974d93ef224b75383499cdb2b70cc086a0dd6f40",
+  "onda_pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+  "onda_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+  "method": {
+    "kind": "clean-room-static-archaeology",
+    "source_precedence": ["implementation", "test", "manifest", "documentation", "external-official", "comment", "inference"],
+    "execution_prohibited": true,
+    "permanent_dependencies": {"onda": 0, "remotion": 0, "hyperframes": 0}
+  },
+  "sources": [
+    {"id":"S-README","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"README.md","blob":"c1c0524d1371d114d5c0a1130dd19fef1cc8f07a","symbol":"repository overview","line_ranges":[[1,240]],"file_sha256":"2da2f4bd3ef9b974e51a34a9b991999b13ff58afa53eaa0b88156fe1174c6077","classification":"documentation","facts":["Publicly described authoring and rendering surfaces."]},
+    {"id":"S-ROOT-CARGO","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"Cargo.toml","blob":"91456b9c52568dcd41dd2588c39643d12bdf263e","symbol":"workspace","line_ranges":[[1,180]],"file_sha256":"0334ccfff382f497d87acfe47c3e45be5e8257fee56848c84631230c6ef1e2f7","classification":"manifest","facts":["Rust package and renderer boundaries."]},
+    {"id":"S-ROOT-PKG","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"package.json","blob":"ecc02f78f9cf336564f5328a0ee9e338674ee7b0","symbol":"workspace scripts","line_ranges":[[1,180]],"file_sha256":"c0af4239572c3d7025dd20098ab0fc6771dc0362b965c8c2ddde0ff9e4b225cb","classification":"manifest","facts":["JavaScript package and test boundaries."]},
+    {"id":"S-REACT-HOST","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/react/src/host-config.ts","blob":"93a654a83fc641bbda1d8d04a109e514fd038594","symbol":"hostConfig and HostNode","line_ranges":[[1,260]],"file_sha256":"f3d5852ed481cc4174e84d469e84e574e3e4f2c6779ddfd30f5a1b9ce9b37007","classification":"implementation","facts":["Custom reconciler uses mutable HostNode children.","Persistence and hydration are disabled."]},
+    {"id":"S-REACT-FRAME","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/react/src/frame.ts","blob":"18283e80c56bd6d40a862ab08258f28b1114e544","symbol":"FrameContext","line_ranges":[[1,130]],"file_sha256":"e75cd9c3adf592105d44f0216af774fca49e08fa7a06e6d6b68e803a6589e5ad","classification":"implementation","facts":["Frame and video configuration are context values."]},
+    {"id":"S-REACT-SEQUENCE","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/react/src/sequence.ts","blob":"7b9dcb0fef79d2b0debde0ca452e5e349beb4897","symbol":"Sequence Loop Series","line_ranges":[[1,290]],"file_sha256":"11e259b37c0afd210b4c357cf01932d4cc303708b3fcdcfce4a6a05ad2c13bd2","classification":"implementation","facts":["Sequences translate global frame to local frame.","Series calculates cumulative offsets."]},
+    {"id":"S-REACT-LOWER","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/react/src/reconciler.ts","blob":"484be37c2c79f5b4c530d5897fa2228800fd38d5","symbol":"renderFrame renderFrames hostNodeToSceneNode","line_ranges":[[1,1100]],"file_sha256":"07b882793476185be433ef905c5a19e28cb708b60aa756f0c870401a0c0d4d83","classification":"implementation","facts":["Each requested frame creates, commits, lowers, unmounts, and discards a fresh React root.","Motion blur evaluates fractional subframes.","Full export materializes a Scene array."]},
+    {"id":"S-REACT-STATE","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/react/src/fonts.ts","blob":"7dc5ee86479ef54bfa3378d43e9f20de718db192","symbol":"font registry","line_ranges":[[1,180]],"file_sha256":"49b3632681444e9db52626e2e42d404a25f33b5515d6406d6190370373f17884","classification":"implementation","facts":["Registered font bytes are process-global mutable state."]},
+    {"id":"S-REACT-WARM","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/react/src/warmers.ts","blob":"e37b9f5e8295ac83cfefe8ade7c7c61df56bd812","symbol":"warmer registry","line_ranges":[[1,170]],"file_sha256":"c52f79f3a1a1a8a3969765a08d027a6a38b5437e064db19ae4641dc8ed4a4a0d","classification":"implementation","facts":["Warmers are process-global and failures are best-effort."]},
+    {"id":"S-REACT-TEST","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/react/src/reconciler.test.tsx","blob":"2377070448bedad3d90d7669d3cf2bddfc777cf6","symbol":"reconciler behavioral tests","line_ranges":[[1,1200]],"file_sha256":"08cf96c78756d3d46d1fc5a1a9e71ce7f1c97a1433754e29370bc74e1472cb93","classification":"test","facts":["Tests establish frame evaluation and lowering behavior."]},
+    {"id":"S-CINEMA-TYPES","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/cinema/src/types.ts","blob":"1fb71040324f5247eb56f591cd9c3f9f13f62c31","symbol":"CinemaPayload","line_ranges":[[1,620]],"file_sha256":"51dd0c96d7aa2037c4260c5f68fa4ffbd9cd6675c7e539baf2f9b9f4b9c2d8a7","classification":"implementation","facts":["Cinema preserves scene, track, entry, role, component, choreography, transition, brand, and finish semantics before lowering."]},
+    {"id":"S-CINEMA-TIME","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/cinema/src/timing.ts","blob":"f3393683ce56d62d2cc50c7a9c2aaa326c7e83a4","symbol":"toFrames computePlacements","line_ranges":[[1,300]],"file_sha256":"b4a172193dd8774af8377374b4aff71cf0196178447faf56b31bc7c52967a68f","classification":"implementation","facts":["Time specifications become rounded frames.","Scene overlaps shorten accumulated placement."]},
+    {"id":"S-CINEMA-COMPILER","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/cinema/src/index.tsx","blob":"91f331f1620482fe8668ddbbc76a489124920682","symbol":"buildComposition","line_ranges":[[1,1100]],"file_sha256":"bf86be86ca3cc8ba477274c02eecfd9569089eb37f91957fb373b497f0a47460","classification":"implementation","facts":["Cinema resolves a finite choreography and transition vocabulary to React elements.","A caller may supply a custom component registry.","Unknown components produce a visible placeholder."]},
+    {"id":"S-CINEMA-INSPECT","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/cinema/src/inspect/index.ts","blob":"c9aa10fbd004f1859b1972cef376ab217b97a9ea","symbol":"inspectComposition","line_ranges":[[1,260]],"file_sha256":"045d552da4677490a566c2477289660d3cb9eb79841bd51af3ec3b3731a44150","classification":"implementation","facts":["Inspection runs over the high-level Cinema payload rather than the lowered Scene."]},
+    {"id":"S-CINEMA-RESOLVE","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/cinema/src/inspect/resolve.ts","blob":"06aee728e309ce767a0a725b5b3e5a65a858fa8e","symbol":"resolveComposition","line_ranges":[[1,420]],"file_sha256":"58cd85638cf5a71270c35ecd8fc328faabbc157e072875092c9c3fdab44155d9","classification":"implementation","facts":["Inspector identities derive from entry id or payload path and retain role labels."]},
+    {"id":"S-CINEMA-TEST","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/cinema/src/validate.test.tsx","blob":"23633715c3b4e2b04f63f381091a1d967fd46f82","symbol":"validation tests","line_ranges":[[1,800]],"file_sha256":"4422135f911dc0dbc192df8ceadb1c271cf69d3e1c8d6449f368d04271630aa7","classification":"test","facts":["Tests distinguish unknown component errors from unknown choreography warnings."]},
+    {"id":"S-SCENE","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/scene-rs/src/lib.rs","blob":"6e650e50ef2b0cc7adc83ceb2a807bfa4df2917c","symbol":"Scene Node NodeKind Timeline","line_ranges":[[1,1900]],"file_sha256":"2b06ffcd81e4cb0b927782c71ed0ee8821cb0589fe11441814a673614bdb87d2","classification":"implementation","facts":["Scene is a composition plus a finite node tree.","Optional numeric NodeId supports addressing.","Timeline nodes resolve an active clip for a requested frame.","Current scene version is one."]},
+    {"id":"S-ANIMATION","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/animation-rs/src/lib.rs","blob":"ee87aa2a9ec9d1f7dc1cdf5d14fce9e3748ed852","symbol":"Timeline evaluate_frame","line_ranges":[[1,620]],"file_sha256":"6116cd48e217bdc532a321b83d7725ad6c78fa4209dc12124d72e534ca27f120","classification":"implementation","facts":["Rust animation stores keyframe time in seconds and evaluates a cloned scene by NodeId.","Missing targets are unchanged."]},
+    {"id":"S-LAYOUT","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/layout-rs/src/lib.rs","blob":"95ffb7f27881530833a86ad89fa842e7d1744d60","symbol":"layout","line_ranges":[[1,360]],"file_sha256":"469e126c759af1a2877506a6e3f9bf2c5455083b3baddd3c1e3d3e7233a0be1c","classification":"implementation","facts":["Layout is a clone-and-rewrite prepass that materializes absolute child translations."]},
+    {"id":"S-IMAGE","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/image-rs/src/lib.rs","blob":"3bc10936de5e457f7cfeed0ed67046dcf123f85a","symbol":"load_images","line_ranges":[[1,720]],"file_sha256":"258b4914d4fee35aa147ea4352d78abb87c6ec7a0e5e27d9d52b51142f4410d8","classification":"implementation","facts":["Image decoding attaches skipped pixel data and may downscale.","Remote URLs remain unresolved and are skipped by renderers."]},
+    {"id":"S-SVG","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/svg-rs/src/lib.rs","blob":"d8fbafaf7365fafcbd307eeb7de954bf02bd05c9","symbol":"expand_svg","line_ranges":[[1,620]],"file_sha256":"99dc1d71af5b34474d990646e316a0a3b21fc960317d8d275399331e8731ab0c","classification":"implementation","facts":["SVG is parsed and lowered to supported scene shapes.","Unsupported SVG features are not preserved as authoring semantics."]},
+    {"id":"S-NODE-EXPORT","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/render/src/index.ts","blob":"971e155db975f06f28a80b7ea924e0bb5cdaac9f","symbol":"render export bridge","line_ranges":[[1,520]],"file_sha256":"c7019388693961e376658e95b5751ff484f8e042352717033c87edf457439fec","classification":"implementation","facts":["Node export materializes all React scenes into a temporary JSON array and invokes the native CLI."]},
+    {"id":"S-PLAYER","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/player/src/player.tsx","blob":"1f621b6b3f9c244f975f9ed5e5789d83f9e8a2c3","symbol":"Player","line_ranges":[[187,580]],"file_sha256":"b45f3a5aceb041acb85d562e2c0ab4fa75332d5b79cad524fb70726297e5e137","classification":"implementation","facts":["Preview renders requested frames on demand.","GPU work is serialized per engine and intermediate frames may be dropped.","Runtime renderer failure demotes to a fallback."]},
+    {"id":"S-AUDIO","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/player/src/audio-engine.ts","blob":"a89e4b7c278fb66a0a7a8432c41effa249167fd3","symbol":"AudioEngine","line_ranges":[[1,310]],"file_sha256":"b2e7b3c8138325543c14f8097fa7a9fdfb50e4ab732478e67d837bd087a8a2d2","classification":"implementation","facts":["Preview audio has an instance clock mapping and is muted off-speed.","Decode failures warn and skip."]},
+    {"id":"S-VIDEO","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/player/src/video.ts","blob":"c18b2360a46b7acf79f0e83a1f666375ed4b1292","symbol":"resolveVideoFrames","line_ranges":[[1,300]],"file_sha256":"65f253906fccc2d794bd66d6e138962bf99a8e9212b7cc033acf66568f159351","classification":"implementation","facts":["Preview video is bucketed at thirty source frames per second and may hold the last good decoded frame.","A DOM overlay fallback is preview-only."]},
+    {"id":"S-CANVAS","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/player/src/canvas-renderer.ts","blob":"ceab5a9cbc86e6391db1c6b5a786c4dbfe883fe1","symbol":"drawScene","line_ranges":[[1,197]],"file_sha256":"b3b87cd9ea8e1e04c4349bcb8d80451cc32c778bd86c1a17dcb726ea8baa8643","classification":"implementation","facts":["Canvas fallback omits image and SVG nodes and approximates text and procedural gradients."]},
+    {"id":"S-WASM","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/wasm/src/lib.rs","blob":"ab4ff309362044ad594efe45cd9934cf24bb0978","symbol":"OndaEngine render","line_ranges":[[174,265]],"file_sha256":"26b1338d6e123b37ea91df2ea05f09f23530f0bd5eab61788473208da8d486c0","classification":"implementation","facts":["CPU WASM parses Scene JSON then conditionally runs image and layout prepasses before rendering."]},
+    {"id":"S-WASM-VELLO","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/wasm-vello/src/lib.rs","blob":"3741dd4bdf17187f5b2931c3b30430e6e91226a0","symbol":"VelloEngine render","line_ranges":[[100,175]],"file_sha256":"c0378bdc979f522a24931be7b7129601e48f135671a6806974abb947622ac145","classification":"implementation","facts":["GPU WASM follows the same JSON, image, and layout boundary before asynchronous rendering."]},
+    {"id":"S-CLI","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/cli-rs/src/main.rs","blob":"fabf0315afff1308ed1114338d0c4449f2be15be","symbol":"render and export commands","line_ranges":[[763,900],[1367,1510],[1600,1810]],"file_sha256":"09f7d6dbb7165845f904bbe3a01be0ac59aa427b057d59a0eafd79a53f77e8b7","classification":"implementation","facts":["Native commands parse scene JSON and run ordered source, timeline, SVG, image, layout, and render stages.","Auto backend may choose GPU or CPU."]},
+    {"id":"S-COMPONENTS","repository":"https://github.com/onda-video/onda","pin":"3ddf1780c9799bf038ac90cec7d8cadb61acafbe","tree":"639df83ebf0262afccd6d021bf6d16ef19777d85","path":"packages/components/src/manifest.ts","blob":"4a26286613b57e8248a7bc7f5823c1fbdb5f2ab5","symbol":"component manifest","line_ranges":[[1,700]],"file_sha256":"48d4d99b9af35e189ad70b97a83da7d8f18f34f0cd86218f7681bd6eeb4733aa","classification":"implementation","facts":["The packaged component catalog is finite and schema-described."]},
+    {"id":"E-REACT","publisher":"Meta Open Source","title":"Render and Commit","url":"https://react.dev/learn/render-and-commit","accessed_at":"2026-08-15T00:00:00Z","section":"Render and commit","classification":"external-official","facts":["React separates recursive render calculation from commit mutations and recommends pure rendering."]},
+    {"id":"E-MLIR","publisher":"LLVM Project","title":"MLIR Rationale","url":"https://mlir.llvm.org/docs/Rationale/MLIRForGraphAlgorithms/","accessed_at":"2026-08-15T00:00:00Z","section":"Incremental lowering","classification":"external-official","facts":["Multi-level representations can preserve useful abstraction until progressive lowering is justified."]},
+    {"id":"E-GSTREAMER","publisher":"GStreamer Project","title":"Design overview","url":"https://gstreamer.freedesktop.org/documentation/additional/design/overview.html","accessed_at":"2026-08-15T00:00:00Z","section":"Pipeline and clock","classification":"external-official","facts":["A media pipeline makes graph direction, element boundaries, messages, and a shared running-time clock explicit."]}
+  ],
+  "authoring_surfaces": [
+    {"id":"AS-REACT","name":"React composition","owner":"JavaScript host program","input_shape":"React element tree plus frame context","identity":"React keys during reconciliation; optional numeric Scene ids only when authored","time":"integer or fractional composition frame","validation":"runtime prop checks and host-node conversion","extension":"arbitrary host-language components lowering to finite primitives","creativity":"open-programmable","output":"one Scene per evaluation","source_refs":["S-REACT-HOST","S-REACT-LOWER","S-REACT-TEST"]},
+    {"id":"AS-CINEMA","name":"Cinema payload","owner":"serialized high-level document","input_shape":"scenes, tracks, entries, roles, registry component names, choreography, transitions, brand","identity":"scene, track, and entry strings plus payload paths","time":"TimeSpec normalized to rounded frames","validation":"pre-lowering errors and warnings","extension":"custom registry plus finite built-in choreography and transition vocabulary","creativity":"schema-guided-extensible","output":"React composition","source_refs":["S-CINEMA-TYPES","S-CINEMA-TIME","S-CINEMA-COMPILER"]},
+    {"id":"AS-JSON","name":"Direct Scene JSON","owner":"document producer","input_shape":"composition plus finite NodeKind tree","identity":"optional numeric NodeId","time":"composition frames and media seconds","validation":"serde parse plus prepass errors","extension":"finite scene schema","creativity":"low-level-open-composition","output":"renderer input","source_refs":["S-SCENE","S-CLI"]},
+    {"id":"AS-RUST","name":"Rust Scene and AnimatedScene","owner":"Rust caller","input_shape":"typed Scene plus optional Timeline and audio tracks","identity":"optional NodeId targeted by tracks","time":"keyframes in seconds evaluated by frame divided by fps","validation":"type system plus serde/runtime behavior","extension":"Rust construction within finite enums","creativity":"low-level-open-composition","output":"evaluated Scene","source_refs":["S-SCENE","S-ANIMATION"]},
+    {"id":"AS-COMPONENTS","name":"Component catalog","owner":"package registry","input_shape":"named component plus schema-described props","identity":"component name before expansion","time":"component-defined frame calculations","validation":"manifest schema and component logic","extension":"new package code or caller registry","creativity":"finite-catalog-with-code-escape","output":"React primitive subtree","source_refs":["S-COMPONENTS","S-CINEMA-COMPILER"]}
+  ],
+  "architecture_nodes": [
+    {"id":"N-CINEMA","kind":"authoring","label":"Cinema payload"},
+    {"id":"N-REACT","kind":"authoring","label":"React program"},
+    {"id":"N-HOST","kind":"intermediate","label":"mutable HostNode tree"},
+    {"id":"N-SCENE","kind":"intermediate","label":"per-frame Scene"},
+    {"id":"N-TIMELINE","kind":"intermediate","label":"Rust timeline"},
+    {"id":"N-PREPASSES","kind":"prepass","label":"source, timeline, SVG, image, layout prepasses"},
+    {"id":"N-CPU","kind":"renderer","label":"CPU renderer"},
+    {"id":"N-GPU","kind":"renderer","label":"Vello GPU renderer"},
+    {"id":"N-CANVAS","kind":"fallback","label":"Canvas2D preview"},
+    {"id":"N-ENCODER","kind":"sink","label":"image or media encoder"},
+    {"id":"N-INSPECT","kind":"analysis","label":"Cinema inspector"},
+    {"id":"N-PLAYER","kind":"scheduler","label":"browser player clock"}
+  ],
+  "architecture_edges": [
+    {"id":"AE-01","from":"N-CINEMA","to":"N-REACT","kind":"lowers","source_refs":["S-CINEMA-COMPILER"]},
+    {"id":"AE-02","from":"N-CINEMA","to":"N-INSPECT","kind":"inspects","source_refs":["S-CINEMA-INSPECT","S-CINEMA-RESOLVE"]},
+    {"id":"AE-03","from":"N-REACT","to":"N-HOST","kind":"reconciles","source_refs":["S-REACT-HOST","S-REACT-LOWER"]},
+    {"id":"AE-04","from":"N-HOST","to":"N-SCENE","kind":"lowers","source_refs":["S-REACT-LOWER"]},
+    {"id":"AE-05","from":"N-TIMELINE","to":"N-SCENE","kind":"evaluates","source_refs":["S-ANIMATION"]},
+    {"id":"AE-06","from":"N-SCENE","to":"N-PREPASSES","kind":"normalizes","source_refs":["S-CLI","S-WASM","S-WASM-VELLO"]},
+    {"id":"AE-07","from":"N-PREPASSES","to":"N-CPU","kind":"feeds","source_refs":["S-WASM","S-CLI"]},
+    {"id":"AE-08","from":"N-PREPASSES","to":"N-GPU","kind":"feeds","source_refs":["S-WASM-VELLO","S-CLI"]},
+    {"id":"AE-09","from":"N-SCENE","to":"N-CANVAS","kind":"approximates","source_refs":["S-CANVAS"]},
+    {"id":"AE-10","from":"N-CPU","to":"N-ENCODER","kind":"rasterizes","source_refs":["S-CLI"]},
+    {"id":"AE-11","from":"N-GPU","to":"N-ENCODER","kind":"rasterizes","source_refs":["S-CLI"]},
+    {"id":"AE-12","from":"N-PLAYER","to":"N-REACT","kind":"requests-frame","source_refs":["S-PLAYER"]}
+  ],
+  "claims": [
+    {"id":"C-001","statement":"React authoring is programmatic, but its render boundary is a finite scene vocabulary.","status":"verified","confidence":0.99,"source_refs":["S-REACT-HOST","S-REACT-LOWER","S-SCENE"]},
+    {"id":"C-002","statement":"React component state is not retained between output frames because every frame uses a fresh root that is unmounted.","status":"verified","confidence":0.99,"source_refs":["S-REACT-LOWER","S-REACT-TEST"]},
+    {"id":"C-003","statement":"Cinema retains more editorial identity and intent than Scene, while its inspector is a parallel high-level analysis path.","status":"verified","confidence":0.98,"source_refs":["S-CINEMA-TYPES","S-CINEMA-INSPECT","S-CINEMA-RESOLVE"]},
+    {"id":"C-004","statement":"Cinema roles, choreography names, brand identity, and most string ids do not survive as first-class Scene fields.","status":"verified","confidence":0.96,"source_refs":["S-CINEMA-COMPILER","S-CINEMA-TYPES","S-SCENE"]},
+    {"id":"C-005","statement":"Direct Scene JSON and typed Rust construction converge at the same finite Scene contract.","status":"verified","confidence":0.99,"source_refs":["S-SCENE","S-CLI","S-WASM"]},
+    {"id":"C-006","statement":"Layout, SVG, image, video, and timeline behavior includes destructive or materializing prepasses rather than a single immutable IR pipeline.","status":"verified","confidence":0.97,"source_refs":["S-LAYOUT","S-SVG","S-IMAGE","S-VIDEO","S-CLI"]},
+    {"id":"C-007","statement":"GPU and CPU preview can share renderer semantics with native export, but browser media resolution and scheduling keep end-to-end parity conditional.","status":"verified","confidence":0.96,"source_refs":["S-PLAYER","S-VIDEO","S-AUDIO","S-WASM","S-WASM-VELLO","S-CLI"]},
+    {"id":"C-008","statement":"Canvas2D is an explicit approximation and not a parity path.","status":"verified","confidence":0.99,"source_refs":["S-CANVAS","S-PLAYER"]},
+    {"id":"C-009","statement":"Full React export materializes every evaluated frame before the native export call, creating duration-proportional scene memory and JSON I/O.","status":"verified","confidence":0.99,"source_refs":["S-REACT-LOWER","S-NODE-EXPORT"]},
+    {"id":"C-010","statement":"Global registries and caches require explicit isolation if authoring evaluation is parallelized or made multi-tenant.","status":"verified","confidence":0.94,"source_refs":["S-REACT-STATE","S-REACT-WARM","S-PLAYER","S-VIDEO"]},
+    {"id":"C-011","statement":"A future CineKernel IR should preserve stable identity, semantic intent, time domains, diagnostics, and capability requirements until explicit lowering stages.","status":"candidate","confidence":0.91,"source_refs":["S-CINEMA-TYPES","S-CINEMA-RESOLVE","S-SCENE","E-MLIR","E-GSTREAMER"]},
+    {"id":"C-012","statement":"React's render and commit model is analogous only at a high level; ONDA deliberately remounts per frame rather than preserving a committed application tree.","status":"verified","confidence":0.97,"source_refs":["S-REACT-LOWER","E-REACT"]}
+  ],
+  "hypotheses": [
+    {"id":"H-R002-001","statement":"ONDA exposes more than one authoring surface.","verdict":"verified","source_refs":["S-README","S-CINEMA-TYPES","S-SCENE"]},
+    {"id":"H-R002-002","statement":"Cinema is a semantic compiler into React rather than the renderer IR itself.","verdict":"verified","source_refs":["S-CINEMA-COMPILER","S-REACT-LOWER"]},
+    {"id":"H-R002-003","statement":"React evaluation retains component state across output frames.","verdict":"rejected","source_refs":["S-REACT-LOWER","S-REACT-TEST"]},
+    {"id":"H-R002-004","statement":"All high-level Cinema identity survives lowering into Scene.","verdict":"rejected","source_refs":["S-CINEMA-TYPES","S-CINEMA-COMPILER","S-SCENE"]},
+    {"id":"H-R002-005","statement":"Preview and export are unconditionally identical.","verdict":"rejected","source_refs":["S-PLAYER","S-VIDEO","S-AUDIO","S-CANVAS","S-CLI"]},
+    {"id":"H-R002-006","statement":"Frame materialization creates a scalability risk for long React exports.","verdict":"verified","source_refs":["S-REACT-LOWER","S-NODE-EXPORT"]},
+    {"id":"H-R002-007","statement":"The finite primitive scene graph prevents novel visuals entirely.","verdict":"rejected","source_refs":["S-SCENE","S-REACT-LOWER","S-COMPONENTS"]}
+  ],
+  "state_and_time": {
+    "state": [
+      {"owner":"React frame evaluation","scope":"one evaluation","mutable":true,"reentrant":"isolated by fresh root","source_refs":["S-REACT-LOWER"]},
+      {"owner":"font and warmer registries","scope":"process","mutable":true,"reentrant":"requires coordination","source_refs":["S-REACT-STATE","S-REACT-WARM"]},
+      {"owner":"Player","scope":"component instance","mutable":true,"reentrant":"GPU engine serialized globally","source_refs":["S-PLAYER"]},
+      {"owner":"video caches","scope":"browser module","mutable":true,"reentrant":"seeks serialized per source","source_refs":["S-VIDEO"]}
+    ],
+    "time_domains": [
+      {"name":"composition frame","unit":"frame","conversion":"seconds = frame / fps","rounding":"surface-dependent","source_refs":["S-REACT-FRAME","S-CINEMA-TIME","S-ANIMATION"]},
+      {"name":"sequence-local frame","unit":"frame","conversion":"outer frame minus sequence start","rounding":"none","source_refs":["S-REACT-SEQUENCE"]},
+      {"name":"Rust keyframe time","unit":"second","conversion":"frame / fps before interpolation","rounding":"none","source_refs":["S-ANIMATION"]},
+      {"name":"preview wall clock","unit":"millisecond","conversion":"floor elapsed scaled by rate over frame duration","rounding":"floor and skipped frames","source_refs":["S-PLAYER"]},
+      {"name":"preview video source","unit":"second","conversion":"rounded to one-thirtieth-second cache bucket","rounding":"nearest bucket","source_refs":["S-VIDEO"]}
+    ]
+  },
+  "identity_and_provenance": [
+    {"stage":"Cinema","identity":"scene, track, entry strings and payload path","preserved_to_next":true,"preserved_to_scene":false,"source_refs":["S-CINEMA-TYPES","S-CINEMA-RESOLVE"]},
+    {"stage":"React","identity":"element keys and optional numeric id prop","preserved_to_next":"partial","preserved_to_scene":"only explicit numeric id","source_refs":["S-REACT-HOST","S-REACT-LOWER"]},
+    {"stage":"Scene","identity":"optional numeric NodeId","preserved_to_next":true,"preserved_to_scene":true,"source_refs":["S-SCENE"]}
+  ],
+  "semantic_preservation": [
+    {"item":"geometry, paint, transform, opacity, effects, media source","outcome":"preserved or materialized","stage":"Scene","source_refs":["S-REACT-LOWER","S-SCENE"]},
+    {"item":"Cinema role, labels, choreography and transition names","outcome":"lost as first-class metadata","stage":"Cinema to React","source_refs":["S-CINEMA-TYPES","S-CINEMA-COMPILER"]},
+    {"item":"brand token identity","outcome":"materialized into resolved values","stage":"Cinema component expansion","source_refs":["S-CINEMA-COMPILER"]},
+    {"item":"flex layout intent","outcome":"replaced by absolute translations","stage":"layout prepass","source_refs":["S-LAYOUT"]},
+    {"item":"SVG document structure","outcome":"lowered to supported shapes with unsupported-feature loss","stage":"SVG prepass","source_refs":["S-SVG"]},
+    {"item":"image source encoding","outcome":"decoded, optionally resized, attached as skipped runtime pixels","stage":"image prepass","source_refs":["S-IMAGE"]}
+  ],
+  "validation_and_fallbacks": [
+    {"condition":"unknown Cinema component","behavior":"validation error and visible build placeholder","severity":"error","source_refs":["S-CINEMA-COMPILER","S-CINEMA-TEST"]},
+    {"condition":"unknown choreography","behavior":"warning and omission","severity":"warning","source_refs":["S-CINEMA-COMPILER","S-CINEMA-TEST"]},
+    {"condition":"unknown transition","behavior":"warning with cross-fade build fallback","severity":"warning","source_refs":["S-CINEMA-COMPILER","S-CINEMA-TEST"]},
+    {"condition":"missing Rust animation target","behavior":"silent unchanged scene","severity":"silent","source_refs":["S-ANIMATION"]},
+    {"condition":"remote image unresolved","behavior":"renderer skips unresolved pixels","severity":"silent","source_refs":["S-IMAGE"]},
+    {"condition":"preview video decode failure","behavior":"hold last good frame or warn and skip","severity":"degraded","source_refs":["S-VIDEO"]},
+    {"condition":"preview renderer failure","behavior":"demote GPU then CPU to Canvas2D","severity":"degraded","source_refs":["S-PLAYER","S-CANVAS"]}
+  ],
+  "preview_export_parity": [
+    {"feature":"Scene geometry through CPU or GPU engine","preview":"shared core renderer","export":"shared core renderer","parity":"strong-conditional","source_refs":["S-WASM","S-WASM-VELLO","S-CLI"]},
+    {"feature":"Canvas2D","preview":"approximate and incomplete","export":"not used","parity":"none","source_refs":["S-CANVAS"]},
+    {"feature":"video","preview":"browser decode, thirty-Hz bucket, last-good hold or DOM overlay","export":"native media decoding","parity":"conditional","source_refs":["S-VIDEO","S-CLI"]},
+    {"feature":"audio","preview":"AudioContext scheduling; muted off-speed","export":"offline mux","parity":"conditional","source_refs":["S-AUDIO","S-CLI"]},
+    {"feature":"scheduling","preview":"wall-clock requests may skip intermediate frames","export":"every authored frame or subframe","parity":"semantic-output-only","source_refs":["S-PLAYER","S-NODE-EXPORT"]}
+  ],
+  "serialization": {
+    "format":"JSON",
+    "scene_version":1,
+    "current_version_omitted":true,
+    "future_version_roundtrip":"observed",
+    "unknown_fields":"serde-default acceptance inferred; requires focused compatibility contract",
+    "runtime_pixels_serialized":false,
+    "source_refs":["S-SCENE","S-REACT-LOWER"]
+  },
+  "materialization_hypotheses": [
+    {"id":"M-001","statement":"React full export memory and temporary JSON scale with frame count times scene size.","status":"verified-structurally","risk":"high for long or dense compositions","source_refs":["S-REACT-LOWER","S-NODE-EXPORT"]},
+    {"id":"M-002","statement":"Motion blur multiplies authoring evaluations and materialized scenes by sample count.","status":"verified-structurally","risk":"multiplicative","source_refs":["S-REACT-LOWER","S-NODE-EXPORT"]},
+    {"id":"M-003","statement":"Streaming evaluated scenes into a bounded renderer queue could remove whole-video scene materialization.","status":"candidate","risk":"requires deterministic backpressure and media contracts","source_refs":["S-NODE-EXPORT","E-GSTREAMER"]}
+  ],
+  "creative_programmability": {
+    "verdict":"capable but uneven",
+    "strengths":["host-language procedural authoring","composable finite primitives","custom component registry","2D, selected 3D, effects, media and SVG paths"],
+    "limits":["high-level Cinema vocabulary is finite","semantic identities disappear early","no demonstrated general shader/material authoring surface","cross-object constraints and reusable semantic subgraphs are weak","preview fallback can hide unsupported output"],
+    "source_refs":["S-REACT-LOWER","S-CINEMA-COMPILER","S-SCENE","S-COMPONENTS"]
+  },
+  "novel_scene_litmus": [
+    {"id":"L-LAPTOP","scene":"exploded laptop layers","result":"possible with authored transforms, depth ordering, grouped primitives and raster assets; weak for semantic assembly constraints and physically based materials","confidence":0.79,"source_refs":["S-SCENE","S-REACT-LOWER"]},
+    {"id":"L-CITY","scene":"glass city revenue chart","result":"partly possible with 3D transforms, extrusion, opacity, charts and effects; physically plausible transmissive glass and general lighting are not established","confidence":0.75,"source_refs":["S-SCENE","S-COMPONENTS"]},
+    {"id":"L-SPACECRAFT","scene":"chrome liquid title spacecraft","result":"stylized approximation is possible through paths, gradients, extrusion and effects; general liquid simulation, reflective materials and environment lighting are not established","confidence":0.72,"source_refs":["S-SCENE","S-COMPONENTS"]}
+  ],
+  "primary_source_comparison": [
+    {"system":"React","comparison":"ONDA uses reconciliation to collect a host tree, but remounts each frame, so React identity and state preservation are intentionally not an output-time contract.","lesson":"Specify evaluation purity and retained-state policy explicitly.","source_refs":["S-REACT-HOST","S-REACT-LOWER","E-REACT"]},
+    {"system":"MLIR","comparison":"ONDA has several implicit levels, but most high-level semantics disappear during direct lowering rather than remaining in explicitly typed intermediate levels.","lesson":"Use staged, inspectable lowering and record semantic loss.","source_refs":["S-CINEMA-COMPILER","S-SCENE","E-MLIR"]},
+    {"system":"GStreamer","comparison":"ONDA export is mostly batch-oriented while GStreamer exposes pipeline direction, element boundaries, messages and clock ownership.","lesson":"Make media flow, clocks, backpressure and diagnostics first-class.","source_refs":["S-PLAYER","S-NODE-EXPORT","E-GSTREAMER"]}
+  ],
+  "candidate_requirements": [
+    {"id":"REQ-CAND-001","text":"Preserve stable source identity and source-map chains across all lowering stages.","priority":"high","status":"nonfinal","source_refs":["S-CINEMA-RESOLVE","S-SCENE","E-MLIR"]},
+    {"id":"REQ-CAND-002","text":"Represent time domains and every rounding or sampling conversion explicitly.","priority":"high","status":"nonfinal","source_refs":["S-CINEMA-TIME","S-ANIMATION","S-PLAYER","S-VIDEO"]},
+    {"id":"REQ-CAND-003","text":"Make semantic loss, approximations and backend capability requirements machine-readable diagnostics.","priority":"high","status":"nonfinal","source_refs":["S-CANVAS","S-VIDEO","S-CINEMA-COMPILER"]},
+    {"id":"REQ-CAND-004","text":"Support bounded streaming evaluation and rendering without whole-video scene materialization.","priority":"high","status":"nonfinal","source_refs":["S-REACT-LOWER","S-NODE-EXPORT","E-GSTREAMER"]},
+    {"id":"REQ-CAND-005","text":"Separate immutable authored intent from materialized assets, layout, and backend resources.","priority":"high","status":"nonfinal","source_refs":["S-LAYOUT","S-IMAGE","S-SVG"]},
+    {"id":"REQ-CAND-006","text":"Define version negotiation and unknown-field behavior with compatibility fixtures.","priority":"medium","status":"nonfinal","source_refs":["S-SCENE"]},
+    {"id":"REQ-CAND-007","text":"Treat preview/export equivalence as a capability matrix, not a universal boolean.","priority":"high","status":"nonfinal","source_refs":["S-PLAYER","S-CANVAS","S-WASM","S-CLI"]},
+    {"id":"REQ-CAND-008","text":"Retain an open procedural escape hatch while keeping renderer inputs finite and validateable.","priority":"high","status":"nonfinal","source_refs":["S-REACT-LOWER","S-SCENE","S-COMPONENTS"]}
+  ],
+  "open_questions": [
+    {"id":"Q-001","question":"What scene-size and duration thresholds make full frame materialization unacceptable on target machines?","defer_to":"R0.03","source_refs":["S-NODE-EXPORT"]},
+    {"id":"Q-002","question":"Which renderer capabilities are intentionally stable across CPU, Vello, and browser hosts?","defer_to":"R0.04","source_refs":["S-WASM","S-WASM-VELLO","S-CLI"]},
+    {"id":"Q-003","question":"What serialization evolution policy is promised beyond current version handling?","defer_to":"R0.05","source_refs":["S-SCENE"]},
+    {"id":"Q-004","question":"How should media clocks, frame rates, variable frame rate, and audio resampling compose?","defer_to":"R0.06","source_refs":["S-AUDIO","S-VIDEO","S-CLI"]},
+    {"id":"Q-005","question":"What general material, shader, constraint, and simulation model is required for the target creative ceiling?","defer_to":"R0.07","source_refs":["S-SCENE","S-COMPONENTS"]},
+    {"id":"Q-006","question":"Which authoring semantics must remain editable after lowering and round-trip serialization?","defer_to":"R0.08","source_refs":["S-CINEMA-TYPES","S-CINEMA-COMPILER"]}
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/identity-and-provenance.schema.json",
+  "data": {
+    "identity_and_provenance": [
+      {
+        "identity": "scene, track, entry strings and payload path",
+        "preserved_to_next": true,
+        "preserved_to_scene": false,
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-RESOLVE"
+        ],
+        "stage": "Cinema"
+      },
+      {
+        "identity": "element keys and optional numeric id prop",
+        "preserved_to_next": "partial",
+        "preserved_to_scene": "only explicit numeric id",
+        "source_refs": [
+          "S-REACT-HOST",
+          "S-REACT-LOWER"
+        ],
+        "stage": "React"
+      },
+      {
+        "identity": "optional numeric NodeId",
+        "preserved_to_next": true,
+        "preserved_to_scene": true,
+        "source_refs": [
+          "S-SCENE"
+        ],
+        "stage": "Scene"
+      }
+    ]
+  },
+  "generated_at": "2026-08-15T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.1"
+}

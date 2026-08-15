@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "pattern": "^\\.\\./\\.\\./\\.\\./\\.\\./schemas/research/r0\\.02/.+\\.schema\\.json$",
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "authoring_surfaces": {
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "authoring_surfaces"
+      ],
+      "type": "object"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "model_ref": {
+      "const": "R0_02_RESEARCH_MODEL.json"
+    },
+    "schema_version": {
+      "const": "r0.02.1"
+    }
+  },
+  "required": [
+    "$schema",
+    "schema_version",
+    "model_ref",
+    "generated_at",
+    "data"
+  ],
+  "type": "object"
+}

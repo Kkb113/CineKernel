@@ -1,0 +1,40 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/novel-scene-litmus.schema.json",
+  "data": {
+    "novel_scene_litmus": [
+      {
+        "confidence": 0.79,
+        "id": "L-LAPTOP",
+        "result": "possible with authored transforms, depth ordering, grouped primitives and raster assets; weak for semantic assembly constraints and physically based materials",
+        "scene": "exploded laptop layers",
+        "source_refs": [
+          "S-SCENE",
+          "S-REACT-LOWER"
+        ]
+      },
+      {
+        "confidence": 0.75,
+        "id": "L-CITY",
+        "result": "partly possible with 3D transforms, extrusion, opacity, charts and effects; physically plausible transmissive glass and general lighting are not established",
+        "scene": "glass city revenue chart",
+        "source_refs": [
+          "S-SCENE",
+          "S-COMPONENTS"
+        ]
+      },
+      {
+        "confidence": 0.72,
+        "id": "L-SPACECRAFT",
+        "result": "stylized approximation is possible through paths, gradients, extrusion and effects; general liquid simulation, reflective materials and environment lighting are not established",
+        "scene": "chrome liquid title spacecraft",
+        "source_refs": [
+          "S-SCENE",
+          "S-COMPONENTS"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-08-15T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.1"
+}

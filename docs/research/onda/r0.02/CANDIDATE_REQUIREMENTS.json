@@ -1,0 +1,98 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/candidate-requirements.schema.json",
+  "data": {
+    "candidate_requirements": [
+      {
+        "id": "REQ-CAND-001",
+        "priority": "high",
+        "source_refs": [
+          "S-CINEMA-RESOLVE",
+          "S-SCENE",
+          "E-MLIR"
+        ],
+        "status": "nonfinal",
+        "text": "Preserve stable source identity and source-map chains across all lowering stages."
+      },
+      {
+        "id": "REQ-CAND-002",
+        "priority": "high",
+        "source_refs": [
+          "S-CINEMA-TIME",
+          "S-ANIMATION",
+          "S-PLAYER",
+          "S-VIDEO"
+        ],
+        "status": "nonfinal",
+        "text": "Represent time domains and every rounding or sampling conversion explicitly."
+      },
+      {
+        "id": "REQ-CAND-003",
+        "priority": "high",
+        "source_refs": [
+          "S-CANVAS",
+          "S-VIDEO",
+          "S-CINEMA-COMPILER"
+        ],
+        "status": "nonfinal",
+        "text": "Make semantic loss, approximations and backend capability requirements machine-readable diagnostics."
+      },
+      {
+        "id": "REQ-CAND-004",
+        "priority": "high",
+        "source_refs": [
+          "S-REACT-LOWER",
+          "S-NODE-EXPORT",
+          "E-GSTREAMER"
+        ],
+        "status": "nonfinal",
+        "text": "Support bounded streaming evaluation and rendering without whole-video scene materialization."
+      },
+      {
+        "id": "REQ-CAND-005",
+        "priority": "high",
+        "source_refs": [
+          "S-LAYOUT",
+          "S-IMAGE",
+          "S-SVG"
+        ],
+        "status": "nonfinal",
+        "text": "Separate immutable authored intent from materialized assets, layout, and backend resources."
+      },
+      {
+        "id": "REQ-CAND-006",
+        "priority": "medium",
+        "source_refs": [
+          "S-SCENE"
+        ],
+        "status": "nonfinal",
+        "text": "Define version negotiation and unknown-field behavior with compatibility fixtures."
+      },
+      {
+        "id": "REQ-CAND-007",
+        "priority": "high",
+        "source_refs": [
+          "S-PLAYER",
+          "S-CANVAS",
+          "S-WASM",
+          "S-CLI"
+        ],
+        "status": "nonfinal",
+        "text": "Treat preview/export equivalence as a capability matrix, not a universal boolean."
+      },
+      {
+        "id": "REQ-CAND-008",
+        "priority": "high",
+        "source_refs": [
+          "S-REACT-LOWER",
+          "S-SCENE",
+          "S-COMPONENTS"
+        ],
+        "status": "nonfinal",
+        "text": "Retain an open procedural escape hatch while keeping renderer inputs finite and validateable."
+      }
+    ]
+  },
+  "generated_at": "2026-08-15T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.1"
+}

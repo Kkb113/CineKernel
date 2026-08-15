@@ -1,0 +1,70 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/validation-and-fallbacks.schema.json",
+  "data": {
+    "validation_and_fallbacks": [
+      {
+        "behavior": "validation error and visible build placeholder",
+        "condition": "unknown Cinema component",
+        "severity": "error",
+        "source_refs": [
+          "S-CINEMA-COMPILER",
+          "S-CINEMA-TEST"
+        ]
+      },
+      {
+        "behavior": "warning and omission",
+        "condition": "unknown choreography",
+        "severity": "warning",
+        "source_refs": [
+          "S-CINEMA-COMPILER",
+          "S-CINEMA-TEST"
+        ]
+      },
+      {
+        "behavior": "warning with cross-fade build fallback",
+        "condition": "unknown transition",
+        "severity": "warning",
+        "source_refs": [
+          "S-CINEMA-COMPILER",
+          "S-CINEMA-TEST"
+        ]
+      },
+      {
+        "behavior": "silent unchanged scene",
+        "condition": "missing Rust animation target",
+        "severity": "silent",
+        "source_refs": [
+          "S-ANIMATION"
+        ]
+      },
+      {
+        "behavior": "renderer skips unresolved pixels",
+        "condition": "remote image unresolved",
+        "severity": "silent",
+        "source_refs": [
+          "S-IMAGE"
+        ]
+      },
+      {
+        "behavior": "hold last good frame or warn and skip",
+        "condition": "preview video decode failure",
+        "severity": "degraded",
+        "source_refs": [
+          "S-VIDEO"
+        ]
+      },
+      {
+        "behavior": "demote GPU then CPU to Canvas2D",
+        "condition": "preview renderer failure",
+        "severity": "degraded",
+        "source_refs": [
+          "S-PLAYER",
+          "S-CANVAS"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-08-15T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.1"
+}

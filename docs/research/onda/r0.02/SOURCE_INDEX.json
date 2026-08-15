@@ -1,0 +1,672 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/source-index.schema.json",
+  "data": {
+    "sources": [
+      {
+        "blob": "c1c0524d1371d114d5c0a1130dd19fef1cc8f07a",
+        "classification": "documentation",
+        "facts": [
+          "Publicly described authoring and rendering surfaces."
+        ],
+        "file_sha256": "2da2f4bd3ef9b974e51a34a9b991999b13ff58afa53eaa0b88156fe1174c6077",
+        "id": "S-README",
+        "line_ranges": [
+          [
+            1,
+            240
+          ]
+        ],
+        "path": "README.md",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "repository overview",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "91456b9c52568dcd41dd2588c39643d12bdf263e",
+        "classification": "manifest",
+        "facts": [
+          "Rust package and renderer boundaries."
+        ],
+        "file_sha256": "0334ccfff382f497d87acfe47c3e45be5e8257fee56848c84631230c6ef1e2f7",
+        "id": "S-ROOT-CARGO",
+        "line_ranges": [
+          [
+            1,
+            180
+          ]
+        ],
+        "path": "Cargo.toml",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "workspace",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "ecc02f78f9cf336564f5328a0ee9e338674ee7b0",
+        "classification": "manifest",
+        "facts": [
+          "JavaScript package and test boundaries."
+        ],
+        "file_sha256": "c0af4239572c3d7025dd20098ab0fc6771dc0362b965c8c2ddde0ff9e4b225cb",
+        "id": "S-ROOT-PKG",
+        "line_ranges": [
+          [
+            1,
+            180
+          ]
+        ],
+        "path": "package.json",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "workspace scripts",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "93a654a83fc641bbda1d8d04a109e514fd038594",
+        "classification": "implementation",
+        "facts": [
+          "Custom reconciler uses mutable HostNode children.",
+          "Persistence and hydration are disabled."
+        ],
+        "file_sha256": "f3d5852ed481cc4174e84d469e84e574e3e4f2c6779ddfd30f5a1b9ce9b37007",
+        "id": "S-REACT-HOST",
+        "line_ranges": [
+          [
+            1,
+            260
+          ]
+        ],
+        "path": "packages/react/src/host-config.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "hostConfig and HostNode",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "18283e80c56bd6d40a862ab08258f28b1114e544",
+        "classification": "implementation",
+        "facts": [
+          "Frame and video configuration are context values."
+        ],
+        "file_sha256": "e75cd9c3adf592105d44f0216af774fca49e08fa7a06e6d6b68e803a6589e5ad",
+        "id": "S-REACT-FRAME",
+        "line_ranges": [
+          [
+            1,
+            130
+          ]
+        ],
+        "path": "packages/react/src/frame.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "FrameContext",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "7b9dcb0fef79d2b0debde0ca452e5e349beb4897",
+        "classification": "implementation",
+        "facts": [
+          "Sequences translate global frame to local frame.",
+          "Series calculates cumulative offsets."
+        ],
+        "file_sha256": "11e259b37c0afd210b4c357cf01932d4cc303708b3fcdcfce4a6a05ad2c13bd2",
+        "id": "S-REACT-SEQUENCE",
+        "line_ranges": [
+          [
+            1,
+            290
+          ]
+        ],
+        "path": "packages/react/src/sequence.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "Sequence Loop Series",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "484be37c2c79f5b4c530d5897fa2228800fd38d5",
+        "classification": "implementation",
+        "facts": [
+          "Each requested frame creates, commits, lowers, unmounts, and discards a fresh React root.",
+          "Motion blur evaluates fractional subframes.",
+          "Full export materializes a Scene array."
+        ],
+        "file_sha256": "07b882793476185be433ef905c5a19e28cb708b60aa756f0c870401a0c0d4d83",
+        "id": "S-REACT-LOWER",
+        "line_ranges": [
+          [
+            1,
+            1100
+          ]
+        ],
+        "path": "packages/react/src/reconciler.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "renderFrame renderFrames hostNodeToSceneNode",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "7dc5ee86479ef54bfa3378d43e9f20de718db192",
+        "classification": "implementation",
+        "facts": [
+          "Registered font bytes are process-global mutable state."
+        ],
+        "file_sha256": "49b3632681444e9db52626e2e42d404a25f33b5515d6406d6190370373f17884",
+        "id": "S-REACT-STATE",
+        "line_ranges": [
+          [
+            1,
+            180
+          ]
+        ],
+        "path": "packages/react/src/fonts.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "font registry",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "e37b9f5e8295ac83cfefe8ade7c7c61df56bd812",
+        "classification": "implementation",
+        "facts": [
+          "Warmers are process-global and failures are best-effort."
+        ],
+        "file_sha256": "c52f79f3a1a1a8a3969765a08d027a6a38b5437e064db19ae4641dc8ed4a4a0d",
+        "id": "S-REACT-WARM",
+        "line_ranges": [
+          [
+            1,
+            170
+          ]
+        ],
+        "path": "packages/react/src/warmers.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "warmer registry",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "2377070448bedad3d90d7669d3cf2bddfc777cf6",
+        "classification": "test",
+        "facts": [
+          "Tests establish frame evaluation and lowering behavior."
+        ],
+        "file_sha256": "08cf96c78756d3d46d1fc5a1a9e71ce7f1c97a1433754e29370bc74e1472cb93",
+        "id": "S-REACT-TEST",
+        "line_ranges": [
+          [
+            1,
+            1200
+          ]
+        ],
+        "path": "packages/react/src/reconciler.test.tsx",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "reconciler behavioral tests",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "1fb71040324f5247eb56f591cd9c3f9f13f62c31",
+        "classification": "implementation",
+        "facts": [
+          "Cinema preserves scene, track, entry, role, component, choreography, transition, brand, and finish semantics before lowering."
+        ],
+        "file_sha256": "51dd0c96d7aa2037c4260c5f68fa4ffbd9cd6675c7e539baf2f9b9f4b9c2d8a7",
+        "id": "S-CINEMA-TYPES",
+        "line_ranges": [
+          [
+            1,
+            620
+          ]
+        ],
+        "path": "packages/cinema/src/types.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "CinemaPayload",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "f3393683ce56d62d2cc50c7a9c2aaa326c7e83a4",
+        "classification": "implementation",
+        "facts": [
+          "Time specifications become rounded frames.",
+          "Scene overlaps shorten accumulated placement."
+        ],
+        "file_sha256": "b4a172193dd8774af8377374b4aff71cf0196178447faf56b31bc7c52967a68f",
+        "id": "S-CINEMA-TIME",
+        "line_ranges": [
+          [
+            1,
+            300
+          ]
+        ],
+        "path": "packages/cinema/src/timing.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "toFrames computePlacements",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "91f331f1620482fe8668ddbbc76a489124920682",
+        "classification": "implementation",
+        "facts": [
+          "Cinema resolves a finite choreography and transition vocabulary to React elements.",
+          "A caller may supply a custom component registry.",
+          "Unknown components produce a visible placeholder."
+        ],
+        "file_sha256": "bf86be86ca3cc8ba477274c02eecfd9569089eb37f91957fb373b497f0a47460",
+        "id": "S-CINEMA-COMPILER",
+        "line_ranges": [
+          [
+            1,
+            1100
+          ]
+        ],
+        "path": "packages/cinema/src/index.tsx",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "buildComposition",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "c9aa10fbd004f1859b1972cef376ab217b97a9ea",
+        "classification": "implementation",
+        "facts": [
+          "Inspection runs over the high-level Cinema payload rather than the lowered Scene."
+        ],
+        "file_sha256": "045d552da4677490a566c2477289660d3cb9eb79841bd51af3ec3b3731a44150",
+        "id": "S-CINEMA-INSPECT",
+        "line_ranges": [
+          [
+            1,
+            260
+          ]
+        ],
+        "path": "packages/cinema/src/inspect/index.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "inspectComposition",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "06aee728e309ce767a0a725b5b3e5a65a858fa8e",
+        "classification": "implementation",
+        "facts": [
+          "Inspector identities derive from entry id or payload path and retain role labels."
+        ],
+        "file_sha256": "58cd85638cf5a71270c35ecd8fc328faabbc157e072875092c9c3fdab44155d9",
+        "id": "S-CINEMA-RESOLVE",
+        "line_ranges": [
+          [
+            1,
+            420
+          ]
+        ],
+        "path": "packages/cinema/src/inspect/resolve.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "resolveComposition",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "23633715c3b4e2b04f63f381091a1d967fd46f82",
+        "classification": "test",
+        "facts": [
+          "Tests distinguish unknown component errors from unknown choreography warnings."
+        ],
+        "file_sha256": "4422135f911dc0dbc192df8ceadb1c271cf69d3e1c8d6449f368d04271630aa7",
+        "id": "S-CINEMA-TEST",
+        "line_ranges": [
+          [
+            1,
+            800
+          ]
+        ],
+        "path": "packages/cinema/src/validate.test.tsx",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "validation tests",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "6e650e50ef2b0cc7adc83ceb2a807bfa4df2917c",
+        "classification": "implementation",
+        "facts": [
+          "Scene is a composition plus a finite node tree.",
+          "Optional numeric NodeId supports addressing.",
+          "Timeline nodes resolve an active clip for a requested frame.",
+          "Current scene version is one."
+        ],
+        "file_sha256": "2b06ffcd81e4cb0b927782c71ed0ee8821cb0589fe11441814a673614bdb87d2",
+        "id": "S-SCENE",
+        "line_ranges": [
+          [
+            1,
+            1900
+          ]
+        ],
+        "path": "packages/scene-rs/src/lib.rs",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "Scene Node NodeKind Timeline",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "ee87aa2a9ec9d1f7dc1cdf5d14fce9e3748ed852",
+        "classification": "implementation",
+        "facts": [
+          "Rust animation stores keyframe time in seconds and evaluates a cloned scene by NodeId.",
+          "Missing targets are unchanged."
+        ],
+        "file_sha256": "6116cd48e217bdc532a321b83d7725ad6c78fa4209dc12124d72e534ca27f120",
+        "id": "S-ANIMATION",
+        "line_ranges": [
+          [
+            1,
+            620
+          ]
+        ],
+        "path": "packages/animation-rs/src/lib.rs",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "Timeline evaluate_frame",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "95ffb7f27881530833a86ad89fa842e7d1744d60",
+        "classification": "implementation",
+        "facts": [
+          "Layout is a clone-and-rewrite prepass that materializes absolute child translations."
+        ],
+        "file_sha256": "469e126c759af1a2877506a6e3f9bf2c5455083b3baddd3c1e3d3e7233a0be1c",
+        "id": "S-LAYOUT",
+        "line_ranges": [
+          [
+            1,
+            360
+          ]
+        ],
+        "path": "packages/layout-rs/src/lib.rs",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "layout",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "3bc10936de5e457f7cfeed0ed67046dcf123f85a",
+        "classification": "implementation",
+        "facts": [
+          "Image decoding attaches skipped pixel data and may downscale.",
+          "Remote URLs remain unresolved and are skipped by renderers."
+        ],
+        "file_sha256": "258b4914d4fee35aa147ea4352d78abb87c6ec7a0e5e27d9d52b51142f4410d8",
+        "id": "S-IMAGE",
+        "line_ranges": [
+          [
+            1,
+            720
+          ]
+        ],
+        "path": "packages/image-rs/src/lib.rs",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "load_images",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "d8fbafaf7365fafcbd307eeb7de954bf02bd05c9",
+        "classification": "implementation",
+        "facts": [
+          "SVG is parsed and lowered to supported scene shapes.",
+          "Unsupported SVG features are not preserved as authoring semantics."
+        ],
+        "file_sha256": "99dc1d71af5b34474d990646e316a0a3b21fc960317d8d275399331e8731ab0c",
+        "id": "S-SVG",
+        "line_ranges": [
+          [
+            1,
+            620
+          ]
+        ],
+        "path": "packages/svg-rs/src/lib.rs",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "expand_svg",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "971e155db975f06f28a80b7ea924e0bb5cdaac9f",
+        "classification": "implementation",
+        "facts": [
+          "Node export materializes all React scenes into a temporary JSON array and invokes the native CLI."
+        ],
+        "file_sha256": "c7019388693961e376658e95b5751ff484f8e042352717033c87edf457439fec",
+        "id": "S-NODE-EXPORT",
+        "line_ranges": [
+          [
+            1,
+            520
+          ]
+        ],
+        "path": "packages/render/src/index.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "render export bridge",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "1f621b6b3f9c244f975f9ed5e5789d83f9e8a2c3",
+        "classification": "implementation",
+        "facts": [
+          "Preview renders requested frames on demand.",
+          "GPU work is serialized per engine and intermediate frames may be dropped.",
+          "Runtime renderer failure demotes to a fallback."
+        ],
+        "file_sha256": "b45f3a5aceb041acb85d562e2c0ab4fa75332d5b79cad524fb70726297e5e137",
+        "id": "S-PLAYER",
+        "line_ranges": [
+          [
+            187,
+            580
+          ]
+        ],
+        "path": "packages/player/src/player.tsx",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "Player",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "a89e4b7c278fb66a0a7a8432c41effa249167fd3",
+        "classification": "implementation",
+        "facts": [
+          "Preview audio has an instance clock mapping and is muted off-speed.",
+          "Decode failures warn and skip."
+        ],
+        "file_sha256": "b2e7b3c8138325543c14f8097fa7a9fdfb50e4ab732478e67d837bd087a8a2d2",
+        "id": "S-AUDIO",
+        "line_ranges": [
+          [
+            1,
+            310
+          ]
+        ],
+        "path": "packages/player/src/audio-engine.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "AudioEngine",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "c18b2360a46b7acf79f0e83a1f666375ed4b1292",
+        "classification": "implementation",
+        "facts": [
+          "Preview video is bucketed at thirty source frames per second and may hold the last good decoded frame.",
+          "A DOM overlay fallback is preview-only."
+        ],
+        "file_sha256": "65f253906fccc2d794bd66d6e138962bf99a8e9212b7cc033acf66568f159351",
+        "id": "S-VIDEO",
+        "line_ranges": [
+          [
+            1,
+            300
+          ]
+        ],
+        "path": "packages/player/src/video.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "resolveVideoFrames",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "ceab5a9cbc86e6391db1c6b5a786c4dbfe883fe1",
+        "classification": "implementation",
+        "facts": [
+          "Canvas fallback omits image and SVG nodes and approximates text and procedural gradients."
+        ],
+        "file_sha256": "b3b87cd9ea8e1e04c4349bcb8d80451cc32c778bd86c1a17dcb726ea8baa8643",
+        "id": "S-CANVAS",
+        "line_ranges": [
+          [
+            1,
+            197
+          ]
+        ],
+        "path": "packages/player/src/canvas-renderer.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "drawScene",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "ab4ff309362044ad594efe45cd9934cf24bb0978",
+        "classification": "implementation",
+        "facts": [
+          "CPU WASM parses Scene JSON then conditionally runs image and layout prepasses before rendering."
+        ],
+        "file_sha256": "26b1338d6e123b37ea91df2ea05f09f23530f0bd5eab61788473208da8d486c0",
+        "id": "S-WASM",
+        "line_ranges": [
+          [
+            174,
+            265
+          ]
+        ],
+        "path": "packages/wasm/src/lib.rs",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "OndaEngine render",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "3741dd4bdf17187f5b2931c3b30430e6e91226a0",
+        "classification": "implementation",
+        "facts": [
+          "GPU WASM follows the same JSON, image, and layout boundary before asynchronous rendering."
+        ],
+        "file_sha256": "c0378bdc979f522a24931be7b7129601e48f135671a6806974abb947622ac145",
+        "id": "S-WASM-VELLO",
+        "line_ranges": [
+          [
+            100,
+            175
+          ]
+        ],
+        "path": "packages/wasm-vello/src/lib.rs",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "VelloEngine render",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "fabf0315afff1308ed1114338d0c4449f2be15be",
+        "classification": "implementation",
+        "facts": [
+          "Native commands parse scene JSON and run ordered source, timeline, SVG, image, layout, and render stages.",
+          "Auto backend may choose GPU or CPU."
+        ],
+        "file_sha256": "09f7d6dbb7165845f904bbe3a01be0ac59aa427b057d59a0eafd79a53f77e8b7",
+        "id": "S-CLI",
+        "line_ranges": [
+          [
+            763,
+            900
+          ],
+          [
+            1367,
+            1510
+          ],
+          [
+            1600,
+            1810
+          ]
+        ],
+        "path": "packages/cli-rs/src/main.rs",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "render and export commands",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "blob": "4a26286613b57e8248a7bc7f5823c1fbdb5f2ab5",
+        "classification": "implementation",
+        "facts": [
+          "The packaged component catalog is finite and schema-described."
+        ],
+        "file_sha256": "48d4d99b9af35e189ad70b97a83da7d8f18f34f0cd86218f7681bd6eeb4733aa",
+        "id": "S-COMPONENTS",
+        "line_ranges": [
+          [
+            1,
+            700
+          ]
+        ],
+        "path": "packages/components/src/manifest.ts",
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "repository": "https://github.com/onda-video/onda",
+        "symbol": "component manifest",
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      {
+        "accessed_at": "2026-08-15T00:00:00Z",
+        "classification": "external-official",
+        "facts": [
+          "React separates recursive render calculation from commit mutations and recommends pure rendering."
+        ],
+        "id": "E-REACT",
+        "publisher": "Meta Open Source",
+        "section": "Render and commit",
+        "title": "Render and Commit",
+        "url": "https://react.dev/learn/render-and-commit"
+      },
+      {
+        "accessed_at": "2026-08-15T00:00:00Z",
+        "classification": "external-official",
+        "facts": [
+          "Multi-level representations can preserve useful abstraction until progressive lowering is justified."
+        ],
+        "id": "E-MLIR",
+        "publisher": "LLVM Project",
+        "section": "Incremental lowering",
+        "title": "MLIR Rationale",
+        "url": "https://mlir.llvm.org/docs/Rationale/MLIRForGraphAlgorithms/"
+      },
+      {
+        "accessed_at": "2026-08-15T00:00:00Z",
+        "classification": "external-official",
+        "facts": [
+          "A media pipeline makes graph direction, element boundaries, messages, and a shared running-time clock explicit."
+        ],
+        "id": "E-GSTREAMER",
+        "publisher": "GStreamer Project",
+        "section": "Pipeline and clock",
+        "title": "Design overview",
+        "url": "https://gstreamer.freedesktop.org/documentation/additional/design/overview.html"
+      }
+    ]
+  },
+  "generated_at": "2026-08-15T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.1"
+}

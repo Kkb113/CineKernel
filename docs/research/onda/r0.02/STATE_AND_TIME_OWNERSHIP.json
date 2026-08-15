@@ -1,0 +1,98 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/state-and-time-ownership.schema.json",
+  "data": {
+    "state_and_time": {
+      "state": [
+        {
+          "mutable": true,
+          "owner": "React frame evaluation",
+          "reentrant": "isolated by fresh root",
+          "scope": "one evaluation",
+          "source_refs": [
+            "S-REACT-LOWER"
+          ]
+        },
+        {
+          "mutable": true,
+          "owner": "font and warmer registries",
+          "reentrant": "requires coordination",
+          "scope": "process",
+          "source_refs": [
+            "S-REACT-STATE",
+            "S-REACT-WARM"
+          ]
+        },
+        {
+          "mutable": true,
+          "owner": "Player",
+          "reentrant": "GPU engine serialized globally",
+          "scope": "component instance",
+          "source_refs": [
+            "S-PLAYER"
+          ]
+        },
+        {
+          "mutable": true,
+          "owner": "video caches",
+          "reentrant": "seeks serialized per source",
+          "scope": "browser module",
+          "source_refs": [
+            "S-VIDEO"
+          ]
+        }
+      ],
+      "time_domains": [
+        {
+          "conversion": "seconds = frame / fps",
+          "name": "composition frame",
+          "rounding": "surface-dependent",
+          "source_refs": [
+            "S-REACT-FRAME",
+            "S-CINEMA-TIME",
+            "S-ANIMATION"
+          ],
+          "unit": "frame"
+        },
+        {
+          "conversion": "outer frame minus sequence start",
+          "name": "sequence-local frame",
+          "rounding": "none",
+          "source_refs": [
+            "S-REACT-SEQUENCE"
+          ],
+          "unit": "frame"
+        },
+        {
+          "conversion": "frame / fps before interpolation",
+          "name": "Rust keyframe time",
+          "rounding": "none",
+          "source_refs": [
+            "S-ANIMATION"
+          ],
+          "unit": "second"
+        },
+        {
+          "conversion": "floor elapsed scaled by rate over frame duration",
+          "name": "preview wall clock",
+          "rounding": "floor and skipped frames",
+          "source_refs": [
+            "S-PLAYER"
+          ],
+          "unit": "millisecond"
+        },
+        {
+          "conversion": "rounded to one-thirtieth-second cache bucket",
+          "name": "preview video source",
+          "rounding": "nearest bucket",
+          "source_refs": [
+            "S-VIDEO"
+          ],
+          "unit": "second"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-08-15T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.1"
+}

@@ -1,0 +1,60 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/semantic-preservation.schema.json",
+  "data": {
+    "semantic_preservation": [
+      {
+        "item": "geometry, paint, transform, opacity, effects, media source",
+        "outcome": "preserved or materialized",
+        "source_refs": [
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "stage": "Scene"
+      },
+      {
+        "item": "Cinema role, labels, choreography and transition names",
+        "outcome": "lost as first-class metadata",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER"
+        ],
+        "stage": "Cinema to React"
+      },
+      {
+        "item": "brand token identity",
+        "outcome": "materialized into resolved values",
+        "source_refs": [
+          "S-CINEMA-COMPILER"
+        ],
+        "stage": "Cinema component expansion"
+      },
+      {
+        "item": "flex layout intent",
+        "outcome": "replaced by absolute translations",
+        "source_refs": [
+          "S-LAYOUT"
+        ],
+        "stage": "layout prepass"
+      },
+      {
+        "item": "SVG document structure",
+        "outcome": "lowered to supported shapes with unsupported-feature loss",
+        "source_refs": [
+          "S-SVG"
+        ],
+        "stage": "SVG prepass"
+      },
+      {
+        "item": "image source encoding",
+        "outcome": "decoded, optionally resized, attached as skipped runtime pixels",
+        "source_refs": [
+          "S-IMAGE"
+        ],
+        "stage": "image prepass"
+      }
+    ]
+  },
+  "generated_at": "2026-08-15T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.1"
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/primary-source-comparison.schema.json",
+  "data": {
+    "primary_source_comparison": [
+      {
+        "comparison": "ONDA uses reconciliation to collect a host tree, but remounts each frame, so React identity and state preservation are intentionally not an output-time contract.",
+        "lesson": "Specify evaluation purity and retained-state policy explicitly.",
+        "source_refs": [
+          "S-REACT-HOST",
+          "S-REACT-LOWER",
+          "E-REACT"
+        ],
+        "system": "React"
+      },
+      {
+        "comparison": "ONDA has several implicit levels, but most high-level semantics disappear during direct lowering rather than remaining in explicitly typed intermediate levels.",
+        "lesson": "Use staged, inspectable lowering and record semantic loss.",
+        "source_refs": [
+          "S-CINEMA-COMPILER",
+          "S-SCENE",
+          "E-MLIR"
+        ],
+        "system": "MLIR"
+      },
+      {
+        "comparison": "ONDA export is mostly batch-oriented while GStreamer exposes pipeline direction, element boundaries, messages and clock ownership.",
+        "lesson": "Make media flow, clocks, backpressure and diagnostics first-class.",
+        "source_refs": [
+          "S-PLAYER",
+          "S-NODE-EXPORT",
+          "E-GSTREAMER"
+        ],
+        "system": "GStreamer"
+      }
+    ]
+  },
+  "generated_at": "2026-08-15T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.1"
+}

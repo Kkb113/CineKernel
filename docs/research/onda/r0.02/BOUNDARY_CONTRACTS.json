@@ -1,0 +1,146 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/boundary-contracts.schema.json",
+  "data": {
+    "claims": [
+      {
+        "confidence": 0.99,
+        "id": "C-001",
+        "source_refs": [
+          "S-REACT-HOST",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "statement": "React authoring is programmatic, but its render boundary is a finite scene vocabulary.",
+        "status": "verified"
+      },
+      {
+        "confidence": 0.99,
+        "id": "C-002",
+        "source_refs": [
+          "S-REACT-LOWER",
+          "S-REACT-TEST"
+        ],
+        "statement": "React component state is not retained between output frames because every frame uses a fresh root that is unmounted.",
+        "status": "verified"
+      },
+      {
+        "confidence": 0.98,
+        "id": "C-003",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-INSPECT",
+          "S-CINEMA-RESOLVE"
+        ],
+        "statement": "Cinema retains more editorial identity and intent than Scene, while its inspector is a parallel high-level analysis path.",
+        "status": "verified"
+      },
+      {
+        "confidence": 0.96,
+        "id": "C-004",
+        "source_refs": [
+          "S-CINEMA-COMPILER",
+          "S-CINEMA-TYPES",
+          "S-SCENE"
+        ],
+        "statement": "Cinema roles, choreography names, brand identity, and most string ids do not survive as first-class Scene fields.",
+        "status": "verified"
+      },
+      {
+        "confidence": 0.99,
+        "id": "C-005",
+        "source_refs": [
+          "S-SCENE",
+          "S-CLI",
+          "S-WASM"
+        ],
+        "statement": "Direct Scene JSON and typed Rust construction converge at the same finite Scene contract.",
+        "status": "verified"
+      },
+      {
+        "confidence": 0.97,
+        "id": "C-006",
+        "source_refs": [
+          "S-LAYOUT",
+          "S-SVG",
+          "S-IMAGE",
+          "S-VIDEO",
+          "S-CLI"
+        ],
+        "statement": "Layout, SVG, image, video, and timeline behavior includes destructive or materializing prepasses rather than a single immutable IR pipeline.",
+        "status": "verified"
+      },
+      {
+        "confidence": 0.96,
+        "id": "C-007",
+        "source_refs": [
+          "S-PLAYER",
+          "S-VIDEO",
+          "S-AUDIO",
+          "S-WASM",
+          "S-WASM-VELLO",
+          "S-CLI"
+        ],
+        "statement": "GPU and CPU preview can share renderer semantics with native export, but browser media resolution and scheduling keep end-to-end parity conditional.",
+        "status": "verified"
+      },
+      {
+        "confidence": 0.99,
+        "id": "C-008",
+        "source_refs": [
+          "S-CANVAS",
+          "S-PLAYER"
+        ],
+        "statement": "Canvas2D is an explicit approximation and not a parity path.",
+        "status": "verified"
+      },
+      {
+        "confidence": 0.99,
+        "id": "C-009",
+        "source_refs": [
+          "S-REACT-LOWER",
+          "S-NODE-EXPORT"
+        ],
+        "statement": "Full React export materializes every evaluated frame before the native export call, creating duration-proportional scene memory and JSON I/O.",
+        "status": "verified"
+      },
+      {
+        "confidence": 0.94,
+        "id": "C-010",
+        "source_refs": [
+          "S-REACT-STATE",
+          "S-REACT-WARM",
+          "S-PLAYER",
+          "S-VIDEO"
+        ],
+        "statement": "Global registries and caches require explicit isolation if authoring evaluation is parallelized or made multi-tenant.",
+        "status": "verified"
+      },
+      {
+        "confidence": 0.91,
+        "id": "C-011",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-RESOLVE",
+          "S-SCENE",
+          "E-MLIR",
+          "E-GSTREAMER"
+        ],
+        "statement": "A future CineKernel IR should preserve stable identity, semantic intent, time domains, diagnostics, and capability requirements until explicit lowering stages.",
+        "status": "candidate"
+      },
+      {
+        "confidence": 0.97,
+        "id": "C-012",
+        "source_refs": [
+          "S-REACT-LOWER",
+          "E-REACT"
+        ],
+        "statement": "React's render and commit model is analogous only at a high level; ONDA deliberately remounts per frame rather than preserving a committed application tree.",
+        "status": "verified"
+      }
+    ]
+  },
+  "generated_at": "2026-08-15T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.1"
+}

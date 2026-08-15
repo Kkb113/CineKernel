@@ -1,0 +1,92 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/authoring-surfaces.schema.json",
+  "data": {
+    "authoring_surfaces": [
+      {
+        "creativity": "open-programmable",
+        "extension": "arbitrary host-language components lowering to finite primitives",
+        "id": "AS-REACT",
+        "identity": "React keys during reconciliation; optional numeric Scene ids only when authored",
+        "input_shape": "React element tree plus frame context",
+        "name": "React composition",
+        "output": "one Scene per evaluation",
+        "owner": "JavaScript host program",
+        "source_refs": [
+          "S-REACT-HOST",
+          "S-REACT-LOWER",
+          "S-REACT-TEST"
+        ],
+        "time": "integer or fractional composition frame",
+        "validation": "runtime prop checks and host-node conversion"
+      },
+      {
+        "creativity": "schema-guided-extensible",
+        "extension": "custom registry plus finite built-in choreography and transition vocabulary",
+        "id": "AS-CINEMA",
+        "identity": "scene, track, and entry strings plus payload paths",
+        "input_shape": "scenes, tracks, entries, roles, registry component names, choreography, transitions, brand",
+        "name": "Cinema payload",
+        "output": "React composition",
+        "owner": "serialized high-level document",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-TIME",
+          "S-CINEMA-COMPILER"
+        ],
+        "time": "TimeSpec normalized to rounded frames",
+        "validation": "pre-lowering errors and warnings"
+      },
+      {
+        "creativity": "low-level-open-composition",
+        "extension": "finite scene schema",
+        "id": "AS-JSON",
+        "identity": "optional numeric NodeId",
+        "input_shape": "composition plus finite NodeKind tree",
+        "name": "Direct Scene JSON",
+        "output": "renderer input",
+        "owner": "document producer",
+        "source_refs": [
+          "S-SCENE",
+          "S-CLI"
+        ],
+        "time": "composition frames and media seconds",
+        "validation": "serde parse plus prepass errors"
+      },
+      {
+        "creativity": "low-level-open-composition",
+        "extension": "Rust construction within finite enums",
+        "id": "AS-RUST",
+        "identity": "optional NodeId targeted by tracks",
+        "input_shape": "typed Scene plus optional Timeline and audio tracks",
+        "name": "Rust Scene and AnimatedScene",
+        "output": "evaluated Scene",
+        "owner": "Rust caller",
+        "source_refs": [
+          "S-SCENE",
+          "S-ANIMATION"
+        ],
+        "time": "keyframes in seconds evaluated by frame divided by fps",
+        "validation": "type system plus serde/runtime behavior"
+      },
+      {
+        "creativity": "finite-catalog-with-code-escape",
+        "extension": "new package code or caller registry",
+        "id": "AS-COMPONENTS",
+        "identity": "component name before expansion",
+        "input_shape": "named component plus schema-described props",
+        "name": "Component catalog",
+        "output": "React primitive subtree",
+        "owner": "package registry",
+        "source_refs": [
+          "S-COMPONENTS",
+          "S-CINEMA-COMPILER"
+        ],
+        "time": "component-defined frame calculations",
+        "validation": "manifest schema and component logic"
+      }
+    ]
+  },
+  "generated_at": "2026-08-15T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.1"
+}

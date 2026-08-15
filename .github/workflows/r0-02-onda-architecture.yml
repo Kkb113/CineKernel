@@ -1,0 +1,78 @@
+name: R0.02 ONDA architecture archaeology
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'docs/research/onda/r0.02/**'
+      - 'reports/research/r0.02/**'
+      - 'schemas/research/r0.02/**'
+      - 'tools/research/onda-r0-02/**'
+      - '.github/workflows/r0-02-onda-architecture.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r0-02-onda-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify (${{ matrix.os }})
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Materialize immutable R0.01 base
+        run: git worktree add .r001-base 974d93ef224b75383499cdb2b70cc086a0dd6f40
+      - name: Restore locked ONDA source checkout at R0.01 base
+        working-directory: .r001-base
+        run: cargo xtask research onda sync --json
+      - name: Verify R0.01 upstream lock at R0.01 base
+        working-directory: .r001-base
+        run: cargo xtask research onda verify --json
+      - name: Verify R0.01 integrity at R0.01 base
+        working-directory: .r001-base
+        run: cargo xtask research onda integrity --check --json
+      - name: Restore locked ONDA source checkout for R0.02
+        run: cargo xtask research onda sync --json
+      - name: Format standalone verifier
+        run: cargo fmt --manifest-path tools/research/onda-r0-02/Cargo.toml --check
+      - name: Lint standalone verifier
+        run: cargo clippy --manifest-path tools/research/onda-r0-02/Cargo.toml --all-targets -- -D warnings
+      - name: Test standalone verifier
+        run: cargo test --manifest-path tools/research/onda-r0-02/Cargo.toml
+      - name: Verify source inventory
+        run: cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- inventory --json
+      - name: Verify canonical model
+        run: cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- verify --json
+      - name: Verify clean-room and frozen-path guards
+        run: cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- guard --json
+      - name: Verify committed integrity manifest
+        run: cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- integrity --check --json
+      - name: Regenerate first copy
+        run: cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- report --json
+      - name: Require deterministic clean tree
+        run: git diff --exit-code
+      - name: Regenerate second copy
+        run: cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- report --json
+      - name: Require second deterministic clean tree
+        run: git diff --exit-code
+      - name: Archive raw verifier evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r0-02-${{ matrix.os }}-evidence
+          path: .cinekernel/research/onda/r0.02/
+          if-no-files-found: ignore
+          retention-days: 90

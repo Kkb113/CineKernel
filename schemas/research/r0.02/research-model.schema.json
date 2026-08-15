@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "architecture_edges": {
+      "minItems": 10,
+      "type": "array"
+    },
+    "architecture_nodes": {
+      "minItems": 8,
+      "type": "array"
+    },
+    "authoring_surfaces": {
+      "minItems": 4,
+      "type": "array"
+    },
+    "candidate_requirements": {
+      "minItems": 6,
+      "type": "array"
+    },
+    "cinekernel_base": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "claims": {
+      "minItems": 10,
+      "type": "array"
+    },
+    "creative_programmability": {
+      "type": "object"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "hypotheses": {
+      "maxItems": 7,
+      "minItems": 7,
+      "type": "array"
+    },
+    "identity_and_provenance": {
+      "minItems": 3,
+      "type": "array"
+    },
+    "materialization_hypotheses": {
+      "minItems": 3,
+      "type": "array"
+    },
+    "method": {
+      "type": "object"
+    },
+    "model_version": {
+      "const": "r0.02.1"
+    },
+    "novel_scene_litmus": {
+      "minItems": 3,
+      "type": "array"
+    },
+    "onda_pin": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "onda_tree": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "open_questions": {
+      "minItems": 5,
+      "type": "array"
+    },
+    "preview_export_parity": {
+      "minItems": 4,
+      "type": "array"
+    },
+    "primary_source_comparison": {
+      "minItems": 3,
+      "type": "array"
+    },
+    "semantic_preservation": {
+      "minItems": 5,
+      "type": "array"
+    },
+    "serialization": {
+      "type": "object"
+    },
+    "sources": {
+      "minItems": 20,
+      "type": "array"
+    },
+    "state_and_time": {
+      "type": "object"
+    },
+    "validation_and_fallbacks": {
+      "minItems": 5,
+      "type": "array"
+    }
+  },
+  "required": [
+    "$schema",
+    "model_version",
+    "generated_at",
+    "cinekernel_base",
+    "onda_pin",
+    "onda_tree",
+    "method",
+    "sources",
+    "authoring_surfaces",
+    "architecture_nodes",
+    "architecture_edges",
+    "claims",
+    "hypotheses",
+    "state_and_time",
+    "identity_and_provenance",
+    "semantic_preservation",
+    "validation_and_fallbacks",
+    "preview_export_parity",
+    "serialization",
+    "materialization_hypotheses",
+    "creative_programmability",
+    "novel_scene_litmus",
+    "primary_source_comparison",
+    "candidate_requirements",
+    "open_questions"
+  ],
+  "type": "object"
+}
