@@ -41,7 +41,25 @@ jobs:
 
       - name: Install FFmpeg (Windows)
         if: runner.os == 'Windows'
-        run: choco install ffmpeg --yes --no-progress
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $attempts = 5
+          for ($attempt = 1; $attempt -le $attempts; $attempt++) {
+            choco install ffmpeg --yes --no-progress
+            if ($LASTEXITCODE -eq 0) {
+              ffmpeg -version
+              exit 0
+            }
+
+            if ($attempt -lt $attempts) {
+              $delay = 15 * $attempt
+              Write-Warning "Chocolatey FFmpeg install failed (attempt $attempt/$attempts); retrying in $delay seconds."
+              Start-Sleep -Seconds $delay
+            }
+          }
+
+          throw "Chocolatey FFmpeg install failed after $attempts attempts."
 
       - name: Install JavaScript dependencies
         run: pnpm install --frozen-lockfile
