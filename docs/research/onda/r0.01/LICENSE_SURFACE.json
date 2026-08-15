@@ -181,12 +181,12 @@
     "declared_spdx": "FSL-1.1-ALv2",
     "future_license_git_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
     "future_license_path": "LICENSE-APACHE",
-    "future_license_sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+    "future_license_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
     "license_git_blob": "1137ce6308a6d817a22b4b85afa35230d2b145cc",
     "license_path": "LICENSE",
-    "license_sha256": "608b7a8dc76cd64ecd90172e382dd9851adb306b47de874b21f2ff52ab32bcc9",
+    "license_sha256": "7e6fdc32986a1ea86933be194a15266419c74963187d9ebf02e2d116a473af29",
     "notice_git_blob": "6761d0af83e34903b42bc2d4ee38c67180099ea6",
     "notice_path": "NOTICE.md",
-    "notice_sha256": "21578be770583e25069042415dc63189ed33dd8605b2ddfd3a205926483e1647"
+    "notice_sha256": "cba16f2312c5866182513c58d46822a34beec24b32b6521511d24a64d78db7d2"
   }
 }

@@ -113,6 +113,24 @@ fn git_blob(upstream: &Path, path: &str) -> Result<String> {
     git(upstream, &["rev-parse", &format!("HEAD:{path}")])
 }
 
+fn git_file_sha256(upstream: &Path, path: &str) -> Result<String> {
+    git_file_sha256_at(upstream, PIN, path)
+}
+
+fn git_file_sha256_at(upstream: &Path, revision: &str, path: &str) -> Result<String> {
+    let output = Command::new("git")
+        .args(["show", &format!("{revision}:{path}")])
+        .current_dir(upstream)
+        .output()?;
+    if !output.status.success() {
+        bail!(
+            "unable to read immutable Git blob {path}: {}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+    Ok(sha256(&output.stdout))
+}
+
 fn identity(root: &Path) -> Result<Value> {
     let upstream = upstream(root);
     if !upstream.join(".git").is_dir() {
@@ -247,7 +265,7 @@ fn provenance_evidence(root: &Path, id: &Value) -> Result<Value> {
         &npm_evidence,
     )?;
     let git_objects = json!({
-        "pin": id["pin"], "tree": id["tree"], "remote": id["remote"],
+        "pin": id["head"], "tree": id["tree"], "remote": id["repository"],
         "author_date": id["author_date"], "committer_date": id["committer_date"],
         "checks": id["checks"]
     });
@@ -259,7 +277,7 @@ fn provenance_evidence(root: &Path, id: &Value) -> Result<Value> {
         "schema_version":SCHEMA_VERSION,"observation_timestamp_utc":CAPTURED,
         "github_commit":github_commit,"github_release":github_release,"github_pr_41":github_pr,"npm":npm_evidence,
         "records":[
-            {"id":"EVID-GIT-OBJECTS","value":{"pin":id["pin"],"tree":id["tree"]},"evidence_source":"local immutable Git object database","observation_timestamp_utc":CAPTURED,"raw_evidence_sha256":file_sha256(&evidence_dir.join("local-git-objects.normalized.json"))?,"verification_method":"git rev-parse, rev-list and remote identity checks; local keyring signature state deliberately excluded as machine-dependent","computed_or_asserted":"COMPUTED_FROM_LIVE_EVIDENCE"},
+            {"id":"EVID-GIT-OBJECTS","value":{"pin":id["head"],"tree":id["tree"]},"evidence_source":"local immutable Git object database","observation_timestamp_utc":CAPTURED,"raw_evidence_sha256":file_sha256(&evidence_dir.join("local-git-objects.normalized.json"))?,"verification_method":"git rev-parse, rev-list and remote identity checks; local keyring signature state deliberately excluded as machine-dependent","computed_or_asserted":"COMPUTED_FROM_LIVE_EVIDENCE"},
             {"id":"EVID-GITHUB-COMMIT","value":github_commit_raw["commit"]["verification"]["verified"],"evidence_source":"GitHub REST commit API at exact SHA","observation_timestamp_utc":CAPTURED,"raw_evidence_sha256":file_sha256(&evidence_dir.join("github-commit.normalized.json"))?,"verification_method":"GitHub verification object plus pin/tree comparison","computed_or_asserted":"COMPUTED_FROM_LIVE_EVIDENCE"},
             {"id":"EVID-GITHUB-RELEASE","value":github_release_raw["id"],"evidence_source":"GitHub REST release API at exact release ID","observation_timestamp_utc":CAPTURED,"raw_evidence_sha256":file_sha256(&evidence_dir.join("github-release.normalized.json"))?,"verification_method":"Exact release and asset ID lookup","computed_or_asserted":"COMPUTED_FROM_LIVE_EVIDENCE"},
             {"id":"EVID-NPM-0.6.1","value":npm_raw["version"],"evidence_source":"npm registry exact-version query","observation_timestamp_utc":CAPTURED,"raw_evidence_sha256":file_sha256(&evidence_dir.join("npm-onda-engine-0.6.1.normalized.json"))?,"verification_method":"npm view onda-engine@0.6.1 --json","computed_or_asserted":"COMPUTED_FROM_LIVE_EVIDENCE"},
@@ -273,7 +291,7 @@ fn provenance_evidence(root: &Path, id: &Value) -> Result<Value> {
 
 fn upstream_lock(root: &Path, id: &Value, evidence: &Value) -> Result<Value> {
     let upstream = upstream(root);
-    let hash = |path: &str| file_sha256(&upstream.join(path));
+    let hash = |path: &str| git_file_sha256(&upstream, path);
     Ok(json!({
         "schema_version": SCHEMA_VERSION,
         "captured_at_utc": CAPTURED,
@@ -1471,6 +1489,32 @@ mod tests {
             ids.into_iter().next().unwrap(),
             "workspace:packages/core#onda-core@0.1.0"
         );
+    }
+    #[test]
+    fn immutable_blob_hash_ignores_worktree_line_endings() {
+        let root = temporary_root("blob-line-endings");
+        command_text(&root, "git", &["init"]).expect("init");
+        command_text(&root, "git", &["config", "user.name", "R0.01 Test"]).expect("name");
+        command_text(
+            &root,
+            "git",
+            &["config", "user.email", "r001@example.invalid"],
+        )
+        .expect("email");
+        fs::write(root.join("fixture.txt"), b"alpha\nbeta\n").expect("LF fixture");
+        command_text(&root, "git", &["add", "fixture.txt"]).expect("add");
+        command_text(&root, "git", &["commit", "-m", "fixture"]).expect("commit");
+        let expected = git_file_sha256_at(&root, "HEAD", "fixture.txt").expect("blob hash");
+        fs::write(root.join("fixture.txt"), b"alpha\r\nbeta\r\n").expect("CRLF fixture");
+        assert_eq!(
+            git_file_sha256_at(&root, "HEAD", "fixture.txt").expect("stable blob hash"),
+            expected
+        );
+        assert_ne!(
+            file_sha256(&root.join("fixture.txt")).expect("worktree hash"),
+            expected
+        );
+        fs::remove_dir_all(root).expect("cleanup");
     }
     #[test]
     fn path_leakage_patterns_cover_windows_linux_and_macos() {

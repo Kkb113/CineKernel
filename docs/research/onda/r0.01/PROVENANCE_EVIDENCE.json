@@ -74,9 +74,9 @@
       "evidence_source": "local immutable Git object database",
       "id": "EVID-GIT-OBJECTS",
       "observation_timestamp_utc": "2026-08-15T00:00:00Z",
-      "raw_evidence_sha256": "d09111580b02d82f8b263e0b14e853a64a982c9ad0cb2a5cdf2800a299e76107",
+      "raw_evidence_sha256": "3f170196c68338f99f051a57bd7c6452457a7a889ca00fd618715eaef2d6e8e3",
       "value": {
-        "pin": null,
+        "pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
         "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
       },
       "verification_method": "git rev-parse, rev-list and remote identity checks; local keyring signature state deliberately excluded as machine-dependent"

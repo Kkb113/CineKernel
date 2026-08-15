@@ -8,11 +8,11 @@
 - ONDA repository: `https://github.com/onda-engine/onda-engine.git`
 - ONDA pin: `3ddf1780c9799bf038ac90cec7d8cadb61acafbe`
 - ONDA tree: `639df83ebf0262afccd6d021bf6d16ef19777d85`
-- LICENSE SHA-256: `608b7a8dc76cd64ecd90172e382dd9851adb306b47de874b21f2ff52ab32bcc9`
-- LICENSE-APACHE SHA-256: `3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5`
-- NOTICE SHA-256: `21578be770583e25069042415dc63189ed33dd8605b2ddfd3a205926483e1647`
-- Cargo.lock SHA-256: `b455bb801e1b22b86d5258527fe68d24c353491365c493a434a94e8f77f46afb`
-- pnpm-lock.yaml SHA-256: `ebfda5d4f51a20eb3f850f04011ddb1952ab33dca5b51ce83e4345d39e6eb639`
+- LICENSE SHA-256: `7e6fdc32986a1ea86933be194a15266419c74963187d9ebf02e2d116a473af29`
+- LICENSE-APACHE SHA-256: `cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30`
+- NOTICE SHA-256: `cba16f2312c5866182513c58d46822a34beec24b32b6521511d24a64d78db7d2`
+- Cargo.lock SHA-256: `67fa301327a87135b37c11a7dc759a99c2ae9bfbf8ddecb2fdaddf7e6553d258`
+- pnpm-lock.yaml SHA-256: `aae73d8537740491fab9cfc75c8966f6f1af97a98fc3c3e1d39663217eed278f`
 - Rust workspace members: 19
 - Resolved Rust packages: 416
 - pnpm workspace packages: 13
