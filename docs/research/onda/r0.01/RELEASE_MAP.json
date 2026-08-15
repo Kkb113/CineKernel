@@ -1,0 +1,75 @@
+{
+  "observed_public_versions": [
+    "0.1.0",
+    "0.1.1",
+    "0.2.0",
+    "0.3.0",
+    "0.4.0",
+    "0.5.0",
+    "0.6.0",
+    "0.6.1"
+  ],
+  "pr_41": {
+    "finding": "0.6.1 manual release closed a path-scoped Release Please gap",
+    "merge_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+    "number": 41
+  },
+  "schema_version": "cinekernel.research.onda.r0.01.v1",
+  "streams": [
+    {
+      "asset": {
+        "digest": "d4335601dc0c66733f772261cbce2de48457767aaa61195691e70062cf331742",
+        "digest_algorithm": "sha256",
+        "id": 475692944,
+        "name": "onda-embed-kit-v0.2.16-x86_64-linux.tar.gz",
+        "platform": "x86_64-linux",
+        "size": 21033371
+      },
+      "id": "embed-kit-github",
+      "kind": "github-release",
+      "latest_tag": "v0.2.16",
+      "published_at": "2026-07-13T16:55:48Z",
+      "release_id": 353301462,
+      "tag_pattern": "v*",
+      "tag_target": "56cc75b2614812ef97121f0171e8e8d765260e59",
+      "workflow": ".github/workflows/release.yml"
+    },
+    {
+      "id": "onda-engine-npm",
+      "integrity": {
+        "algorithm": "sha512-sri",
+        "value": "sha512-5tfqzK5DuMCIbzKfKq8CsOJzKv5JHGGWtYNdSLTsdI/9jf5mMmj1408/YEfbz3pJtwIDA2WfpNL5tFF7eXvipQ=="
+      },
+      "kind": "npm-public",
+      "latest": "0.6.1",
+      "local_scripts_disabled_pack": {
+        "entry_count": 4,
+        "interpretation": "dist is absent because lifecycle scripts were disabled; this is expected and proves source pack intent differs from built publication",
+        "unpacked_size": 25616
+      },
+      "matching_github_release": "NOT_OBSERVED_FOR_0.6.1",
+      "provenance": "NO_PROVENANCE_ATTESTATION_OBSERVED",
+      "published_at": "2026-07-20T03:12:08.488Z",
+      "published_version": "0.6.1",
+      "registry_file_count": 42,
+      "registry_signature_count": 1,
+      "registry_unpacked_size": 17131808,
+      "shasum": {
+        "algorithm": "sha1",
+        "value": "e48444f629cbc112f23456809e348fa67feafad8"
+      },
+      "source_version": "0.6.1",
+      "tag_pattern": "onda-engine-v*",
+      "tarball": "https://registry.npmjs.org/onda-engine/-/onda-engine-0.6.1.tgz",
+      "workflow": ".github/workflows/release-npm.yml"
+    },
+    {
+      "id": "scoped-github-packages",
+      "kind": "github-packages",
+      "manifest_versions": "independent",
+      "registry_state": "AUTH_REQUIRED_NOT_VERIFIED",
+      "tag_pattern": "@onda-engine/*@*",
+      "workflow": "release configuration"
+    }
+  ]
+}

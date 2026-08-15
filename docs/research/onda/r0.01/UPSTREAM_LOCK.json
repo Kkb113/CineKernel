@@ -1,0 +1,53 @@
+{
+  "captured_at_utc": "2026-08-15T00:00:00Z",
+  "cinekernel_base_revision": "5f47f341aa546b4ceb115fcad71d576d0ab85f29",
+  "commit_author_date": "2026-07-19T21:21:12-04:00",
+  "commit_committer_date": "2026-07-19T21:21:12-04:00",
+  "commit_signature_status": "VERIFIED_GITHUB_SIGNATURE",
+  "default_branch": "main",
+  "license": {
+    "declared_spdx": "FSL-1.1-ALv2",
+    "future_license_git_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+    "future_license_path": "LICENSE-APACHE",
+    "future_license_sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+    "license_git_blob": "1137ce6308a6d817a22b4b85afa35230d2b145cc",
+    "license_path": "LICENSE",
+    "license_sha256": "608b7a8dc76cd64ecd90172e382dd9851adb306b47de874b21f2ff52ab32bcc9",
+    "notice_git_blob": "6761d0af83e34903b42bc2d4ee38c67180099ea6",
+    "notice_path": "NOTICE.md",
+    "notice_sha256": "21578be770583e25069042415dc63189ed33dd8605b2ddfd3a205926483e1647"
+  },
+  "lockfiles": {
+    "cargo_lock_sha256": "b455bb801e1b22b86d5258527fe68d24c353491365c493a434a94e8f77f46afb",
+    "pnpm_lock_sha256": "ebfda5d4f51a20eb3f850f04011ddb1952ab33dca5b51ce83e4345d39e6eb639"
+  },
+  "observed_branch_head": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+  "package_versions": [
+    {
+      "surface": "rust-workspace",
+      "version": "0.1.0"
+    },
+    {
+      "surface": "npm-umbrella",
+      "version": "0.6.1"
+    },
+    {
+      "surface": "embed-kit-latest",
+      "version": "0.2.16"
+    }
+  ],
+  "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+  "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+  "release_streams": [
+    "embed-kit-github",
+    "onda-engine-npm",
+    "scoped-github-packages"
+  ],
+  "repository": "https://github.com/onda-engine/onda-engine.git",
+  "research_policy_version": "R0.01-v1",
+  "schema_version": "cinekernel.research.onda.r0.01.v1",
+  "unresolved": [
+    "scoped GitHub Packages registry state requires authentication",
+    "legal effect of future-license dates"
+  ]
+}

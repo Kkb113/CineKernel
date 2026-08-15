@@ -797,9 +797,13 @@ fn report(root: &Path) -> Result<Value> {
         &dir.join("R0_01_ACCEPTANCE_REPORT.md"),
         &acceptance_report(&summary, &guard_result),
     )?;
+    let packet = review_packet(root, &summary)?.replace(
+        "- Research branch: `research/r0.01-onda-provenance`",
+        "- Research branch: `research/r0.01-onda-provenance`\n- Harness/schemas/tests commit: `d35e31615ab7d9ef6e348ccde1a4b243dc364bc8`\n- Evidence commit: the commit containing this packet",
+    );
     write_text(
         &root.join("reports/research/r0.01/REVIEW_PACKET.md"),
-        &review_packet(root, &summary)?,
+        &packet,
     )?;
     validate_schemas(root)?;
     integrity_manifest(root)?;
@@ -868,7 +872,7 @@ fn collect_all_files(directory: &Path, output: &mut Vec<PathBuf>) -> Result<()> 
 fn acceptance_report(summary: &Value, _guard: &Value) -> String {
     let sections = [
         ("1. Executive status","PASS — exact source/release/licensing/provenance lock established; legal questions are quarantined and no reuse decision depends on them."),
-        ("2. CineKernel base revision",BASE),("3. Research branch and commits","`research/r0.01-onda-provenance`; commit list is finalized at review time."),
+        ("2. CineKernel base revision",BASE),("3. Research branch and commits","`research/r0.01-onda-provenance`; harness/schemas/tests commit `d35e31615ab7d9ef6e348ccde1a4b243dc364bc8`; the evidence commit is the commit containing this generated report."),
         ("4. ONDA selected research pin",PIN),("5. Repository and tree identity",TREE),("6. Commit verification","GitHub signature VERIFIED; independent ls-remote and API observations matched the selected pin."),
         ("7. Module inventory","See `MODULE_INVENTORY.*`."),("8. Rust workspace inventory","19 members at workspace version 0.1.0."),("9. JavaScript workspace inventory","13 packages/apps; umbrella version 0.6.1."),
         ("10. Dependency graph","416 locked Cargo packages plus statically parsed pnpm workspaces."),("11. Feature/dependency reachability","Default CLI and optional video, segment, transcribe, speak, WASM, GPU, audio, typography and layout surfaces are separated."),
