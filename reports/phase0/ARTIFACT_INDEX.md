@@ -1,6 +1,6 @@
 # Phase 0.1 artifact index
 
-Tracked review artifacts are durable summaries from evidence commit `b12e6c74a519fa693a49f50cd23df6dddc910b88`. Raw videos, command logs, environment captures, per-attempt results, and 109 sidecar verification manifests remain under ignored `.cinekernel/` locally and are configured for 90-day GitHub Actions retention.
+Tracked review artifacts include the original durable summaries from evidence commit `b12e6c74a519fa693a49f50cd23df6dddc910b88` and the final remote-closure attestation. Raw videos, command logs, environment captures, per-attempt results, and sidecar verification manifests remain under ignored `.cinekernel/` locally and are configured for 90-day GitHub Actions retention.
 
 | Artifact | Purpose | Provenance |
 |---|---|---|
@@ -13,9 +13,10 @@ Tracked review artifacts are durable summaries from evidence commit `b12e6c74a51
 | `artifacts/EQUIVALENT_RENDER_MEDIANS.svg` | selected equivalent median comparisons | canonical `render_command` timings |
 | `artifacts/HYPERFRAMES_PHASE_MEDIANS.svg` | separated HyperFrames preflight/render/verify medians | canonical raw v2 timings |
 | `REVIEW_FINDINGS_RESOLUTION.md` | ten findings mapped to fixes and gates | final attestation |
-| `CI_EVIDENCE.md` | actual CI records and manual-dispatch blocker | normal CI green; manual blocked |
+| `CI_EVIDENCE.md` | actual CI, full/all, isolation, and attestation records | all closure gates green |
 | `PHASE0_1_CLOSURE_EVIDENCE.md` | focused reruns required by the native 3D floor change | 24/24 verified at closure implementation `907a2551` |
+| `REMOTE_CLOSURE_ATTESTATION.md` | exact remote jobs, canonical counts, artifact IDs, and evidence hashes | final Phase 0.1 PASS |
 | `SOURCE_ARCHAEOLOGY_SUMMARY.md` | critical-path conclusions and immutable source links | validator PASS |
-| `ARTIFACT_SHA256.txt` | review-artifact integrity manifest | 27 entries, regenerated and verified after closure evidence |
+| `ARTIFACT_SHA256.txt` | review-artifact integrity manifest | regenerated and verified after final remote attestation |
 
 No `node_modules`, Rust `target`, `.cinekernel`, or `Remotion-Hyperframe-SourceCode` path is tracked.
