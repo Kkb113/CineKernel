@@ -99,6 +99,8 @@ test("probe driver excludes warmups and scopes GPU tolerance to documented rows"
   assert.match(source,/engine===\"remotion\"&&caseId===\"mixed-2d-3d\"/);
   assert.match(source,/minimum_psnr_average_db:35/);
   assert.match(source,/minimum_ssim_all:\.98/);
+  assert.match(source,/attempt<=3/);
+  assert.match(source,/stderr:\(execution\.stderr\?\?""\)\.slice\(-4000\)/);
   assert.match(source,/engine===\"remotion\"&&caseId===\"3d-scene\"\?20:15/);
   assert.match(source,/excludedProbes\.has\(\"G\"\)/);
   assert.match(source,/UNSUPPORTED by canonical environment/);
