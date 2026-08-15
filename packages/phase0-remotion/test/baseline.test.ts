@@ -56,3 +56,13 @@ test("audio renders are padded and trimmed to the declared composition duration"
   assert.match(renderer,/["']-t["'],String\(durationSeconds\)/);
   assert.match(renderer,/["']--timeout["'],["']120000["']/);
 });
+
+test("Probe D still renderer reuses one browser and restarts it only after capture failure", () => {
+  const source=readFileSync(resolve(packageRoot,"scripts/probe-stills.ts"),"utf8");
+  assert.match(source,/await bundle\(/);
+  assert.match(source,/browser\?\?=await openBrowser/);
+  assert.match(source,/puppeteerInstance:browser/);
+  assert.match(source,/await renderStill\(/);
+  assert.match(source,/attempt<=3/);
+  assert.match(source,/await closeBrowser\(\)/);
+});

@@ -1,0 +1,77 @@
+name: Phase 0 macOS probe attestation
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: Workflow run containing the retained macOS canonical artifact
+        type: string
+        required: true
+      source_revision:
+        description: Full source revision used to name the retained canonical artifact
+        type: string
+        required: true
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  probe-attestation:
+    name: Retained canonical probes (macos-latest)
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install FFmpeg
+        run: brew install ffmpeg
+
+      - name: Install JavaScript dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download retained macOS canonical evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: phase0-${{ inputs.source_revision }}-macos-latest-full-all
+          path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.source_run_id }}
+
+      - name: Reconstruct canonical pointer and verify retained inventory
+        shell: pwsh
+        run: |
+          $manifest = Get-Content reports/phase0/CANONICAL_RUN_MANIFEST.json | ConvertFrom-Json
+          New-Item -ItemType Directory -Force -Path .cinekernel/canonical | Out-Null
+          @{
+            canonical_run_id = $manifest.canonical_run_id
+            manifest = ".cinekernel/runs/$($manifest.canonical_run_id)/canonical-run-manifest.json"
+          } | ConvertTo-Json | Set-Content .cinekernel/canonical/latest.json
+          cargo xtask phase0 verify --canonical --json
+
+      - name: Run correctness probes against retained canonical outputs
+        env:
+          CINEKERNEL_REMOTION_GL: angle
+        run: cargo xtask phase0 probes --canonical --exclude G --json
+
+      - name: Upload macOS probe attestation
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase0-macos-probe-attestation-${{ github.sha }}
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            .cinekernel/probes/
+            reports/phase0/CORRECTNESS_PROBES.*
