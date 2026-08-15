@@ -1,6 +1,6 @@
 # Phase 0.1 closure evidence
 
-Status: **LOCAL FOCUSED RERUN PASS; REMOTE CLOSURE GATES PENDING**
+Status: **PASS**
 
 Implementation revision: `907a2551c3dad27c698ac43d7ecb41957236be53`.
 
@@ -17,7 +17,10 @@ The closure implementation adds a depth-tested native 3D floor, separates Linux 
 
 The original 109-result reference-machine run remains the Phase 0.1 aggregate baseline for unchanged workloads. These focused results replace the native 3D/mixed implementation evidence and confirm the unchanged Remotion/HyperFrames 3D/mixed reference groups; they are not presented as a new whole-suite aggregate. HyperFrames preflight remains excluded from `render_command` exactly as in the established timing methodology and remains separately recorded in each raw result.
 
-The acceptance report must remain `CONDITIONAL PASS` until both default-branch workflows succeed:
+Remote closure is complete:
 
-- the capability-aware three-OS manual full/all workflow; and
-- the dedicated Ubuntu loopback-only network-isolation workflow for Probe G.
+- capability-aware full/all run [31855973437](https://github.com/Kkb113/CineKernel/actions/runs/31855973437) rendered and verified 99/99 macOS, 101/101 Ubuntu, and 101/101 Windows results;
+- macOS retained-evidence attestation [31870436549](https://github.com/Kkb113/CineKernel/actions/runs/31870436549) passed probes A-F and H-J with 9 PASS / 0 FAIL / 0 UNSUPPORTED; and
+- dedicated Ubuntu network-isolation run [31855975438](https://github.com/Kkb113/CineKernel/actions/runs/31855975438) passed Probe G for Remotion and HyperFrames in a loopback-only network namespace.
+
+The original macOS job-level failure occurred only after successful rendering and 99/99 verification, in the old per-still Probe D browser lifecycle. The corrected probe reuses one browser and does not change native 3D, canonical render output, or performance timing. The reference-machine aggregate and focused native-floor performance runs therefore remain valid. See `REMOTE_CLOSURE_ATTESTATION.md` for artifact IDs and hashes.

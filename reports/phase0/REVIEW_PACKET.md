@@ -1,8 +1,8 @@
 # CineKernel Phase 0.1 reviewer packet
 
-Status: **CONDITIONAL PASS**. Implementation revision A: `0249b40ec41673ed8ac2f22c23583ddc3629a320`. Evidence revision B: `b12e6c74a519fa693a49f50cd23df6dddc910b88`. Canonical run: `20260814T144948Z-c6e0a98a-b94a-48e9-a26e-f69faf10f048`.
+Status: **PASS**. Original aggregate revision A: `0249b40ec41673ed8ac2f22c23583ddc3629a320`. Native-floor closure: `907a2551c3dad27c698ac43d7ecb41957236be53`. Remote performance revision: `6f254eda880ab5a1463baac1d0a1819b7c68cac7`. Final closure master: `1c07e19fb0eb9b9f9c4b7c5e3cc26b6a29e54a93`.
 
-Normal CI: [run 31810436296](https://github.com/Kkb113/CineKernel/actions/runs/31810436296), all three OS jobs green at implementation A. Post-evidence CI: [run 31817123555](https://github.com/Kkb113/CineKernel/actions/runs/31817123555), all three OS jobs green at attestation `8b4825e`. Manual benchmark workflow path: `.github/workflows/phase0-benchmarks.yml`; no run URL exists because GitHub returns 404 until the workflow is registered on the default branch.
+Current master CI: [run 31870422891](https://github.com/Kkb113/CineKernel/actions/runs/31870422891), all three OS jobs green. Remote full/all: [run 31855973437](https://github.com/Kkb113/CineKernel/actions/runs/31855973437). Ubuntu Probe G: [run 31855975438](https://github.com/Kkb113/CineKernel/actions/runs/31855975438). Final macOS probes: [run 31870436549](https://github.com/Kkb113/CineKernel/actions/runs/31870436549), 9/9 PASS.
 
 ## Five largest changes
 
@@ -22,11 +22,11 @@ Normal CI: [run 31810436296](https://github.com/Kkb113/CineKernel/actions/runs/3
 
 ## Five important limitations
 
-1. The manual three-OS full/all workflow has not run because it is not registered on `master`.
-2. Strong render-time network isolation (Probe G) is therefore not executed; a static scan is not counted as equivalent evidence.
-3. Local GPU evidence covers one Intel Arc/Vulkan adapter and cannot establish driver/backend conformance.
-4. The deterministic bitmap glyph path is benchmark infrastructure, not a production international text stack.
-5. Phase 0 micro/mixed workloads do not replace a five-to-ten-minute production corpus or final VideoIR evaluation.
+1. Local hardware GPU performance evidence covers one Intel Arc/Vulkan adapter; hosted-runner software/capability evidence is not cross-driver certification.
+2. The deterministic bitmap glyph path is benchmark infrastructure, not a production international text stack.
+3. Phase 0 micro/mixed workloads do not replace a five-to-ten-minute production corpus or final VideoIR evaluation.
+4. FFmpeg distribution/version differences across operating systems still require a certified production boundary.
+5. Phase 0 selects candidate renderer roles, not an irreversible final renderer architecture.
 
 ## Review artifacts and order
 
@@ -37,7 +37,7 @@ Normal CI: [run 31810436296](https://github.com/Kkb113/CineKernel/actions/runs/3
 5. `reports/phase0/VERIFIER_REPORT.md`, `VERIFICATION_MANIFEST_INDEX.json`, and `CORRECTNESS_PROBES.md` — verification and adversarial evidence.
 6. `reports/phase0/ARCHITECTURE_BAKEOFF.md` — proposed architecture direction.
 7. `reports/phase0/SOURCE_ARCHAEOLOGY_SUMMARY.md` and `docs/research/{remotion,hyperframes}/` — pinned source analysis.
-8. `reports/phase0/RISK_REGISTER.md`, `OPEN_DECISIONS.md`, and `CI_EVIDENCE.md` — limitations, decisions, and remote gate state.
+8. `reports/phase0/REMOTE_CLOSURE_ATTESTATION.md`, `RISK_REGISTER.md`, `OPEN_DECISIONS.md`, and `CI_EVIDENCE.md` — remote evidence, limitations, decisions, and closure state.
 9. `reports/phase0/ARTIFACT_INDEX.md` and `ARTIFACT_SHA256.txt` — inventory and integrity.
 
 Tracked visual artifacts are `MIXED_EQUIVALENCE_CONTACT_SHEET.png`, `MEDIA_ORACLE_CONTACT_SHEET.png`, `EQUIVALENT_RENDER_MEDIANS.svg`, and `HYPERFRAMES_PHASE_MEDIANS.svg`. Runtime videos/logs/manifests are ignored locally and configured for 90-day workflow retention.

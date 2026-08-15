@@ -6,12 +6,12 @@ Implementation revision A is `0249b40ec41673ed8ac2f22c23583ddc3629a320`; generat
 
 - **Original problem:** pnpm cache lookup preceded pnpm installation; Rust/FFmpeg setup and acceptance claims were unreliable.
 - **Root cause:** workflow ordering and platform assumptions had not been validated remotely.
-- **Implementation change:** pnpm 11.8.0 installs first; Rust components use valid syntax; each OS uses native FFmpeg installation; wgpu has a bounded timeout; evidence uploads use `if: always()` and 90-day retention.
+- **Implementation change:** pnpm 11.8.0 installs first; Rust components use valid syntax; each OS uses a platform-appropriate FFmpeg installer; wgpu has a bounded timeout; evidence uploads use `if: always()` and 90-day retention.
 - **Files changed:** `.github/workflows/ci.yml`, `.github/workflows/phase0-benchmarks.yml`.
 - **Tests added:** workflow commands exercise frozen install, schemas, lineage, native smoke, verifier, and capability classification.
-- **Evidence:** normal CI [31810436296](https://github.com/Kkb113/CineKernel/actions/runs/31810436296), jobs Ubuntu `94799485842`, macOS `94799485855`, Windows `94799485868`, all success.
-- **Final status:** normal CI RESOLVED; manual workflow BLOCKED.
-- **Remaining limitation:** GitHub must register the manual workflow on the default branch before dispatch; no unauthorized `master` change was made.
+- **Evidence:** current master CI [31870422891](https://github.com/Kkb113/CineKernel/actions/runs/31870422891), jobs Windows `94978096773`, Ubuntu `94978096796`, macOS `94978096803`, all success; remote full/all and isolation workflows are also registered and executed.
+- **Final status:** RESOLVED.
+- **Remaining limitation:** hosted CI classifies unavailable hardware GPU capability instead of treating software fallback as hardware evidence.
 
 ## Finding 2 — Timing was not apples-to-apples
 
@@ -53,9 +53,9 @@ Implementation revision A is `0249b40ec41673ed8ac2f22c23583ddc3629a320`; generat
 - **Implementation change:** A-J now use measured-only repeated framemd5, full decoded media mapping, all browser worker modes, shuffled native evaluation, preview/final checkpoints, real three-clip audio and invalid overlap, central mux verification, xtask timeout recovery, and real FFmpeg backpressure.
 - **Files changed:** `packages/phase0-common/scripts/run-probes.ts`, fixtures, probe schemas/reports, harness.
 - **Tests added:** async entrypoint, warm-up exclusion, scoped GPU tolerance, invalid compositions/audio, and queue bounds.
-- **Evidence:** nine PASS, zero FAIL, one UNSUPPORTED; Probe J maximum three frames / 24,883,200 bytes.
-- **Final status:** RESOLVED except Probe G execution.
-- **Remaining limitation:** Windows cannot supply the required Linux namespace; Ubuntu manual execution is blocked by workflow registration.
+- **Evidence:** macOS retained-evidence attestation [31870436549](https://github.com/Kkb113/CineKernel/actions/runs/31870436549) has nine PASS, zero FAIL, zero UNSUPPORTED; Ubuntu Probe G [31855975438](https://github.com/Kkb113/CineKernel/actions/runs/31855975438) passes for both browser engines; Probe J maximum three frames / 24,883,200 bytes.
+- **Final status:** RESOLVED.
+- **Remaining limitation:** retain Linux namespace isolation as a dedicated gate because Windows and macOS cannot provide equivalent `unshare --net` evidence.
 
 ## Finding 6 — Harness reliability was incomplete
 
@@ -112,4 +112,4 @@ Implementation revision A is `0249b40ec41673ed8ac2f22c23583ddc3629a320`; generat
 - **Final status:** RESOLVED.
 - **Remaining limitation:** external upstreams remain wrapped dependencies and are not claimed to be relicensed.
 
-Overall disposition remains **CONDITIONAL PASS** solely because the manual workflow and Ubuntu Probe G hard gates are blocked, not because a passing result is being inferred from workflow definitions.
+Overall disposition is **PASS**. The capability-aware remote full/all matrix ran, Ubuntu Probe G passed under OS-enforced loopback-only isolation, and the corrected macOS retained-evidence attestation passed A-F and H-J with zero failures or unsupported probes. See `REMOTE_CLOSURE_ATTESTATION.md`.
