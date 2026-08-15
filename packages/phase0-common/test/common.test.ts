@@ -95,12 +95,15 @@ test("probe driver transforms and reaches its argument guard without top-level-a
 test("probe driver excludes warmups and scopes GPU tolerance to documented rows", () => {
   const root=resolve(import.meta.dirname,"../../..");
   const source=readFileSync(resolve(root,"benchmarks/probes/run-probes.ts"),"utf8");
+  const remotionStills=readFileSync(resolve(root,"packages/phase0-remotion/scripts/probe-stills.ts"),"utf8");
   assert.match(source,/basename\(path\)===\"result\.json\"/);
   assert.match(source,/engine===\"remotion\"&&caseId===\"mixed-2d-3d\"/);
   assert.match(source,/minimum_psnr_average_db:35/);
   assert.match(source,/minimum_ssim_all:\.98/);
-  assert.match(source,/attempt<=3/);
-  assert.match(source,/stderr:\(execution\.stderr\?\?""\)\.slice\(-4000\)/);
+  assert.match(source,/probe-stills\.ts/);
+  assert.match(source,/const remotionExecution=spawnSync/);
+  assert.match(remotionStills,/attempt<=3/);
+  assert.match(remotionStills,/stderr:String\(error/);
   assert.match(source,/engine===\"remotion\"&&caseId===\"3d-scene\"\?20:15/);
   assert.match(source,/excludedProbes\.has\(\"G\"\)/);
   assert.match(source,/UNSUPPORTED by canonical environment/);
@@ -130,4 +133,17 @@ test("manual evidence workflow is GPU capability-aware and excludes Probe G", ()
   assert.match(workflow,/\[Environment\]::ProcessorCount/);
   assert.match(workflow,/CINEKERNEL_REMOTION_GL = 'angle'/);
   assert.match(workflow,/phase0 probes --canonical --exclude G/);
+});
+
+test("macOS probe attestation reuses retained canonical evidence without rerunning performance", () => {
+  const root=resolve(import.meta.dirname,"../../..");
+  const workflow=readFileSync(resolve(root,".github/workflows/phase0-macos-probe-attestation.yml"),"utf8");
+  assert.match(workflow,/actions\/download-artifact@v4/);
+  assert.match(workflow,/source_run_id/);
+  assert.match(workflow,/source_revision/);
+  assert.match(workflow,/phase0-\$\{\{ inputs\.source_revision \}\}-macos-latest-full-all/);
+  assert.match(workflow,/cargo xtask phase0 verify --canonical --json/);
+  assert.match(workflow,/CINEKERNEL_REMOTION_GL: angle/);
+  assert.match(workflow,/phase0 probes --canonical --exclude G --json/);
+  assert.doesNotMatch(workflow,/phase0 canonical-run/);
 });
