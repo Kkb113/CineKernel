@@ -264,22 +264,16 @@ fn snapshot_target(name: &str, resolution: &str) -> Option<String> {
     }
 }
 
-pub(crate) fn build_graph(upstream: &Path, raw: &Path, declarations: &[Value]) -> Result<Value> {
-    let lock = fs::read_to_string(upstream.join("pnpm-lock.yaml"))?;
-    let lines = lock.lines().collect::<Vec<_>>();
-    let packages_start = lines
-        .iter()
-        .position(|line| *line == "packages:")
-        .context("pnpm packages section")?
-        + 1;
-    let snapshots_start = lines
-        .iter()
-        .position(|line| *line == "snapshots:")
-        .context("pnpm snapshots section")?;
-    let packages = parse_packages(&lines, packages_start, snapshots_start);
-    let snapshots = parse_snapshots(&lines, snapshots_start + 1);
-    let licenses = run_license_inventory(upstream, raw, &packages)?;
+type PropagatedGraphState = (
+    BTreeSet<String>,
+    BTreeMap<String, BTreeSet<String>>,
+    BTreeMap<String, BTreeSet<String>>,
+);
 
+fn propagate_graph_state(
+    snapshots: &BTreeMap<String, SnapshotRecord>,
+    declarations: &[Value],
+) -> PropagatedGraphState {
     let mut direct = BTreeSet::new();
     let mut classifications: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
     let mut reachability: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
@@ -313,20 +307,39 @@ pub(crate) fn build_graph(upstream: &Path, raw: &Path, declarations: &[Value]) -
                 continue;
             };
             let classes = classifications.entry(target.clone()).or_default();
-            let previous = classes.len();
+            let previous_class_count = classes.len();
             classes.extend(parent_classes.iter().cloned());
             if edge_kind == "optionalDependencies" {
                 classes.insert("optional".to_owned());
             }
-            reachability
-                .entry(target.clone())
-                .or_default()
-                .extend(parent_importers.iter().cloned());
-            if classes.len() != previous {
+            let importers = reachability.entry(target.clone()).or_default();
+            let previous_importer_count = importers.len();
+            importers.extend(parent_importers.iter().cloned());
+            if classes.len() != previous_class_count || importers.len() != previous_importer_count {
                 queue.push_back(target);
             }
         }
     }
+    (direct, classifications, reachability)
+}
+
+pub(crate) fn build_graph(upstream: &Path, raw: &Path, declarations: &[Value]) -> Result<Value> {
+    let lock = fs::read_to_string(upstream.join("pnpm-lock.yaml"))?;
+    let lines = lock.lines().collect::<Vec<_>>();
+    let packages_start = lines
+        .iter()
+        .position(|line| *line == "packages:")
+        .context("pnpm packages section")?
+        + 1;
+    let snapshots_start = lines
+        .iter()
+        .position(|line| *line == "snapshots:")
+        .context("pnpm snapshots section")?;
+    let packages = parse_packages(&lines, packages_start, snapshots_start);
+    let snapshots = parse_snapshots(&lines, snapshots_start + 1);
+    let licenses = run_license_inventory(upstream, raw, &packages)?;
+
+    let (direct, classifications, reachability) = propagate_graph_state(&snapshots, declarations);
 
     let mut nodes = Vec::new();
     let mut edges = Vec::new();
@@ -472,5 +485,48 @@ mod tests {
             platform_license_family("@img/sharp-libvips-linux-x64")
         );
         assert_eq!(platform_license_family("react"), None);
+    }
+
+    #[test]
+    fn importer_reachability_converges_across_unequal_paths() {
+        let snapshots = BTreeMap::from([
+            (
+                "shared@1.0.0".to_owned(),
+                SnapshotRecord {
+                    dependencies: BTreeMap::from([(
+                        "leaf".to_owned(),
+                        ("1.0.0".to_owned(), "dependencies".to_owned()),
+                    )]),
+                },
+            ),
+            ("leaf@1.0.0".to_owned(), SnapshotRecord::default()),
+            (
+                "bridge@1.0.0".to_owned(),
+                SnapshotRecord {
+                    dependencies: BTreeMap::from([(
+                        "shared".to_owned(),
+                        ("1.0.0".to_owned(), "dependencies".to_owned()),
+                    )]),
+                },
+            ),
+        ]);
+        let declarations = [
+            json!({"dependency":"shared","resolved_version":"1.0.0","classification":"external-runtime","manifest":"root-a/package.json"}),
+            json!({"dependency":"bridge","resolved_version":"1.0.0","classification":"external-runtime","manifest":"root-b/package.json"}),
+        ];
+        let first = propagate_graph_state(&snapshots, &declarations);
+        let expected = BTreeSet::from([
+            "root-a/package.json".to_owned(),
+            "root-b/package.json".to_owned(),
+        ]);
+        assert_eq!(first.2["shared@1.0.0"], expected);
+        assert_eq!(first.2["leaf@1.0.0"], expected);
+
+        let second = propagate_graph_state(&snapshots, &declarations);
+        assert_eq!(first, second);
+        assert_eq!(
+            second.2["leaf@1.0.0"].iter().cloned().collect::<Vec<_>>(),
+            ["root-a/package.json", "root-b/package.json"]
+        );
     }
 }

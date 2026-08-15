@@ -1,6 +1,6 @@
 # 1. Executive status
 
-PASS — exact source/release/licensing/provenance lock established; legal questions are quarantined and no reuse decision depends on them.
+CONDITIONAL PASS — all local remediation checks pass; dedicated GitHub reproduction is pending.
 
 # 2. CineKernel base revision
 
@@ -108,7 +108,7 @@ The dedicated workflow runs formatting, all-target/all-feature checks, strict Cl
 
 # 28. Reproducibility/idempotency results
 
-PASS: GitHub Actions run `31886829885` succeeded and published artifact `r0-01-onda-provenance-31886829885`. https://github.com/Kkb113/CineKernel/actions/runs/31886829885
+PENDING: the dedicated workflow must run the full pipeline twice, prove a clean diff, pass the independent integrity verifier, and publish raw evidence.
 
 # 29. Inconsistencies
 
