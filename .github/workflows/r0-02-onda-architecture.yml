@@ -40,6 +40,8 @@ jobs:
         run: cargo xtask research onda sync --json
       - name: Verify R0.01 upstream lock at R0.01 base
         working-directory: .r001-base
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: cargo xtask research onda verify --json
       - name: Verify R0.01 integrity at R0.01 base
         working-directory: .r001-base
