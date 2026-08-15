@@ -41,6 +41,15 @@ jobs:
       - name: Install JavaScript dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Sync pinned upstream source
+        run: cargo xtask upstream sync
+
+      - name: Verify pinned upstream source
+        run: cargo xtask upstream verify --json
+
+      - name: Prepare deterministic fixtures
+        run: cargo xtask phase0 prepare --json
+
       - name: Download retained macOS canonical evidence
         uses: actions/download-artifact@v4
         with:
