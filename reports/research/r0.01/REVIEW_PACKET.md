@@ -1,6 +1,6 @@
 # R0.01 reviewer packet
 
-- Status: PASS
+- Status: CONDITIONAL PASS — remote reproduction pending
 - CineKernel base: `5f47f341aa546b4ceb115fcad71d576d0ab85f29`
 - Research branch: `research/r0.01-onda-provenance`
 - Harness/schemas/tests commit: `d35e31615ab7d9ef6e348ccde1a4b243dc364bc8`
@@ -16,30 +16,11 @@
 - Rust workspace members: 19
 - Resolved Rust packages: 416
 - pnpm workspace packages: 13
-- External models/artifacts: 13 total records (5 model/downloaded-binary records)
+- Resolved pnpm packages: 528
+- External models/artifacts: 19 total records
 - Release streams: 3
 - License hotspots: 9
-- Unresolved factual items: 2 lock-level items; all additional inconsistencies remain explicit in the register
-- Legal-review items: 9 hotspot chains
-- R0.01 harness tests: 32 passed, 0 failed
-- Full tests: 65 Rust passed, 27 JavaScript passed, 0 final failures
-- Determinism: 15 documents compared, 0 SHA-256 differences
-- Guards: dependency PASS; tracked-source PASS; exact-copy PASS; Phase 0 immutability PASS
-
-## Verification exit codes
-
-| Command | Exit |
-|---|---:|
-| `cargo fmt --all --check` | 0 |
-| `cargo check --workspace --all-targets --all-features` | 0 |
-| `cargo clippy --workspace --all-targets --all-features -- -D warnings` | 0 |
-| `cargo test --workspace --all-features` | 0 |
-| `corepack pnpm install --frozen-lockfile` | 0 |
-| `corepack pnpm typecheck` | 0 |
-| `corepack pnpm test` | 0 |
-| each required `cargo xtask research onda ... --json` invocation | 0 |
-
-One restricted-sandbox Rust attempt could not terminate the synthetic timeout-test process and exited 101; the unchanged full suite rerun with normal Windows process-tree control exited 0. This was an execution-environment limitation, not a source change.
+- Guards: dependency PASS; tracked-source PASS; exact-copy PASS; Phase 0 immutability PASS; absolute-path leakage PASS
 
 ## Reproduction
 
@@ -49,6 +30,7 @@ cargo xtask research onda verify --json
 cargo xtask research onda inventory --json
 cargo xtask research onda report --json
 cargo xtask research onda guard --json
+cargo xtask research onda integrity --check --json
 ```
 
-All commands must exit 0. Raw evidence is written only below ignored `.cinekernel/research/onda/r0.01/`. Committed artifacts are under `docs/research/onda/r0.01/`, schemas under `schemas/research/`, and this packet plus the integrity manifest under `reports/research/r0.01/`.
+The dedicated workflow runs the generation pipeline twice, requires a byte-clean Git diff, and uploads raw evidence without building or executing ONDA. Raw evidence is written only below ignored `.cinekernel/research/onda/r0.01/`.

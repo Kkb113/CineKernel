@@ -1,0 +1,151 @@
+{
+  "github_commit": {
+    "author_date": "2026-07-20T01:21:12Z",
+    "committer_date": "2026-07-20T01:21:12Z",
+    "sha": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+    "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+    "verification": {
+      "reason": "valid",
+      "verified": true,
+      "verified_at": "2026-07-20T01:21:12Z"
+    }
+  },
+  "github_pr_41": {
+    "merge_commit_sha": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+    "merged_at": "2026-07-20T01:21:12Z",
+    "number": 41,
+    "state": "closed",
+    "title": "Release: onda-engine 0.6.1 — ship the kinetic presets already on main"
+  },
+  "github_release": {
+    "asset": {
+      "digest": "sha256:d4335601dc0c66733f772261cbce2de48457767aaa61195691e70062cf331742",
+      "id": 475692944,
+      "name": "onda-embed-kit-v0.2.16-x86_64-linux.tar.gz",
+      "size": 21033371
+    },
+    "id": 353301462,
+    "published_at": "2026-07-13T16:55:48Z",
+    "tag_name": "v0.2.16",
+    "tag_target": "56cc75b2614812ef97121f0171e8e8d765260e59",
+    "target_commitish": "main"
+  },
+  "npm": {
+    "dist": {
+      "file_count": 42,
+      "integrity": "sha512-5tfqzK5DuMCIbzKfKq8CsOJzKv5JHGGWtYNdSLTsdI/9jf5mMmj1408/YEfbz3pJtwIDA2WfpNL5tFF7eXvipQ==",
+      "shasum": "e48444f629cbc112f23456809e348fa67feafad8",
+      "signatures": [
+        {
+          "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+          "sig": "MEUCIDLvwTz4HWtkIEVZQVbuObm7m9OQj3fnMYyDmy4SCknSAiEAkVAElGtYCbTOh7O1dcXapdZ0YnQl0QGcCD0aqDj2wNg="
+        }
+      ],
+      "tarball": "https://registry.npmjs.org/onda-engine/-/onda-engine-0.6.1.tgz",
+      "unpacked_size": 17131808
+    },
+    "dist_tags": {
+      "latest": "0.6.1"
+    },
+    "license": "FSL-1.1-ALv2",
+    "name": "onda-engine",
+    "observed_public_versions": [
+      "0.1.0",
+      "0.1.1",
+      "0.2.0",
+      "0.3.0",
+      "0.4.0",
+      "0.5.0",
+      "0.6.0",
+      "0.6.1"
+    ],
+    "published_at": "2026-07-20T03:12:08.488Z",
+    "repository": {
+      "directory": "packages/umbrella",
+      "type": "git",
+      "url": "git+https://github.com/onda-engine/onda-engine.git"
+    },
+    "version": "0.6.1"
+  },
+  "observation_timestamp_utc": "2026-08-15T00:00:00Z",
+  "records": [
+    {
+      "computed_or_asserted": "COMPUTED_FROM_LIVE_EVIDENCE",
+      "evidence_source": "local immutable Git object database",
+      "id": "EVID-GIT-OBJECTS",
+      "observation_timestamp_utc": "2026-08-15T00:00:00Z",
+      "raw_evidence_sha256": "d09111580b02d82f8b263e0b14e853a64a982c9ad0cb2a5cdf2800a299e76107",
+      "value": {
+        "pin": null,
+        "tree": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+      },
+      "verification_method": "git rev-parse, rev-list and remote identity checks; local keyring signature state deliberately excluded as machine-dependent"
+    },
+    {
+      "computed_or_asserted": "COMPUTED_FROM_LIVE_EVIDENCE",
+      "evidence_source": "GitHub REST commit API at exact SHA",
+      "id": "EVID-GITHUB-COMMIT",
+      "observation_timestamp_utc": "2026-08-15T00:00:00Z",
+      "raw_evidence_sha256": "8f81e2566b0bfa14e11dfe99b1fda915c580739b4199332c2b9dcf12f94f74cc",
+      "value": true,
+      "verification_method": "GitHub verification object plus pin/tree comparison"
+    },
+    {
+      "computed_or_asserted": "COMPUTED_FROM_LIVE_EVIDENCE",
+      "evidence_source": "GitHub REST release API at exact release ID",
+      "id": "EVID-GITHUB-RELEASE",
+      "observation_timestamp_utc": "2026-08-15T00:00:00Z",
+      "raw_evidence_sha256": "1651569c9d6851e815566130fb0ab20918a44e41c730963e3b71f3e98b97ab31",
+      "value": 353301462,
+      "verification_method": "Exact release and asset ID lookup"
+    },
+    {
+      "computed_or_asserted": "COMPUTED_FROM_LIVE_EVIDENCE",
+      "evidence_source": "npm registry exact-version query",
+      "id": "EVID-NPM-0.6.1",
+      "observation_timestamp_utc": "2026-08-15T00:00:00Z",
+      "raw_evidence_sha256": "e71ca05e575a328175645901512a5aacd835de93c6eccf55192c76c7b0d0e4df",
+      "value": "0.6.1",
+      "verification_method": "npm view onda-engine@0.6.1 --json"
+    },
+    {
+      "computed_or_asserted": "COMPUTED_FROM_LIVE_EVIDENCE",
+      "evidence_source": "npm registry package version index",
+      "id": "EVID-NPM-VERSIONS",
+      "observation_timestamp_utc": "2026-08-15T00:00:00Z",
+      "raw_evidence_sha256": "e71ca05e575a328175645901512a5aacd835de93c6eccf55192c76c7b0d0e4df",
+      "value": [
+        "0.1.0",
+        "0.1.1",
+        "0.2.0",
+        "0.3.0",
+        "0.4.0",
+        "0.5.0",
+        "0.6.0",
+        "0.6.1"
+      ],
+      "verification_method": "npm view onda-engine versions --json"
+    },
+    {
+      "computed_or_asserted": "COMPUTED_FROM_LIVE_EVIDENCE",
+      "evidence_source": "npm registry package dist-tags",
+      "id": "EVID-NPM-DIST-TAGS",
+      "observation_timestamp_utc": "2026-08-15T00:00:00Z",
+      "raw_evidence_sha256": "e71ca05e575a328175645901512a5aacd835de93c6eccf55192c76c7b0d0e4df",
+      "value": {
+        "latest": "0.6.1"
+      },
+      "verification_method": "npm view onda-engine dist-tags --json"
+    },
+    {
+      "computed_or_asserted": "ASSERTED_FROM_RECORDED_EVIDENCE",
+      "evidence_source": "approved R0.01 research decision",
+      "id": "EVID-RESEARCH-PIN",
+      "observation_timestamp_utc": "2026-08-15T00:00:00Z",
+      "raw_evidence_sha256": "8f81e2566b0bfa14e11dfe99b1fda915c580739b4199332c2b9dcf12f94f74cc",
+      "value": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "verification_method": "matched independent Git and GitHub observations"
+    }
+  ],
+  "schema_version": "cinekernel.research.onda.r0.01.v1"
+}

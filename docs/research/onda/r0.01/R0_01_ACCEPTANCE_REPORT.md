@@ -1,6 +1,6 @@
 # 1. Executive status
 
-PASS — exact source/release/licensing/provenance lock established; legal questions are quarantined and no reuse decision depends on them.
+CONDITIONAL PASS — all local remediation checks pass; dedicated GitHub reproduction is pending.
 
 # 2. CineKernel base revision
 
@@ -104,11 +104,11 @@ PASS; frozen paths unchanged.
 
 # 27. Automated test results
 
-PASS: 65 Rust tests and 27 JavaScript tests passed; 32 of the Rust tests directly cover R0.01. Formatting, all-target/all-feature check, strict Clippy and JavaScript typecheck passed.
+The dedicated workflow runs formatting, all-target/all-feature checks, strict Clippy, all Rust tests, JavaScript typecheck/tests, schema mutation tests, and all R0.01 commands.
 
 # 28. Reproducibility/idempotency results
 
-PASS: two consecutive report generations produced 15 byte-identical committed research documents with zero SHA-256 differences.
+PENDING: the dedicated workflow must run the full pipeline twice, prove a clean diff, pass the independent integrity verifier, and publish raw evidence.
 
 # 29. Inconsistencies
 
@@ -130,4 +130,4 @@ Researchers must produce abstract requirements only and use primary sources befo
 
 PROCEED only under the committed clean-room policy and this immutable pin.
 
-Machine summary: Rust members 19; resolved packages 416; JavaScript packages 13; artifacts 13; release streams 3; hotspots 9.
+Machine summary: Rust members 19; resolved packages 416; JavaScript packages 13; artifacts 19; release streams 3; hotspots 9.

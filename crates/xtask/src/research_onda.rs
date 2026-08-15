@@ -1,6 +1,6 @@
 use super::{AppResult, Failure, EXIT_VERIFICATION_FAILURE};
 use anyhow::{bail, Context, Result};
-use clap::Subcommand;
+use clap::{Args, Subcommand};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
@@ -23,6 +23,13 @@ pub(crate) enum OndaCommand {
     Inventory,
     Report,
     Guard,
+    Integrity(IntegrityArgs),
+}
+
+#[derive(Debug, Args)]
+pub(crate) struct IntegrityArgs {
+    #[arg(long)]
+    check: bool,
 }
 
 pub(crate) fn execute(root: &Path, command: &OndaCommand) -> AppResult<Value> {
@@ -32,6 +39,13 @@ pub(crate) fn execute(root: &Path, command: &OndaCommand) -> AppResult<Value> {
         OndaCommand::Inventory => inventory(root),
         OndaCommand::Report => report(root),
         OndaCommand::Guard => guard(root),
+        OndaCommand::Integrity(args) => {
+            if !args.check {
+                Err(anyhow::anyhow!("integrity requires --check"))
+            } else {
+                integrity_check(root)
+            }
+        }
     };
     result.map_err(|error| Failure::new(EXIT_VERIFICATION_FAILURE, error))
 }
@@ -157,7 +171,107 @@ fn sync(root: &Path) -> Result<Value> {
     Ok(json!({"ok": true, "pin": PIN, "tree": TREE, "checkout": ".cinekernel/upstreams/onda"}))
 }
 
-fn upstream_lock(root: &Path, id: &Value) -> Result<Value> {
+fn provenance_evidence(root: &Path, id: &Value) -> Result<Value> {
+    let github_commit_raw: Value = serde_json::from_str(&command_text(
+        root,
+        "gh",
+        &[
+            "api",
+            &format!("repos/onda-engine/onda-engine/commits/{PIN}"),
+        ],
+    )?)?;
+    let github_release_raw: Value = serde_json::from_str(&command_text(
+        root,
+        "gh",
+        &["api", "repos/onda-engine/onda-engine/releases/353301462"],
+    )?)?;
+    let github_pr_raw: Value = serde_json::from_str(&command_text(
+        root,
+        "gh",
+        &["api", "repos/onda-engine/onda-engine/pulls/41"],
+    )?)?;
+    let npm = if cfg!(windows) { "npm.cmd" } else { "npm" };
+    let npm_raw: Value = serde_json::from_str(&command_text(
+        root,
+        npm,
+        &["view", "onda-engine@0.6.1", "--json"],
+    )?)?;
+    let npm_versions_raw: Value = serde_json::from_str(&command_text(
+        root,
+        npm,
+        &["view", "onda-engine", "versions", "--json"],
+    )?)?;
+    let npm_dist_tags_raw: Value = serde_json::from_str(&command_text(
+        root,
+        npm,
+        &["view", "onda-engine", "dist-tags", "--json"],
+    )?)?;
+    let release_tag_target = git(&upstream(root), &["rev-list", "-n", "1", "v0.2.16"])?;
+    let github_commit = json!({
+        "sha":github_commit_raw["sha"],"tree":github_commit_raw["commit"]["tree"]["sha"],
+        "author_date":github_commit_raw["commit"]["author"]["date"],
+        "committer_date":github_commit_raw["commit"]["committer"]["date"],
+        "verification":{"verified":github_commit_raw["commit"]["verification"]["verified"],"reason":github_commit_raw["commit"]["verification"]["reason"],"verified_at":github_commit_raw["commit"]["verification"]["verified_at"]}
+    });
+    let asset = github_release_raw["assets"]
+        .as_array()
+        .and_then(|assets| assets.iter().find(|asset| asset["id"] == 475692944))
+        .context("embed-kit asset 475692944")?;
+    let github_release = json!({
+        "id":github_release_raw["id"],"tag_name":github_release_raw["tag_name"],
+        "target_commitish":github_release_raw["target_commitish"],"tag_target":release_tag_target.trim(),"published_at":github_release_raw["published_at"],
+        "asset":{"id":asset["id"],"name":asset["name"],"size":asset["size"],"digest":asset["digest"]}
+    });
+    let github_pr = json!({"number":github_pr_raw["number"],"title":github_pr_raw["title"],"state":github_pr_raw["state"],"merged_at":github_pr_raw["merged_at"],"merge_commit_sha":github_pr_raw["merge_commit_sha"]});
+    let npm_evidence = json!({
+        "name":npm_raw["name"],"version":npm_raw["version"],"license":npm_raw["license"],
+        "repository":npm_raw["repository"],"published_at":npm_raw["time"]["0.6.1"],
+        "observed_public_versions":npm_versions_raw,"dist_tags":npm_dist_tags_raw,
+        "dist":{"tarball":npm_raw["dist"]["tarball"],"shasum":npm_raw["dist"]["shasum"],"integrity":npm_raw["dist"]["integrity"],"file_count":npm_raw["dist"]["fileCount"],"unpacked_size":npm_raw["dist"]["unpackedSize"],"signatures":npm_raw["dist"]["signatures"]}
+    });
+    let evidence_dir = raw(root).join("provenance");
+    write_json(
+        &evidence_dir.join("github-commit.normalized.json"),
+        &github_commit,
+    )?;
+    write_json(
+        &evidence_dir.join("github-release.normalized.json"),
+        &github_release,
+    )?;
+    write_json(
+        &evidence_dir.join("github-pr-41.normalized.json"),
+        &github_pr,
+    )?;
+    write_json(
+        &evidence_dir.join("npm-onda-engine-0.6.1.normalized.json"),
+        &npm_evidence,
+    )?;
+    let git_objects = json!({
+        "pin": id["pin"], "tree": id["tree"], "remote": id["remote"],
+        "author_date": id["author_date"], "committer_date": id["committer_date"],
+        "checks": id["checks"]
+    });
+    write_json(
+        &evidence_dir.join("local-git-objects.normalized.json"),
+        &git_objects,
+    )?;
+    let evidence = json!({
+        "schema_version":SCHEMA_VERSION,"observation_timestamp_utc":CAPTURED,
+        "github_commit":github_commit,"github_release":github_release,"github_pr_41":github_pr,"npm":npm_evidence,
+        "records":[
+            {"id":"EVID-GIT-OBJECTS","value":{"pin":id["pin"],"tree":id["tree"]},"evidence_source":"local immutable Git object database","observation_timestamp_utc":CAPTURED,"raw_evidence_sha256":file_sha256(&evidence_dir.join("local-git-objects.normalized.json"))?,"verification_method":"git rev-parse, rev-list and remote identity checks; local keyring signature state deliberately excluded as machine-dependent","computed_or_asserted":"COMPUTED_FROM_LIVE_EVIDENCE"},
+            {"id":"EVID-GITHUB-COMMIT","value":github_commit_raw["commit"]["verification"]["verified"],"evidence_source":"GitHub REST commit API at exact SHA","observation_timestamp_utc":CAPTURED,"raw_evidence_sha256":file_sha256(&evidence_dir.join("github-commit.normalized.json"))?,"verification_method":"GitHub verification object plus pin/tree comparison","computed_or_asserted":"COMPUTED_FROM_LIVE_EVIDENCE"},
+            {"id":"EVID-GITHUB-RELEASE","value":github_release_raw["id"],"evidence_source":"GitHub REST release API at exact release ID","observation_timestamp_utc":CAPTURED,"raw_evidence_sha256":file_sha256(&evidence_dir.join("github-release.normalized.json"))?,"verification_method":"Exact release and asset ID lookup","computed_or_asserted":"COMPUTED_FROM_LIVE_EVIDENCE"},
+            {"id":"EVID-NPM-0.6.1","value":npm_raw["version"],"evidence_source":"npm registry exact-version query","observation_timestamp_utc":CAPTURED,"raw_evidence_sha256":file_sha256(&evidence_dir.join("npm-onda-engine-0.6.1.normalized.json"))?,"verification_method":"npm view onda-engine@0.6.1 --json","computed_or_asserted":"COMPUTED_FROM_LIVE_EVIDENCE"},
+            {"id":"EVID-NPM-VERSIONS","value":npm_versions_raw,"evidence_source":"npm registry package version index","observation_timestamp_utc":CAPTURED,"raw_evidence_sha256":file_sha256(&evidence_dir.join("npm-onda-engine-0.6.1.normalized.json"))?,"verification_method":"npm view onda-engine versions --json","computed_or_asserted":"COMPUTED_FROM_LIVE_EVIDENCE"},
+            {"id":"EVID-NPM-DIST-TAGS","value":npm_dist_tags_raw,"evidence_source":"npm registry package dist-tags","observation_timestamp_utc":CAPTURED,"raw_evidence_sha256":file_sha256(&evidence_dir.join("npm-onda-engine-0.6.1.normalized.json"))?,"verification_method":"npm view onda-engine dist-tags --json","computed_or_asserted":"COMPUTED_FROM_LIVE_EVIDENCE"},
+            {"id":"EVID-RESEARCH-PIN","value":PIN,"evidence_source":"approved R0.01 research decision","observation_timestamp_utc":CAPTURED,"raw_evidence_sha256":file_sha256(&evidence_dir.join("github-commit.normalized.json"))?,"verification_method":"matched independent Git and GitHub observations","computed_or_asserted":"ASSERTED_FROM_RECORDED_EVIDENCE"}
+        ]
+    });
+    Ok(evidence)
+}
+
+fn upstream_lock(root: &Path, id: &Value, evidence: &Value) -> Result<Value> {
     let upstream = upstream(root);
     let hash = |path: &str| file_sha256(&upstream.join(path));
     Ok(json!({
@@ -171,7 +285,7 @@ fn upstream_lock(root: &Path, id: &Value) -> Result<Value> {
         "pinned_tree": TREE,
         "commit_author_date": id["author_date"],
         "commit_committer_date": id["committer_date"],
-        "commit_signature_status": "VERIFIED_GITHUB_SIGNATURE",
+        "commit_signature_status": {"local_git":"NOT_USED_FOR_TRUST_DECISION","github_api_verified":evidence["github_commit"]["verification"]["verified"],"github_api_reason":evidence["github_commit"]["verification"]["reason"],"status":"VERIFIED_BY_GITHUB_API"},
         "license": {
             "declared_spdx": "FSL-1.1-ALv2",
             "license_path": "LICENSE",
@@ -201,8 +315,9 @@ fn upstream_lock(root: &Path, id: &Value) -> Result<Value> {
 
 fn verify(root: &Path) -> Result<Value> {
     let id = identity(root)?;
+    let evidence = provenance_evidence(root, &id)?;
     let mut failures = identity_failures(&id)?;
-    let lock = upstream_lock(root, &id)?;
+    let lock = upstream_lock(root, &id, &evidence)?;
     let expected = docs(root).join("UPSTREAM_LOCK.json");
     let lock_match = if expected.exists() {
         serde_json::from_slice::<Value>(&fs::read(expected)?)? == lock
@@ -268,6 +383,23 @@ fn relative(path: &str, root: &Path) -> String {
         .replace('\\', "/")
 }
 
+fn normalized_workspace_manifest(manifest: &str, workspace: &str) -> String {
+    let manifest = manifest.replace('\\', "/");
+    let workspace = workspace
+        .replace('\\', "/")
+        .trim_end_matches('/')
+        .to_owned();
+    let relative = if manifest.len() > workspace.len()
+        && manifest[..workspace.len()].eq_ignore_ascii_case(&workspace)
+        && manifest.as_bytes().get(workspace.len()) == Some(&b'/')
+    {
+        &manifest[workspace.len() + 1..]
+    } else {
+        manifest.trim_start_matches('/')
+    };
+    relative.to_owned()
+}
+
 fn classify_module(name: &str, manifest: &str) -> &'static str {
     if manifest.contains("apps/") {
         return "application";
@@ -307,6 +439,25 @@ fn classify_dependency_source(source: Option<&str>) -> &'static str {
     })
 }
 
+fn normalized_cargo_id(name: &str, version: &str, source: Option<&str>, manifest: &str) -> String {
+    match classify_dependency_source(source) {
+        "path/workspace" => {
+            let directory = Path::new(manifest)
+                .parent()
+                .unwrap_or_else(|| Path::new("."))
+                .to_string_lossy()
+                .replace('\\', "/");
+            format!("workspace:{directory}#{name}@{version}")
+        }
+        "registry" => format!("registry:crates.io#{name}@{version}"),
+        "git" => format!(
+            "git:{}#{name}@{version}",
+            source.unwrap_or("UNKNOWN").trim_start_matches("git+")
+        ),
+        _ => format!("unknown:{name}@{version}"),
+    }
+}
+
 fn rust_inventory(metadata: &Value, upstream: &Path) -> Result<(Vec<Value>, Vec<Value>)> {
     let members: BTreeSet<&str> = metadata["workspace_members"]
         .as_array()
@@ -320,12 +471,21 @@ fn rust_inventory(metadata: &Value, upstream: &Path) -> Result<(Vec<Value>, Vec<
         .as_array()
         .context("packages missing")?
     {
-        let id = package["id"].as_str().unwrap_or_default();
-        let manifest = relative(
+        let raw_id = package["id"].as_str().unwrap_or_default();
+        let raw_manifest = normalized_workspace_manifest(
             package["manifest_path"].as_str().unwrap_or_default(),
-            upstream,
+            &upstream.to_string_lossy(),
         );
         let source = classify_dependency_source(package["source"].as_str());
+        let name = package["name"].as_str().unwrap_or_default();
+        let version = package["version"].as_str().unwrap_or_default();
+        let manifest = match source {
+            "path/workspace" => raw_manifest,
+            "registry" => format!("registry:crates.io/{name}/{version}/Cargo.toml"),
+            "git" => format!("git:{name}/{version}/Cargo.toml"),
+            _ => format!("unknown:{name}/{version}/Cargo.toml"),
+        };
+        let id = normalized_cargo_id(name, version, package["source"].as_str(), &manifest);
         let dependencies = package["dependencies"]
             .as_array()
             .map_or_else(Vec::new, |deps| {
@@ -339,10 +499,10 @@ fn rust_inventory(metadata: &Value, upstream: &Path) -> Result<(Vec<Value>, Vec<
             "id": id, "name": package["name"], "version": package["version"],
             "manifest": manifest, "source_kind": source, "source": package["source"],
             "checksum": package["checksum"], "license": package["license"],
-            "repository": package["repository"], "workspace_member": members.contains(id),
+            "repository": package["repository"], "workspace_member": members.contains(raw_id),
             "features": package["features"], "dependencies": dependencies
         });
-        if members.contains(id) {
+        if members.contains(raw_id) {
             modules.push(json!({
                 "ecosystem":"rust", "name":package["name"], "version":package["version"],
                 "path": manifest, "classification":classify_module(package["name"].as_str().unwrap_or_default(), &manifest),
@@ -471,18 +631,30 @@ fn external_artifacts() -> Value {
         {"name":"FFmpeg","purpose":"video encode/decode","kind":"system executable","required_by":"onda-video/CLI video","phase":"RUNTIME_EXTERNAL","optional":true,"platform":"native","version_pin":null,"license":"LGPL/GPL build-dependent","status":"LEGAL_REVIEW_REQUIRED","source":"packages/video-rs/Cargo.toml; workflows"},
         {"name":"Vulkan/lavapipe","purpose":"GPU or software Vulkan backend","kind":"system dependency","required_by":"onda-vello","phase":"RUNTIME_EXTERNAL","optional":true,"platform":"Linux","version_pin":null,"license":"implementation-dependent","status":"LEGAL_REVIEW_REQUIRED","source":".github/workflows/ci.yml"},
         {"name":"CMake and C/C++ toolchain","purpose":"native dependency builds","kind":"build tool","required_by":"whisper-rs/espeak-rs/ONNX Runtime","phase":"BUILD_TIME","optional":true,"platform":"native","version_pin":null,"license":"system dependency","status":"VERIFIED_AT_PIN","source":"Cargo.lock; feature manifests"},
+        {"name":"espeak-rs crate","purpose":"Rust binding and native eSpeak build boundary","kind":"registry package","required_by":"onda-tts speak","phase":"BUILD_TIME","optional":true,"platform":"native","version_pin":"0.2.0","license":"MIT declared by crate; vendored components separate","status":"LEGAL_REVIEW_REQUIRED","source":"packages/tts-rs/Cargo.toml; Cargo.lock"},
+        {"name":"vendored eSpeak NG source","purpose":"phonemizer compiled by espeak-rs","kind":"vendored source in dependency","required_by":"espeak-rs -> onda-tts speak","phase":"BUILD_TIME","optional":true,"platform":"native","version_pin":null,"license":"GPL-family terms require qualified review","status":"LEGAL_REVIEW_REQUIRED","source":"packages/tts-rs/Cargo.toml comments; espeak-rs package contents"},
+        {"name":"eSpeak NG language/data assets","purpose":"phoneme tables and voices","kind":"data dependency","required_by":"onda-tts speak","phase":"BUILD_TIME","optional":true,"platform":"native","version_pin":null,"cache_path":"system espeak-ng-data location embedded at build time","source_url":"https://github.com/espeak-ng/espeak-ng","source_repository":"https://github.com/espeak-ng/espeak-ng","expected_size":"approximately 12 MB per ONDA build comments","digest_algorithm":null,"digest":null,"onda_verification":"build.rs checks for phondata presence, not cryptographic identity","license":"GPL-family/data terms require qualified review","status":"LEGAL_REVIEW_REQUIRED","source":"packages/tts-rs/build.rs"},
+        {"name":"system espeak-ng/espeak-ng-data packages","purpose":"release-build source/data provider","kind":"system dependency","required_by":"embed-kit speak feature release build","phase":"BUILD_TIME","optional":true,"platform":"macOS and Debian/Ubuntu release environments","version_pin":null,"license":"distribution package terms require review","status":"LEGAL_REVIEW_REQUIRED","source":"scripts/build-embed-kit.sh; release workflow","reconciliation":"Some manifest comments describe vendored source/no runtime executable, while build.rs and release guidance still require or prefer complete system data at build time. No system eSpeak executable is asserted as a runtime requirement."},
         {"name":"wasm-bindgen CLI","purpose":"WASM package generation","kind":"build tool","required_by":"WASM packages","phase":"BUILD_TIME","optional":true,"platform":"wasm32","version_pin":null,"license":"MIT/Apache-2.0","status":"VERIFIED_AT_PIN","source":"package scripts/workflows"},
         {"name":"Node.js","purpose":"JavaScript workspace","kind":"runtime tool","required_by":"pnpm workspace","phase":"BUILD_TIME","optional":false,"platform":"all","version_pin":">=20","license":"MIT","status":"VERIFIED_AT_PIN","source":"package.json"},
         {"name":"pnpm","purpose":"workspace package manager","kind":"build tool","required_by":"JavaScript workspace","phase":"BUILD_TIME","optional":false,"platform":"all","version_pin":"10.5.0","license":"MIT","status":"VERIFIED_AT_PIN","source":"package.json"},
         {"name":"Bun","purpose":"release/embed scripting reference","kind":"build tool","required_by":"release tooling","phase":"BUILD_TIME","optional":true,"platform":"release","version_pin":null,"license":"MIT","status":"UNRESOLVED","source":"scripts/workflows"},
         {"name":"Rust toolchain","purpose":"Rust workspace","kind":"build tool","required_by":"all Rust modules","phase":"BUILD_TIME","optional":false,"platform":"all","version_pin":"rust-version 1.80 minimum","license":"Apache-2.0/MIT","status":"VERIFIED_AT_PIN","source":"Cargo.toml"},
         {"name":"U2-Net model","purpose":"segmentation","kind":"downloaded model","required_by":"onda-segment","phase":"MODEL_DATA","optional":true,"cache_path":"~/.onda/models/u2net.onnx","source_url":"https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net.onnx","source_repository":"https://github.com/danielgatis/rembg","expected_size":"approximately 176 MB","digest_algorithm":null,"digest":null,"onda_verification":"approximate size threshold only","license":"upstream source claims Apache-2.0; artifact rights require verification","status":"LEGAL_REVIEW_REQUIRED"},
-        {"name":"Whisper tiny.en/base.en/small.en","purpose":"transcription","kind":"downloaded model","required_by":"onda-transcribe","phase":"MODEL_DATA","optional":true,"cache_path":"~/.onda/models/ggml-{tiny,base,small}.en.bin","source_url":"https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-{name}.bin","source_repository":"https://huggingface.co/ggerganov/whisper.cpp","expected_size":"75 MB / 142 MB / 466 MB","digest_algorithm":null,"digest":null,"onda_verification":"approximate size threshold only","license":"model/data-specific","status":"LEGAL_REVIEW_REQUIRED"},
+        {"name":"Whisper tiny.en model","purpose":"transcription","kind":"downloaded model","required_by":"onda-transcribe","phase":"MODEL_DATA","optional":true,"cache_path":"~/.onda/models/ggml-tiny.en.bin","source_url":"https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.en.bin","source_repository":"https://huggingface.co/ggerganov/whisper.cpp","expected_size":"approximately 75 MB","digest_algorithm":null,"digest":null,"onda_verification":"approximate size threshold only","license":"model/data-specific","status":"LEGAL_REVIEW_REQUIRED"},
+        {"name":"Whisper base.en model","purpose":"default transcription model","kind":"downloaded model","required_by":"onda-transcribe","phase":"MODEL_DATA","optional":true,"cache_path":"~/.onda/models/ggml-base.en.bin","source_url":"https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin","source_repository":"https://huggingface.co/ggerganov/whisper.cpp","expected_size":"approximately 142 MB","digest_algorithm":null,"digest":null,"onda_verification":"approximate size threshold only","license":"model/data-specific","status":"LEGAL_REVIEW_REQUIRED"},
+        {"name":"Whisper small.en model","purpose":"higher-accuracy transcription","kind":"downloaded model","required_by":"onda-transcribe","phase":"MODEL_DATA","optional":true,"cache_path":"~/.onda/models/ggml-small.en.bin","source_url":"https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.en.bin","source_repository":"https://huggingface.co/ggerganov/whisper.cpp","expected_size":"approximately 466 MB","digest_algorithm":null,"digest":null,"onda_verification":"approximate size threshold only","license":"model/data-specific","status":"LEGAL_REVIEW_REQUIRED"},
         {"name":"Kokoro ONNX model","purpose":"text to speech","kind":"downloaded model","required_by":"onda-tts speak","phase":"MODEL_DATA","optional":true,"cache_path":"~/.onda/models/kokoro-v1.0.onnx","source_url":"https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx","source_repository":"https://github.com/thewh1teagle/kokoro-onnx","expected_size":"approximately 325 MB","digest_algorithm":null,"digest":null,"onda_verification":"approximate size threshold only","license":"upstream source claims Apache-2.0; artifact rights require verification","status":"LEGAL_REVIEW_REQUIRED"},
         {"name":"Kokoro voice bundle","purpose":"TTS voices","kind":"downloaded model","required_by":"onda-tts speak","phase":"MODEL_DATA","optional":true,"cache_path":"~/.onda/models/voices-v1.0.bin","source_url":"https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin","source_repository":"https://github.com/thewh1teagle/kokoro-onnx","expected_size":"approximately 28 MB","digest_algorithm":null,"digest":null,"onda_verification":"approximate size threshold only","license":"data-specific","status":"LEGAL_REVIEW_REQUIRED"},
-        {"name":"ONNX Runtime prebuilt binary","purpose":"model inference","kind":"downloaded binary","required_by":"ort/onda-segment/onda-tts","phase":"BUILD_TIME","optional":true,"cache_path":"Cargo build cache","source_url":"ort release infrastructure","expected_size":"platform-dependent","digest_algorithm":null,"digest":null,"onda_verification":"delegated to ort-sys build tooling","license":"MIT plus third-party notices","status":"LEGAL_REVIEW_REQUIRED"}
+        {"name":"ONNX Runtime prebuilt binary","purpose":"model inference","kind":"downloaded binary","required_by":"ort/onda-segment/onda-tts","phase":"BUILD_TIME","optional":true,"cache_path":"Cargo build cache","source_url":"https://github.com/microsoft/onnxruntime/releases","source_repository":"https://github.com/microsoft/onnxruntime","expected_size":"platform-dependent","digest_algorithm":null,"digest":null,"onda_verification":"delegated to ort-sys build tooling","license":"MIT plus third-party notices","status":"LEGAL_REVIEW_REQUIRED"}
     ]});
-    for artifact in value["artifacts"].as_array_mut().expect("artifact array") {
+    for (index, artifact) in value["artifacts"]
+        .as_array_mut()
+        .expect("artifact array")
+        .iter_mut()
+        .enumerate()
+    {
+        artifact["id"] = Value::String(format!("ART-{:03}", index + 1));
         artifact["confidence"] = Value::String(
             "HIGH for pinned-source observation; legal conclusions excluded".to_owned(),
         );
@@ -496,15 +668,15 @@ fn external_artifacts() -> Value {
     value
 }
 
-fn release_map() -> Value {
+fn release_map(evidence: &Value) -> Value {
     json!({"schema_version":SCHEMA_VERSION,"streams":[
-        {"id":"embed-kit-github","kind":"github-release","tag_pattern":"v*","latest_tag":"v0.2.16","tag_target":"56cc75b2614812ef97121f0171e8e8d765260e59","release_id":353301462,"published_at":"2026-07-13T16:55:48Z","asset":{"id":475692944,"name":"onda-embed-kit-v0.2.16-x86_64-linux.tar.gz","size":21033371,"digest_algorithm":"sha256","digest":"d4335601dc0c66733f772261cbce2de48457767aaa61195691e70062cf331742","platform":"x86_64-linux"},"workflow":".github/workflows/release.yml"},
-        {"id":"onda-engine-npm","kind":"npm-public","tag_pattern":"onda-engine-v*","source_version":"0.6.1","published_version":"0.6.1","latest":"0.6.1","published_at":"2026-07-20T03:12:08.488Z","matching_github_release":"NOT_OBSERVED_FOR_0.6.1","tarball":"https://registry.npmjs.org/onda-engine/-/onda-engine-0.6.1.tgz","shasum":{"algorithm":"sha1","value":"e48444f629cbc112f23456809e348fa67feafad8"},"integrity":{"algorithm":"sha512-sri","value":"sha512-5tfqzK5DuMCIbzKfKq8CsOJzKv5JHGGWtYNdSLTsdI/9jf5mMmj1408/YEfbz3pJtwIDA2WfpNL5tFF7eXvipQ=="},"registry_signature_count":1,"registry_file_count":42,"registry_unpacked_size":17131808,"local_scripts_disabled_pack":{"entry_count":4,"unpacked_size":25616,"interpretation":"dist is absent because lifecycle scripts were disabled; this is expected and proves source pack intent differs from built publication"},"provenance":"NO_PROVENANCE_ATTESTATION_OBSERVED","workflow":".github/workflows/release-npm.yml"},
+        {"id":"embed-kit-github","kind":"github-release","tag_pattern":"v*","latest_tag":evidence["github_release"]["tag_name"],"tag_target":evidence["github_release"]["tag_target"],"release_id":evidence["github_release"]["id"],"published_at":evidence["github_release"]["published_at"],"asset":{"id":evidence["github_release"]["asset"]["id"],"name":evidence["github_release"]["asset"]["name"],"size":evidence["github_release"]["asset"]["size"],"digest_algorithm":"sha256","digest":evidence["github_release"]["asset"]["digest"].as_str().unwrap_or("").trim_start_matches("sha256:"),"platform":"x86_64-linux"},"workflow":".github/workflows/release.yml","evidence_record":"EVID-GITHUB-RELEASE"},
+        {"id":"onda-engine-npm","kind":"npm-public","tag_pattern":"onda-engine-v*","source_version":"0.6.1","published_version":evidence["npm"]["version"],"latest":evidence["npm"]["dist_tags"]["latest"],"published_at":evidence["npm"]["published_at"],"matching_github_release":"NOT_OBSERVED_FOR_0.6.1","tarball":evidence["npm"]["dist"]["tarball"],"shasum":{"algorithm":"sha1","value":evidence["npm"]["dist"]["shasum"]},"integrity":{"algorithm":"sha512-sri","value":evidence["npm"]["dist"]["integrity"]},"registry_signature_count":evidence["npm"]["dist"]["signatures"].as_array().map_or(0,Vec::len),"registry_file_count":evidence["npm"]["dist"]["file_count"],"registry_unpacked_size":evidence["npm"]["dist"]["unpacked_size"],"local_scripts_disabled_pack":{"entry_count":4,"unpacked_size":25616,"interpretation":"dist is absent because lifecycle scripts were disabled; this is expected and proves source pack intent differs from built publication"},"provenance":"NO_PROVENANCE_ATTESTATION_OBSERVED","workflow":".github/workflows/release-npm.yml","evidence_record":"EVID-NPM-0.6.1"},
         {"id":"scoped-github-packages","kind":"github-packages","tag_pattern":"@onda-engine/*@*","manifest_versions":"independent","registry_state":"AUTH_REQUIRED_NOT_VERIFIED","workflow":"release configuration"}
-    ],"observed_public_versions":["0.1.0","0.1.1","0.2.0","0.3.0","0.4.0","0.5.0","0.6.0","0.6.1"],"pr_41":{"number":41,"merge_commit":PIN,"finding":"0.6.1 manual release closed a path-scoped Release Please gap"}})
+    ],"observed_public_versions":evidence["npm"]["observed_public_versions"],"pr_41":{"number":evidence["github_pr_41"]["number"],"merge_commit":evidence["github_pr_41"]["merge_commit_sha"],"finding":"0.6.1 manual release closed a path-scoped Release Please gap"}})
 }
 
-fn license_surface(lock: &Value, rust_packages: &[Value], js_modules: &[Value]) -> Value {
+fn license_surface(lock: &Value, rust_packages: &[Value], javascript_packages: &[Value]) -> Value {
     let mut expressions = BTreeSet::new();
     for package in rust_packages {
         if let Some(license) = package["license"].as_str() {
@@ -513,8 +685,11 @@ fn license_surface(lock: &Value, rust_packages: &[Value], js_modules: &[Value]) 
             expressions.insert("UNKNOWN/CUSTOM".to_owned());
         }
     }
-    for package in js_modules {
-        if let Some(license) = package["license"].as_str() {
+    for package in javascript_packages {
+        if let Some(license) = package["license"]
+            .as_str()
+            .or_else(|| package["expression"].as_str())
+        {
             expressions.insert(license.to_owned());
         } else {
             expressions.insert("UNKNOWN/CUSTOM".to_owned());
@@ -547,7 +722,11 @@ fn license_surface(lock: &Value, rust_packages: &[Value], js_modules: &[Value]) 
 }
 
 fn inventory(root: &Path) -> Result<Value> {
-    verify(root)?;
+    let id = identity(root)?;
+    let failures = identity_failures(&id)?;
+    if !failures.is_empty() {
+        bail!("ONDA identity verification failed before inventory: {failures:?}");
+    }
     let upstream = upstream(root);
     let default_metadata = cargo_metadata(&upstream, false)?;
     let all_metadata = cargo_metadata(&upstream, true)?;
@@ -563,6 +742,11 @@ fn inventory(root: &Path) -> Result<Value> {
     write_json(&raw(root).join("npm/local-pack-dry-run.json"), &packlist)?;
     let (mut modules, rust_packages) = rust_inventory(&all_metadata, &upstream)?;
     let (js_modules, js_dependencies) = js_inventory(&upstream)?;
+    let js_graph = crate::research_onda_pnpm::build_graph(
+        &upstream,
+        &raw(root).join("pnpm"),
+        &js_dependencies,
+    )?;
     modules.extend(js_modules.clone());
     modules.push(json!({"ecosystem":"rust","name":"vector-rs","version":null,"path":"packages/vector-rs","classification":"DOCUMENTED_OR_COMMENTED_BUT_ABSENT","status":"DOCUMENTED_OR_COMMENTED_BUT_ABSENT"}));
     modules.push(json!({"ecosystem":"rust","name":"codecs-rs","version":null,"path":"packages/codecs-rs","classification":"DOCUMENTED_OR_COMMENTED_BUT_ABSENT","status":"DOCUMENTED_OR_COMMENTED_BUT_ABSENT"}));
@@ -572,18 +756,26 @@ fn inventory(root: &Path) -> Result<Value> {
     let dependency_value = json!({
         "schema_version":SCHEMA_VERSION,"pinned_commit":PIN,
         "cargo":{"package_count":rust_packages.len(),"workspace_member_count":all_metadata["workspace_members"].as_array().map_or(0,Vec::len),"packages":rust_packages},
-        "javascript":{"workspace_package_count":js_modules.len(),"dependencies":js_dependencies},
+        "javascript":{"workspace_package_count":js_modules.len(),"workspace_declarations":js_dependencies,"resolved_graph":js_graph},
         "reachability":{"default_cli":"manifest/feature derived","video":"OPTIONAL","segment":"OPTIONAL","transcribe":"OPTIONAL","speak":"OPTIONAL","wasm":"OPTIONAL","gpu_vello":"OPTIONAL","cpu_renderer":"default renderer module","audio":"OPTIONAL","typography":"workspace","layout":"workspace"}
     });
-    let lock = upstream_lock(root, &identity(root)?)?;
+    let evidence = provenance_evidence(root, &id)?;
+    let lock = upstream_lock(root, &id, &evidence)?;
     let artifacts = external_artifacts();
-    let releases = release_map();
+    let releases = release_map(&evidence);
+    let mut javascript_licenses = js_modules.clone();
+    javascript_licenses.extend(
+        dependency_value["javascript"]["resolved_graph"]["license_records"]
+            .as_array()
+            .cloned()
+            .unwrap_or_default(),
+    );
     let licenses = license_surface(
         &lock,
         dependency_value["cargo"]["packages"]
             .as_array()
             .unwrap_or(&Vec::new()),
-        &js_modules,
+        &javascript_licenses,
     );
     write_json(&docs(root).join("UPSTREAM_LOCK.json"), &lock)?;
     write_json(&docs(root).join("MODULE_INVENTORY.json"), &module_value)?;
@@ -594,46 +786,103 @@ fn inventory(root: &Path) -> Result<Value> {
     write_json(&docs(root).join("EXTERNAL_ARTIFACTS.json"), &artifacts)?;
     write_json(&docs(root).join("RELEASE_MAP.json"), &releases)?;
     write_json(&docs(root).join("LICENSE_SURFACE.json"), &licenses)?;
+    write_json(&docs(root).join("PROVENANCE_EVIDENCE.json"), &evidence)?;
     Ok(json!({
         "ok":true,"pin":PIN,"tree":TREE,"rust_workspace_members":dependency_value["cargo"]["workspace_member_count"],
         "rust_resolved_packages":dependency_value["cargo"]["package_count"],"javascript_workspace_packages":js_modules.len(),
+        "javascript_resolved_packages":dependency_value["javascript"]["resolved_graph"]["resolved_package_count"],
         "external_artifacts":artifacts["artifacts"].as_array().map_or(0,Vec::len),"release_streams":releases["streams"].as_array().map_or(0,Vec::len),
         "license_hotspots":licenses["hotspots"].as_array().map_or(0,Vec::len)
     }))
 }
 
 fn production_manifest_violation(root: &Path) -> Result<Vec<String>> {
-    let tracked = git(root, &["ls-files"])?;
+    let metadata: Value = serde_json::from_str(&command_text(
+        root,
+        "cargo",
+        &["metadata", "--format-version", "1", "--all-features"],
+    )?)?;
+    let mut violations = cargo_metadata_violations(&metadata)?;
+    for manifest in git(root, &["ls-files", "*package.json"])?.lines() {
+        let value: Value = serde_json::from_slice(&fs::read(root.join(manifest))?)?;
+        violations.extend(npm_manifest_violations(manifest, &value));
+    }
+    let pnpm_lock = fs::read_to_string(root.join("pnpm-lock.yaml"))?;
+    for node in crate::research_onda_pnpm::forbidden_lock_nodes(&pnpm_lock) {
+        violations.push(format!("resolved pnpm package {node}"));
+    }
+    violations.sort();
+    violations.dedup();
+    Ok(violations)
+}
+
+fn cargo_metadata_violations(metadata: &Value) -> Result<Vec<String>> {
     let mut violations = Vec::new();
-    for rel in tracked.lines().filter(|path| {
-        path.ends_with("Cargo.toml")
-            || path.ends_with("package.json")
-            || *path == "pnpm-workspace.yaml"
-    }) {
-        let normalized = rel.replace('\\', "/");
-        if normalized == "crates/xtask/Cargo.toml" {
-            continue;
+    let members = metadata["workspace_members"]
+        .as_array()
+        .context("CineKernel workspace members")?
+        .iter()
+        .filter_map(Value::as_str)
+        .collect::<BTreeSet<_>>();
+    for package in metadata["packages"]
+        .as_array()
+        .context("CineKernel packages")?
+    {
+        let package_id = package["id"].as_str().unwrap_or_default();
+        if members.contains(package_id) {
+            for dependency in package["dependencies"].as_array().unwrap_or(&Vec::new()) {
+                if forbidden_dependency(
+                    dependency["name"].as_str().unwrap_or_default(),
+                    dependency["source"].as_str(),
+                ) {
+                    violations.push(format!(
+                        "{} dependency {} (alias {})",
+                        package["name"].as_str().unwrap_or("unknown"),
+                        dependency["name"].as_str().unwrap_or("unknown"),
+                        dependency["rename"].as_str().unwrap_or("none")
+                    ));
+                }
+            }
         }
-        let text = fs::read_to_string(root.join(rel))?;
-        for needle in forbidden_manifest_hits(&text) {
-            violations.push(format!("{normalized}: {needle}"));
+        if forbidden_dependency(
+            package["name"].as_str().unwrap_or_default(),
+            package["source"].as_str(),
+        ) {
+            violations.push(format!("resolved Cargo package {package_id}"));
         }
     }
     Ok(violations)
 }
 
-fn forbidden_manifest_hits(text: &str) -> Vec<&'static str> {
-    [
-        "onda-engine",
-        "@onda-engine/",
-        "onda-core",
-        "onda-scene",
-        "onda-renderer",
-        "onda-vello",
-    ]
-    .into_iter()
-    .filter(|needle| text.contains(needle))
-    .collect()
+fn npm_manifest_violations(manifest: &str, value: &Value) -> Vec<String> {
+    let mut violations = Vec::new();
+    for field in [
+        "dependencies",
+        "devDependencies",
+        "peerDependencies",
+        "optionalDependencies",
+    ] {
+        if let Some(dependencies) = value[field].as_object() {
+            for (name, requirement) in dependencies {
+                if forbidden_dependency(name, requirement.as_str()) {
+                    violations.push(format!("{manifest} {field} {name}={requirement}"));
+                }
+            }
+        }
+    }
+    violations
+}
+
+fn forbidden_dependency(name: &str, source_or_requirement: Option<&str>) -> bool {
+    name == "onda-engine"
+        || name.starts_with("onda-")
+        || name.starts_with("@onda-engine/")
+        || source_or_requirement.is_some_and(|source| {
+            source.contains("onda-engine/onda-engine")
+                || source.starts_with("npm:onda-engine@")
+                || source.starts_with("npm:@onda-engine/")
+                || source.starts_with("npm:onda-")
+        })
 }
 
 fn source_like(path: &str) -> bool {
@@ -715,18 +964,63 @@ fn guard(root: &Path) -> Result<Value> {
     let tracked_upstream = git(root, &["ls-files", ".cinekernel/upstreams/onda"])?;
     let exact_copies = exact_copy_violations(root)?;
     let phase0 = phase0_changes(root)?;
+    let absolute_paths = absolute_path_leaks(root)?;
     let value = json!({
-        "ok":production_dependencies.is_empty() && tracked_upstream.is_empty() && exact_copies.is_empty() && phase0.is_empty(),
+        "ok":production_dependencies.is_empty() && tracked_upstream.is_empty() && exact_copies.is_empty() && phase0.is_empty() && absolute_paths.is_empty(),
         "onda_production_dependencies":{"ok":production_dependencies.is_empty(),"violations":production_dependencies},
         "tracked_upstream":{"ok":tracked_upstream.is_empty(),"files":tracked_upstream.lines().collect::<Vec<_>>()},
         "exact_copy_guard":{"ok":exact_copies.is_empty(),"description":"Exact SHA-256 content match for nontrivial tracked source-like files; not proof against all derivation.","violations":exact_copies},
-        "phase0_immutability":{"ok":phase0.is_empty(),"violations":phase0}
+        "phase0_immutability":{"ok":phase0.is_empty(),"violations":phase0},
+        "absolute_path_leakage":{"ok":absolute_paths.is_empty(),"patterns":["file:///","drive-letter absolute path","/Users/","/home/","AppData",".cinekernel/upstreams/onda"],"violations":absolute_paths}
     });
     write_json(&raw(root).join("checks/guard.json"), &value)?;
     if value["ok"] != true {
         bail!("R0.01 guard failed: {value}");
     }
     Ok(value)
+}
+
+fn absolute_path_leaks(root: &Path) -> Result<Vec<String>> {
+    let mut files = Vec::new();
+    collect_all_files(&docs(root), &mut files)?;
+    collect_all_files(&root.join("reports/research/r0.01"), &mut files)?;
+    let boundary =
+        |byte: u8| matches!(byte, b' ' | b'"' | b'\'' | b'`' | b'(' | b'[' | b'=' | b':');
+    let drive = |text: &str| {
+        let bytes = text.as_bytes();
+        bytes.windows(3).enumerate().any(|(index, window)| {
+            window[0].is_ascii_alphabetic()
+                && window[1] == b':'
+                && matches!(window[2], b'/' | b'\\')
+                && (index == 0 || boundary(bytes[index - 1]))
+        })
+    };
+    let unix = |text: &str, pattern: &str| {
+        text.match_indices(pattern)
+            .any(|(index, _)| index == 0 || boundary(text.as_bytes()[index - 1]))
+    };
+    let mut violations = Vec::new();
+    for path in files {
+        let text = fs::read_to_string(&path).unwrap_or_default();
+        for (line_index, line) in text.lines().enumerate() {
+            if drive(line)
+                || unix(line, "/Users/")
+                || unix(line, "/home/")
+                || line.contains("file:///")
+                || line.contains("AppData")
+                || line.contains(".cinekernel/upstreams/onda")
+            {
+                violations.push(format!(
+                    "{}:{}",
+                    relative(&path.to_string_lossy(), root),
+                    line_index + 1
+                ));
+            }
+        }
+    }
+    violations.sort();
+    violations.dedup();
+    Ok(violations)
 }
 
 fn markdown_table(title: &str, headers: &str, rows: impl Iterator<Item = String>) -> String {
@@ -767,7 +1061,7 @@ fn report(root: &Path) -> Result<Value> {
             }),
         ),
     )?;
-    write_text(&dir.join("DEPENDENCY_INVENTORY.md"), &format!("# R0.01 ONDA dependency inventory\n\n- Locked Rust packages: {}\n- Rust workspace members: {}\n- JavaScript workspace packages: {}\n- Default and all-feature Cargo graphs both resolve under `--locked`; raw metadata is ignored under `.cinekernel/research/onda/r0.01/cargo/`.\n- Dependency records preserve source kind, resolved version, checksum where Cargo exposes one, features, optionality, target conditions, and edges.\n- JavaScript records separate runtime, peer, development and benchmark-only declarations. Exact pnpm resolution remains represented by the pinned `pnpm-lock.yaml` hash and static lock input.\n\nNo ONDA code was built or executed.\n", dependencies["cargo"]["package_count"],dependencies["cargo"]["workspace_member_count"],dependencies["javascript"]["workspace_package_count"]))?;
+    write_text(&dir.join("DEPENDENCY_INVENTORY.md"), &format!("# R0.01 ONDA dependency inventory\n\n- Locked Rust packages: {}\n- Rust workspace members: {}\n- JavaScript workspace packages: {}\n- Resolved pnpm packages: {}\n- Resolved pnpm dependency edges: {}\n- Per-node pnpm license records: {}\n- Default and all-feature Cargo graphs both resolve under `--locked`; raw metadata is ignored under the research evidence directory.\n- Cargo records preserve machine-neutral identity, source kind, exact version, checksum where Cargo exposes one, features, optionality, target conditions, and edges.\n- JavaScript records cover the complete pnpm v9 `packages` and `snapshots` graph, preserving integrity, direct/transitive state, dependency edges, importer reachability, classification, license expression, repository and homepage without emitting installed paths.\n\nNo ONDA code was built or executed.\n", dependencies["cargo"]["package_count"],dependencies["cargo"]["workspace_member_count"],dependencies["javascript"]["workspace_package_count"],dependencies["javascript"]["resolved_graph"]["resolved_package_count"],dependencies["javascript"]["resolved_graph"]["dependency_edge_count"],dependencies["javascript"]["resolved_graph"]["license_records"].as_array().map_or(0, Vec::len)))?;
     write_text(
         &dir.join("EXTERNAL_ARTIFACTS.md"),
         &markdown_table(
@@ -795,7 +1089,7 @@ fn report(root: &Path) -> Result<Value> {
     write_text(&dir.join("RESEARCH_SOURCE_INDEX.md"), SOURCE_INDEX)?;
     write_text(
         &dir.join("R0_01_ACCEPTANCE_REPORT.md"),
-        &acceptance_report(&summary, &guard_result),
+        &acceptance_report(root, &summary, &guard_result)?,
     )?;
     let packet = review_packet(root, &summary)?.replace(
         "- Research branch: `research/r0.01-onda-provenance`",
@@ -807,8 +1101,13 @@ fn report(root: &Path) -> Result<Value> {
     )?;
     validate_schemas(root)?;
     integrity_manifest(root)?;
+    let status = if remote_attestation(root)?.is_some() {
+        "PASS"
+    } else {
+        "CONDITIONAL PASS"
+    };
     Ok(
-        json!({"ok":true,"status":"PASS","summary":summary,"guard":guard_result,"review_packet":"reports/research/r0.01/REVIEW_PACKET.md"}),
+        json!({"ok":true,"status":status,"summary":summary,"guard":guard_result,"review_packet":"reports/research/r0.01/REVIEW_PACKET.md"}),
     )
 }
 
@@ -825,6 +1124,11 @@ fn validate_schemas(root: &Path) -> Result<()> {
             "onda-external-artifacts.schema.json",
         ),
         ("RELEASE_MAP.json", "onda-release-map.schema.json"),
+        ("LICENSE_SURFACE.json", "onda-license-surface.schema.json"),
+        (
+            "PROVENANCE_EVIDENCE.json",
+            "onda-provenance-evidence.schema.json",
+        ),
     ] {
         let instance: Value = serde_json::from_slice(&fs::read(docs(root).join(document))?)?;
         let schema_value: Value =
@@ -838,9 +1142,7 @@ fn validate_schemas(root: &Path) -> Result<()> {
 }
 
 fn integrity_manifest(root: &Path) -> Result<()> {
-    let mut files = Vec::new();
-    collect_all_files(&docs(root), &mut files)?;
-    files.sort();
+    let files = integrity_files(root)?;
     let mut output = String::new();
     for path in files {
         let rel = relative(&path.to_string_lossy(), root);
@@ -850,6 +1152,63 @@ fn integrity_manifest(root: &Path) -> Result<()> {
         &root.join("reports/research/r0.01/INTEGRITY_MANIFEST.sha256"),
         &output,
     )
+}
+
+fn integrity_files(root: &Path) -> Result<Vec<PathBuf>> {
+    let mut files = Vec::new();
+    collect_all_files(&docs(root), &mut files)?;
+    collect_all_files(&root.join("schemas/research"), &mut files)?;
+    collect_all_files(&root.join("reports/research/r0.01"), &mut files)?;
+    files.push(root.join("crates/xtask/src/main.rs"));
+    files.push(root.join("crates/xtask/src/research_onda.rs"));
+    files.push(root.join("crates/xtask/src/research_onda_pnpm.rs"));
+    files.push(root.join(".github/workflows/r0-01-onda-provenance.yml"));
+    files.retain(|path| {
+        path.is_file()
+            && path.file_name().and_then(OsStr::to_str) != Some("INTEGRITY_MANIFEST.sha256")
+    });
+    files.sort();
+    files.dedup();
+    Ok(files)
+}
+
+fn integrity_check(root: &Path) -> Result<Value> {
+    let manifest_path = root.join("reports/research/r0.01/INTEGRITY_MANIFEST.sha256");
+    let mut recorded = BTreeMap::new();
+    for line in fs::read_to_string(&manifest_path)?.lines() {
+        let (hash, path) = line
+            .split_once("  ")
+            .context("malformed integrity manifest line")?;
+        recorded.insert(path.to_owned(), hash.to_owned());
+    }
+    let expected_files = integrity_files(root)?;
+    let expected_paths = expected_files
+        .iter()
+        .map(|path| relative(&path.to_string_lossy(), root))
+        .collect::<BTreeSet<_>>();
+    let recorded_paths = recorded.keys().cloned().collect::<BTreeSet<_>>();
+    let mut failures = Vec::new();
+    for path in expected_paths.difference(&recorded_paths) {
+        failures.push(format!("missing manifest entry: {path}"));
+    }
+    for path in recorded_paths.difference(&expected_paths) {
+        failures.push(format!("unexpected manifest entry: {path}"));
+    }
+    for path in expected_files {
+        let relative_path = relative(&path.to_string_lossy(), root);
+        if let Some(expected) = recorded.get(&relative_path) {
+            match file_sha256(&path) {
+                Ok(actual) if &actual == expected => {}
+                Ok(_) => failures.push(format!("hash mismatch: {relative_path}")),
+                Err(error) => failures.push(format!("unreadable file: {relative_path}: {error}")),
+            }
+        }
+    }
+    let value = json!({"ok":failures.is_empty(),"entry_count":recorded.len(),"failures":failures});
+    if value["ok"] != true {
+        bail!("integrity verification failed: {}", value["failures"]);
+    }
+    Ok(value)
 }
 
 fn collect_all_files(directory: &Path, output: &mut Vec<PathBuf>) -> Result<()> {
@@ -869,9 +1228,45 @@ fn collect_all_files(directory: &Path, output: &mut Vec<PathBuf>) -> Result<()> 
     Ok(())
 }
 
-fn acceptance_report(summary: &Value, _guard: &Value) -> String {
+fn remote_attestation(root: &Path) -> Result<Option<Value>> {
+    let path = root.join("reports/research/r0.01/REMOTE_REPRODUCTION_ATTESTATION.json");
+    if !path.exists() {
+        return Ok(None);
+    }
+    let value: Value = serde_json::from_slice(&fs::read(path)?)?;
+    let valid = value["status"] == "success"
+        && value["run_id"].as_u64().is_some()
+        && value["artifact_name"]
+            .as_str()
+            .is_some_and(|name| !name.is_empty())
+        && value["run_url"]
+            .as_str()
+            .is_some_and(|url| url.starts_with("https://github.com/"));
+    if !valid {
+        bail!("remote reproduction attestation is malformed or unsuccessful");
+    }
+    Ok(Some(value))
+}
+
+fn acceptance_report(root: &Path, summary: &Value, _guard: &Value) -> Result<String> {
+    let remote = remote_attestation(root)?;
+    let (status, reproduction) = remote.as_ref().map_or_else(
+        || (
+            "CONDITIONAL PASS — all local remediation checks pass; dedicated GitHub reproduction is pending.",
+            "PENDING: the dedicated workflow must run the full pipeline twice, prove a clean diff, pass the independent integrity verifier, and publish raw evidence.".to_owned(),
+        ),
+        |attestation| (
+            "PASS — exact source/release/licensing/provenance lock established; legal questions are quarantined and no reuse decision depends on them.",
+            format!(
+                "PASS: GitHub Actions run `{}` succeeded and published artifact `{}`. {}",
+                attestation["run_id"],
+                attestation["artifact_name"].as_str().unwrap_or(""),
+                attestation["run_url"].as_str().unwrap_or("")
+            ),
+        ),
+    );
     let sections = [
-        ("1. Executive status","PASS — exact source/release/licensing/provenance lock established; legal questions are quarantined and no reuse decision depends on them."),
+        ("1. Executive status",status),
         ("2. CineKernel base revision",BASE),("3. Research branch and commits","`research/r0.01-onda-provenance`; harness/schemas/tests commit `d35e31615ab7d9ef6e348ccde1a4b243dc364bc8`; the evidence commit is the commit containing this generated report."),
         ("4. ONDA selected research pin",PIN),("5. Repository and tree identity",TREE),("6. Commit verification","GitHub signature VERIFIED; independent ls-remote and API observations matched the selected pin."),
         ("7. Module inventory","See `MODULE_INVENTORY.*`."),("8. Rust workspace inventory","19 members at workspace version 0.1.0."),("9. JavaScript workspace inventory","13 packages/apps; umbrella version 0.6.1."),
@@ -883,7 +1278,7 @@ fn acceptance_report(summary: &Value, _guard: &Value) -> String {
         ("20. Dependency license surface","Derived inventory is not replaced by upstream NOTICE."),("21. Copyleft/license hotspots","9 hotspots; factual chains recorded; LEGAL_REVIEW_REQUIRED."),
         ("22. FSL future-license evidence","CURRENT_FSL; FUTURE_APACHE_TEXT_PRESENT; CANDIDATE_DATE_CALCULATED; LEGAL_EFFECTIVE_DATE_NOT_CONFIRMED."),("23. Clean-room policy","Committed and governing R0.02–R0.08."),
         ("24. Independence guards","PASS."),("25. Exact-copy guard","PASS; exact nontrivial source-content check, not a general plagiarism proof."),("26. Phase 0 immutability","PASS; frozen paths unchanged."),
-        ("27. Automated test results","PASS: 65 Rust tests and 27 JavaScript tests passed; 32 of the Rust tests directly cover R0.01. Formatting, all-target/all-feature check, strict Clippy and JavaScript typecheck passed."),("28. Reproducibility/idempotency results","PASS: two consecutive report generations produced 15 byte-identical committed research documents with zero SHA-256 differences."),
+        ("27. Automated test results","The dedicated workflow runs formatting, all-target/all-feature checks, strict Clippy, all Rust tests, JavaScript typecheck/tests, schema mutation tests, and all R0.01 commands."),("28. Reproducibility/idempotency results",&reproduction),
         ("29. Inconsistencies","See structured inconsistency register."),("30. Unresolved factual questions","Scoped registry contents and artifact internals remain unverified."),("31. Legal-review-required questions","FSL effect, FFmpeg build terms, GPL/eSpeak chain, model/data rights and distribution-specific obligations."),
         ("32. Risks carried into R0.02","Researchers must produce abstract requirements only and use primary sources before specification."),("33. R0.02 recommendation","PROCEED only under the committed clean-room policy and this immutable pin.")
     ];
@@ -892,12 +1287,17 @@ fn acceptance_report(summary: &Value, _guard: &Value) -> String {
         output.push_str(&format!("# {heading}\n\n{body}\n\n"));
     }
     output.push_str(&format!("Machine summary: Rust members {}; resolved packages {}; JavaScript packages {}; artifacts {}; release streams {}; hotspots {}.\n",summary["rust_workspace_members"],summary["rust_resolved_packages"],summary["javascript_workspace_packages"],summary["external_artifacts"],summary["release_streams"],summary["license_hotspots"]));
-    output
+    Ok(output)
 }
 
 fn review_packet(root: &Path, summary: &Value) -> Result<String> {
     let lock: Value = serde_json::from_slice(&fs::read(docs(root).join("UPSTREAM_LOCK.json"))?)?;
-    Ok(format!("# R0.01 reviewer packet\n\n- Status: PASS\n- CineKernel base: `{BASE}`\n- Research branch: `research/r0.01-onda-provenance`\n- ONDA repository: `{REPOSITORY}`\n- ONDA pin: `{PIN}`\n- ONDA tree: `{TREE}`\n- LICENSE SHA-256: `{}`\n- LICENSE-APACHE SHA-256: `{}`\n- NOTICE SHA-256: `{}`\n- Cargo.lock SHA-256: `{}`\n- pnpm-lock.yaml SHA-256: `{}`\n- Rust workspace members: {}\n- Resolved Rust packages: {}\n- pnpm workspace packages: {}\n- External models/artifacts: {} total records (5 model/downloaded-binary records)\n- Release streams: {}\n- License hotspots: {}\n- Unresolved factual items: 2 lock-level items; all additional inconsistencies remain explicit in the register\n- Legal-review items: 9 hotspot chains\n- R0.01 harness tests: 32 passed, 0 failed\n- Full tests: 65 Rust passed, 27 JavaScript passed, 0 final failures\n- Determinism: 15 documents compared, 0 SHA-256 differences\n- Guards: dependency PASS; tracked-source PASS; exact-copy PASS; Phase 0 immutability PASS\n\n## Verification exit codes\n\n| Command | Exit |\n|---|---:|\n| `cargo fmt --all --check` | 0 |\n| `cargo check --workspace --all-targets --all-features` | 0 |\n| `cargo clippy --workspace --all-targets --all-features -- -D warnings` | 0 |\n| `cargo test --workspace --all-features` | 0 |\n| `corepack pnpm install --frozen-lockfile` | 0 |\n| `corepack pnpm typecheck` | 0 |\n| `corepack pnpm test` | 0 |\n| each required `cargo xtask research onda ... --json` invocation | 0 |\n\nOne restricted-sandbox Rust attempt could not terminate the synthetic timeout-test process and exited 101; the unchanged full suite rerun with normal Windows process-tree control exited 0. This was an execution-environment limitation, not a source change.\n\n## Reproduction\n\n```text\ncargo xtask research onda sync\ncargo xtask research onda verify --json\ncargo xtask research onda inventory --json\ncargo xtask research onda report --json\ncargo xtask research onda guard --json\n```\n\nAll commands must exit 0. Raw evidence is written only below ignored `.cinekernel/research/onda/r0.01/`. Committed artifacts are under `docs/research/onda/r0.01/`, schemas under `schemas/research/`, and this packet plus the integrity manifest under `reports/research/r0.01/`.\n",lock["license"]["license_sha256"].as_str().unwrap_or(""),lock["license"]["future_license_sha256"].as_str().unwrap_or(""),lock["license"]["notice_sha256"].as_str().unwrap_or(""),lock["lockfiles"]["cargo_lock_sha256"].as_str().unwrap_or(""),lock["lockfiles"]["pnpm_lock_sha256"].as_str().unwrap_or(""),summary["rust_workspace_members"],summary["rust_resolved_packages"],summary["javascript_workspace_packages"],summary["external_artifacts"],summary["release_streams"],summary["license_hotspots"]))
+    let status = if remote_attestation(root)?.is_some() {
+        "PASS"
+    } else {
+        "CONDITIONAL PASS — remote reproduction pending"
+    };
+    Ok(format!("# R0.01 reviewer packet\n\n- Status: {status}\n- CineKernel base: `{BASE}`\n- Research branch: `research/r0.01-onda-provenance`\n- ONDA repository: `{REPOSITORY}`\n- ONDA pin: `{PIN}`\n- ONDA tree: `{TREE}`\n- LICENSE SHA-256: `{}`\n- LICENSE-APACHE SHA-256: `{}`\n- NOTICE SHA-256: `{}`\n- Cargo.lock SHA-256: `{}`\n- pnpm-lock.yaml SHA-256: `{}`\n- Rust workspace members: {}\n- Resolved Rust packages: {}\n- pnpm workspace packages: {}\n- Resolved pnpm packages: {}\n- External models/artifacts: {} total records\n- Release streams: {}\n- License hotspots: {}\n- Guards: dependency PASS; tracked-source PASS; exact-copy PASS; Phase 0 immutability PASS; absolute-path leakage PASS\n\n## Reproduction\n\n```text\ncargo xtask research onda sync\ncargo xtask research onda verify --json\ncargo xtask research onda inventory --json\ncargo xtask research onda report --json\ncargo xtask research onda guard --json\ncargo xtask research onda integrity --check --json\n```\n\nThe dedicated workflow runs the generation pipeline twice, requires a byte-clean Git diff, and uploads raw evidence without building or executing ONDA. Raw evidence is written only below ignored `.cinekernel/research/onda/r0.01/`.\n",lock["license"]["license_sha256"].as_str().unwrap_or(""),lock["license"]["future_license_sha256"].as_str().unwrap_or(""),lock["license"]["notice_sha256"].as_str().unwrap_or(""),lock["lockfiles"]["cargo_lock_sha256"].as_str().unwrap_or(""),lock["lockfiles"]["pnpm_lock_sha256"].as_str().unwrap_or(""),summary["rust_workspace_members"],summary["rust_resolved_packages"],summary["javascript_workspace_packages"],summary["javascript_resolved_packages"],summary["external_artifacts"],summary["release_streams"],summary["license_hotspots"]))
 }
 
 const CLEAN_ROOM_POLICY: &str = r#"# R0.01 clean-room policy
@@ -1044,6 +1444,48 @@ mod tests {
         assert_eq!(packages[0]["features"]["segment"][0], "dep:onda-segment");
     }
     #[test]
+    fn cargo_workspace_ids_are_host_path_independent() {
+        let fixtures = [
+            (
+                r"C:\Users\reviewer\src\onda",
+                r"C:\Users\reviewer\src\onda\packages\core\Cargo.toml",
+            ),
+            (
+                "/home/reviewer/src/onda",
+                "/home/reviewer/src/onda/packages/core/Cargo.toml",
+            ),
+            (
+                "/Users/reviewer/src/onda",
+                "/Users/reviewer/src/onda/packages/core/Cargo.toml",
+            ),
+        ];
+        let ids = fixtures
+            .into_iter()
+            .map(|(root, manifest)| {
+                let manifest = normalized_workspace_manifest(manifest, root);
+                normalized_cargo_id("onda-core", "0.1.0", None, &manifest)
+            })
+            .collect::<BTreeSet<_>>();
+        assert_eq!(ids.len(), 1);
+        assert_eq!(
+            ids.into_iter().next().unwrap(),
+            "workspace:packages/core#onda-core@0.1.0"
+        );
+    }
+    #[test]
+    fn path_leakage_patterns_cover_windows_linux_and_macos() {
+        let root = temporary_root("path-leaks");
+        let report = root.join("docs/research/onda/r0.01");
+        fs::create_dir_all(&report).expect("report directory");
+        fs::write(
+            report.join("fixture.txt"),
+            "C:/Users/reviewer/source\n/home/reviewer/source\n/Users/reviewer/source\n",
+        )
+        .expect("fixture");
+        assert_eq!(absolute_path_leaks(&root).expect("leaks").len(), 3);
+        fs::remove_dir_all(root).expect("cleanup");
+    }
+    #[test]
     fn benchmark_app_is_application() {
         assert_eq!(
             classify_module("x", "apps/benchmark/package.json"),
@@ -1081,7 +1523,21 @@ mod tests {
     }
     #[test]
     fn release_streams_separate() {
-        assert_eq!(release_map()["streams"].as_array().unwrap().len(), 3);
+        let evidence = json!({
+            "github_release": {
+                "tag_name": "v0.2.16", "id": 353301462_u64,
+                "published_at": "2026-08-14T00:00:00Z",
+                "asset": {"id": 1, "name": "embed-kit", "size": 1, "digest": format!("sha256:{}", "0".repeat(64))}
+            },
+            "npm": {
+                "version": "0.6.1", "published_at": "2026-08-14T00:00:00Z",
+                "dist": {"tarball": "https://registry.npmjs.org/onda-engine/-/onda-engine-0.6.1.tgz", "shasum": "0".repeat(40), "integrity": "sha512-fixture", "signatures": [], "file_count": 1, "unpacked_size": 1}
+            }
+        });
+        assert_eq!(
+            release_map(&evidence)["streams"].as_array().unwrap().len(),
+            3
+        );
     }
     #[test]
     fn artifact_classes_present() {
@@ -1108,8 +1564,53 @@ mod tests {
     }
     #[test]
     fn dependency_guard_detects_upstream_identifiers() {
-        assert_eq!(forbidden_manifest_hits("onda-core = \"1\""), ["onda-core"]);
-        assert!(forbidden_manifest_hits("serde = \"1\"").is_empty());
+        assert!(forbidden_dependency("onda-core", Some("1")));
+        assert!(forbidden_dependency(
+            "renamed",
+            Some("git+https://github.com/onda-engine/onda-engine")
+        ));
+        assert!(forbidden_dependency("alias", Some("npm:onda-engine@0.6.1")));
+        assert!(!forbidden_dependency("serde", Some("1")));
+    }
+    #[test]
+    fn cargo_guard_structurally_covers_direct_renamed_git_optional_dev_and_xtask() {
+        let fixture = json!({
+            "workspace_members": ["app-id", "xtask-id"],
+            "packages": [
+                {"id":"app-id","name":"app","source":null,"dependencies":[
+                    {"name":"onda-core","rename":null,"source":null,"kind":null,"optional":false},
+                    {"name":"onda-renderer","rename":"renderer","source":null,"kind":null,"optional":true},
+                    {"name":"clean-name","rename":"git-alias","source":"git+https://github.com/onda-engine/onda-engine?rev=abc","kind":"dev","optional":false}
+                ]},
+                {"id":"xtask-id","name":"xtask","source":null,"dependencies":[
+                    {"name":"onda-engine","rename":null,"source":null,"kind":"dev","optional":false}
+                ]},
+                {"id":"resolved-id","name":"onda-transitive","source":"registry+https://github.com/rust-lang/crates.io-index","dependencies":[]}
+            ]
+        });
+        let violations = cargo_metadata_violations(&fixture).expect("guard");
+        assert_eq!(violations.len(), 5);
+        assert!(violations
+            .iter()
+            .any(|line| line.starts_with("xtask dependency")));
+
+        let clean = json!({"workspace_members":["clean"],"packages":[{"id":"clean","name":"xtask","source":null,"dependencies":[{"name":"serde","rename":null,"source":"registry+https://github.com/rust-lang/crates.io-index","kind":"dev","optional":false}]}]});
+        assert!(cargo_metadata_violations(&clean).expect("clean").is_empty());
+    }
+    #[test]
+    fn npm_guard_structurally_covers_alias_dev_peer_and_optional_dependencies() {
+        let fixture = json!({
+            "dependencies":{"direct":"npm:onda-engine@0.6.1"},
+            "devDependencies":{"onda-dev":"1.0.0"},
+            "peerDependencies":{"@onda-engine/player":"1.0.0"},
+            "optionalDependencies":{"alias":"npm:onda-renderer@1.0.0"}
+        });
+        assert_eq!(npm_manifest_violations("package.json", &fixture).len(), 4);
+        assert!(npm_manifest_violations(
+            "package.json",
+            &json!({"dependencies":{"react":"19.0.0"}})
+        )
+        .is_empty());
     }
     #[test]
     fn phase0_frozen_path_guard_is_scoped() {
@@ -1191,6 +1692,8 @@ mod tests {
             "onda-dependency-inventory.schema.json",
             "onda-external-artifacts.schema.json",
             "onda-release-map.schema.json",
+            "onda-license-surface.schema.json",
+            "onda-provenance-evidence.schema.json",
         ] {
             let schema: Value = serde_json::from_slice(
                 &fs::read(root.join("schemas/research").join(name)).expect("schema"),
@@ -1199,6 +1702,76 @@ mod tests {
             let validator = jsonschema::validator_for(&schema).expect("valid schema");
             assert!(validator.validate(&json!({})).is_err());
         }
+    }
+    #[test]
+    fn strict_schemas_reject_required_nested_mutations() {
+        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .and_then(Path::parent)
+            .expect("workspace root")
+            .to_path_buf();
+        let load = |document: &str, schema: &str| {
+            let instance: Value = serde_json::from_slice(
+                &fs::read(root.join("docs/research/onda/r0.01").join(document)).expect("document"),
+            )
+            .expect("document json");
+            let schema: Value = serde_json::from_slice(
+                &fs::read(root.join("schemas/research").join(schema)).expect("schema"),
+            )
+            .expect("schema json");
+            (instance, schema)
+        };
+        let rejected = |instance: &Value, schema: &Value| {
+            jsonschema::validator_for(schema)
+                .expect("valid schema")
+                .validate(instance)
+                .is_err()
+        };
+
+        let (mut lock, schema) = load("UPSTREAM_LOCK.json", "onda-upstream-lock.schema.json");
+        lock["license"]["license_sha256"] = json!("invalid");
+        assert!(rejected(&lock, &schema));
+        let (mut lock, schema) = load("UPSTREAM_LOCK.json", "onda-upstream-lock.schema.json");
+        lock["unexpected"] = json!(true);
+        assert!(rejected(&lock, &schema));
+
+        let (mut dependencies, schema) = load(
+            "DEPENDENCY_INVENTORY.json",
+            "onda-dependency-inventory.schema.json",
+        );
+        dependencies["cargo"]["packages"][0]
+            .as_object_mut()
+            .expect("package")
+            .remove("id");
+        assert!(rejected(&dependencies, &schema));
+
+        let (mut artifacts, schema) = load(
+            "EXTERNAL_ARTIFACTS.json",
+            "onda-external-artifacts.schema.json",
+        );
+        artifacts["artifacts"][0]["status"] = json!("NOT_A_STATUS");
+        assert!(rejected(&artifacts, &schema));
+        let model = artifacts["artifacts"]
+            .as_array_mut()
+            .expect("artifacts")
+            .iter_mut()
+            .find(|artifact| artifact["kind"] == "downloaded model")
+            .expect("model");
+        model
+            .as_object_mut()
+            .expect("model object")
+            .remove("cache_path");
+        assert!(rejected(&artifacts, &schema));
+
+        let (mut releases, schema) = load("RELEASE_MAP.json", "onda-release-map.schema.json");
+        releases["streams"][0]["asset"]
+            .as_object_mut()
+            .expect("asset")
+            .remove("digest");
+        assert!(rejected(&releases, &schema));
+        let (mut releases, schema) = load("RELEASE_MAP.json", "onda-release-map.schema.json");
+        releases["streams"][1] = releases["streams"][0].clone();
+        assert!(rejected(&releases, &schema));
     }
     #[test]
     fn command_failure_surfaces_without_panicking() {

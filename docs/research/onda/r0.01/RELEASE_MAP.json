@@ -25,6 +25,7 @@
         "platform": "x86_64-linux",
         "size": 21033371
       },
+      "evidence_record": "EVID-GITHUB-RELEASE",
       "id": "embed-kit-github",
       "kind": "github-release",
       "latest_tag": "v0.2.16",
@@ -35,6 +36,7 @@
       "workflow": ".github/workflows/release.yml"
     },
     {
+      "evidence_record": "EVID-NPM-0.6.1",
       "id": "onda-engine-npm",
       "integrity": {
         "algorithm": "sha512-sri",

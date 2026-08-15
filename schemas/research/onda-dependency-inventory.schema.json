@@ -1,13 +1,70 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://cinekernel.dev/schemas/research/onda-dependency-inventory.schema.json",
-  "type": "object",
+  "type": "object", "additionalProperties": false,
   "required": ["schema_version", "pinned_commit", "cargo", "javascript", "reachability"],
   "properties": {
     "schema_version": {"const": "cinekernel.research.onda.r0.01.v1"},
-    "pinned_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-    "cargo": {"type": "object", "required": ["package_count", "workspace_member_count", "packages"]},
-    "javascript": {"type": "object", "required": ["workspace_package_count", "dependencies"]},
-    "reachability": {"type": "object"}
+    "pinned_commit": {"const": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"},
+    "cargo": {
+      "type": "object", "additionalProperties": false, "required": ["package_count", "workspace_member_count", "packages"],
+      "properties": {
+        "package_count": {"type": "integer", "minimum": 400}, "workspace_member_count": {"const": 19},
+        "packages": {"type": "array", "minItems": 400, "uniqueItems": true, "items": {"$ref": "#/$defs/cargoPackage"}}
+      }
+    },
+    "javascript": {
+      "type": "object", "additionalProperties": false, "required": ["workspace_package_count", "workspace_declarations", "resolved_graph"],
+      "properties": {
+        "workspace_package_count": {"const": 13},
+        "workspace_declarations": {"type": "array", "minItems": 90, "uniqueItems": true, "items": {"$ref": "#/$defs/jsDeclaration"}},
+        "resolved_graph": {
+          "type": "object", "additionalProperties": false,
+          "required": ["lockfile_version", "resolved_package_count", "dependency_edge_count", "resolved_packages", "dependency_edges", "license_records"],
+          "properties": {
+            "lockfile_version": {"const": "9.0"}, "resolved_package_count": {"type": "integer", "minimum": 500}, "dependency_edge_count": {"type": "integer", "minimum": 1000},
+            "resolved_packages": {"type": "array", "minItems": 500, "uniqueItems": true, "items": {"$ref": "#/$defs/jsNode"}},
+            "dependency_edges": {"type": "array", "minItems": 1000, "uniqueItems": true, "items": {"$ref": "#/$defs/jsEdge"}},
+            "license_records": {"type": "array", "minItems": 500, "uniqueItems": true, "items": {"$ref": "#/$defs/jsLicense"}}
+          }
+        }
+      }
+    },
+    "reachability": {"type": "object", "minProperties": 10, "additionalProperties": {"type": "string", "minLength": 1}}
+  },
+  "$defs": {
+    "cargoPackage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "name", "version", "manifest", "source_kind", "source", "checksum", "license", "repository", "workspace_member", "features", "dependencies"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^(workspace:|registry:crates\\.io#|git:https?://|unknown:)"}, "name": {"type": "string", "minLength": 1}, "version": {"type": "string", "minLength": 1},
+        "manifest": {"type": "string", "pattern": "^(packages/|registry:|git:|unknown:)"}, "source_kind": {"enum": ["path/workspace", "registry", "git", "unknown"]},
+        "source": {"type": ["string", "null"]}, "checksum": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}, "license": {"type": ["string", "null"]}, "repository": {"type": ["string", "null"]},
+        "workspace_member": {"type": "boolean"}, "features": {"type": "object"}, "dependencies": {"type": "array", "items": {"$ref": "#/$defs/cargoEdge"}}
+      }
+    },
+    "cargoEdge": {
+      "type": "object", "additionalProperties": false, "required": ["name", "source", "requirement", "kind", "optional", "target", "features", "uses_default_features"],
+      "properties": {"name": {"type": "string", "minLength": 1}, "source": {"type": ["string", "null"]}, "requirement": {"type": "string"}, "kind": {"type": ["string", "null"]}, "optional": {"type": "boolean"}, "target": {"type": ["string", "null"]}, "features": {"type": "array", "items": {"type": "string"}}, "uses_default_features": {"type": "boolean"}}
+    },
+    "jsDeclaration": {
+      "type": "object", "additionalProperties": false, "required": ["package", "dependency", "requirement", "resolved_version", "classification", "manifest"],
+      "properties": {"package": {"type": "string"}, "dependency": {"type": "string"}, "requirement": {"type": "string"}, "resolved_version": {"type": "string"}, "classification": {"enum": ["external-runtime", "peer", "development", "benchmark-only"]}, "manifest": {"type": "string", "pattern": "^(packages|apps)/.+/package\\.json$"}}
+    },
+    "jsNode": {
+      "type": "object", "additionalProperties": false, "required": ["id", "package_name", "version", "source_kind", "registry", "integrity", "direct", "classifications", "reachable_from", "reachability_status", "license", "dependencies"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^npm:"}, "package_name": {"type": "string"}, "version": {"type": "string"}, "source_kind": {"enum": ["registry", "git", "path/workspace"]},
+        "registry": {"type": "string", "minLength": 1}, "integrity": {"type": ["string", "null"], "pattern": "^sha(1|256|512)-"}, "direct": {"type": "boolean"},
+        "classifications": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}, "reachable_from": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}, "reachability_status": {"enum": ["REACHABLE_FROM_WORKSPACE_IMPORTER", "NOT_REACHABLE_FROM_WORKSPACE_IMPORTER"]},
+        "license": {"$ref": "#/$defs/licenseDetail"}, "dependencies": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["target", "kind"], "properties": {"target": {"type": "string", "pattern": "^npm:"}, "kind": {"enum": ["dependencies", "optionalDependencies"]}}}}
+      }
+    },
+    "licenseDetail": {
+      "type": "object", "additionalProperties": false, "required": ["expression", "repository", "homepage", "source", "status"],
+      "properties": {"expression": {"type": "string", "minLength": 1}, "repository": {"type": ["string", "null"]}, "homepage": {"type": ["string", "null"]}, "source": {"type": "string"}, "status": {"enum": ["VERIFIED_AT_PIN", "UNRESOLVED"]}}
+    },
+    "jsEdge": {"type": "object", "additionalProperties": false, "required": ["from", "to", "kind"], "properties": {"from": {"type": "string", "pattern": "^npm:"}, "to": {"type": "string", "pattern": "^npm:"}, "kind": {"enum": ["dependencies", "optionalDependencies"]}}},
+    "jsLicense": {"type": "object", "additionalProperties": false, "required": ["package_id", "package_name", "version", "expression", "repository", "homepage", "status"], "properties": {"package_id": {"type": "string", "pattern": "^npm:"}, "package_name": {"type": "string"}, "version": {"type": "string"}, "expression": {"type": "string"}, "repository": {"type": ["string", "null"]}, "homepage": {"type": ["string", "null"]}, "status": {"enum": ["VERIFIED_AT_PIN", "UNRESOLVED"]}}}
   }
 }

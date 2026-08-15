@@ -17,6 +17,7 @@ use std::time::{Duration, Instant};
 
 mod process;
 mod research_onda;
+mod research_onda_pnpm;
 use process::{run_supervised, write_log};
 
 const EXIT_MISSING_DEPENDENCY: u8 = 1;
