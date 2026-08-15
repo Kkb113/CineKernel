@@ -40,3 +40,12 @@ test("mixed scene contains real chart labels, deterministic texture, 3D overlay,
 test("invalid HyperFrames benchmark case is rejected", () => {
   assert.throws(()=>createComposition({caseId:"deliberately-invalid",width:640,height:360,duration:1}),/Unknown case/);
 });
+
+test("benchmark preflight gates errors without promoting software-WebGL warnings to failures", () => {
+  const root = resolve(import.meta.dirname, "../../..");
+  const source = readFileSync(resolve(root, "packages/phase0-hyperframes/scripts/render.ts"), "utf8");
+  assert.match(source, /run\(\["check",project\]\)/);
+  assert.doesNotMatch(source, /run\(\["lint",project\]\)/);
+  assert.doesNotMatch(source, /--strict/);
+  assert.match(source, /stdio:"inherit"/);
+});
