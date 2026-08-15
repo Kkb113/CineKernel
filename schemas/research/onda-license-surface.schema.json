@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cinekernel.dev/schemas/research/onda-license-surface.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "source_license", "future_license", "observed_expressions", "notice_completeness", "hotspots"],
+  "properties": {
+    "schema_version": {"const": "cinekernel.research.onda.r0.01.v1"},
+    "source_license": {"$ref": "#/$defs/sourceLicense"},
+    "future_license": {"$ref": "#/$defs/futureLicense"},
+    "observed_expressions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "notice_completeness": {"const": "UPSTREAM_NOTICE_DECLARED_INCOMPLETE"},
+    "hotspots": {"type": "array", "minItems": 9, "uniqueItems": true, "items": {"$ref": "#/$defs/hotspot"}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "gitSha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sourceLicense": {
+      "type": "object", "additionalProperties": false,
+      "required": ["declared_spdx", "license_path", "license_git_blob", "license_sha256", "future_license_path", "future_license_git_blob", "future_license_sha256", "notice_path", "notice_git_blob", "notice_sha256"],
+      "properties": {
+        "declared_spdx": {"const": "FSL-1.1-ALv2"},
+        "license_path": {"const": "LICENSE"}, "license_git_blob": {"$ref": "#/$defs/gitSha"}, "license_sha256": {"$ref": "#/$defs/sha256"},
+        "future_license_path": {"const": "LICENSE-APACHE"}, "future_license_git_blob": {"$ref": "#/$defs/gitSha"}, "future_license_sha256": {"$ref": "#/$defs/sha256"},
+        "notice_path": {"const": "NOTICE.md"}, "notice_git_blob": {"$ref": "#/$defs/gitSha"}, "notice_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "futureLicense": {
+      "type": "object", "additionalProperties": false,
+      "required": ["availability_evidence", "candidate_future_license_date", "software_version", "status"],
+      "properties": {
+        "availability_evidence": {"type": "array", "minItems": 2, "items": {"type": "object", "additionalProperties": false, "required": ["kind", "date"], "properties": {"kind": {"enum": ["commit", "npm-publication"]}, "date": {"type": "string", "format": "date-time"}, "version": {"type": "string"}}}},
+        "candidate_future_license_date": {"type": "string", "format": "date"},
+        "software_version": {"type": "string", "minLength": 1},
+        "status": {"type": "array", "uniqueItems": true, "allOf": [{"contains": {"const": "CURRENT_FSL"}}, {"contains": {"const": "FUTURE_APACHE_TEXT_PRESENT"}}, {"contains": {"const": "CANDIDATE_DATE_CALCULATED"}}, {"contains": {"const": "LEGAL_EFFECTIVE_DATE_NOT_CONFIRMED"}}], "items": {"enum": ["CURRENT_FSL", "FUTURE_APACHE_TEXT_PRESENT", "CANDIDATE_DATE_CALCULATED", "LEGAL_EFFECTIVE_DATE_NOT_CONFIRMED"]}}
+      }
+    },
+    "hotspot": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "surface", "declared", "status", "human_legal_review_required", "source_repository", "source_url", "version", "distributed_in_output", "confidence"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^LIC-[0-9]{3}$"}, "surface": {"type": "string", "minLength": 1}, "declared": {"type": "string", "minLength": 1},
+        "status": {"enum": ["LEGAL_REVIEW_REQUIRED", "LEGAL_EFFECTIVE_DATE_NOT_CONFIRMED"]}, "human_legal_review_required": {"const": true},
+        "source_repository": {"const": "https://github.com/onda-engine/onda-engine.git"}, "source_url": {"type": "string", "format": "uri"}, "version": {"type": "string", "minLength": 1},
+        "distributed_in_output": {"type": "string", "minLength": 1}, "confidence": {"type": "string", "minLength": 1}, "fact": {"type": "string", "minLength": 1}, "chain": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

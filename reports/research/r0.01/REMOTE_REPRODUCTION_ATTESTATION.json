@@ -1,0 +1,10 @@
+{
+  "artifact_name": "r0-01-onda-provenance-31888987515",
+  "completed_at_utc": "2026-08-15T14:07:37Z",
+  "head_sha": "73d8fc50e8d1a4226711912ff58427397fbfbba6",
+  "run_id": 31888987515,
+  "run_url": "https://github.com/Kkb113/CineKernel/actions/runs/31888987515",
+  "schema_version": "cinekernel.research.onda.r0.01.v1",
+  "status": "success",
+  "workflow": ".github/workflows/r0-01-onda-provenance.yml"
+}

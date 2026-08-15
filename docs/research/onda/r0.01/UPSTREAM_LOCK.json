@@ -1,0 +1,58 @@
+{
+  "captured_at_utc": "2026-08-15T00:00:00Z",
+  "cinekernel_base_revision": "5f47f341aa546b4ceb115fcad71d576d0ab85f29",
+  "commit_author_date": "2026-07-19T21:21:12-04:00",
+  "commit_committer_date": "2026-07-19T21:21:12-04:00",
+  "commit_signature_status": {
+    "github_api_reason": "valid",
+    "github_api_verified": true,
+    "local_git": "NOT_USED_FOR_TRUST_DECISION",
+    "status": "VERIFIED_BY_GITHUB_API"
+  },
+  "default_branch": "main",
+  "license": {
+    "declared_spdx": "FSL-1.1-ALv2",
+    "future_license_git_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+    "future_license_path": "LICENSE-APACHE",
+    "future_license_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "license_git_blob": "1137ce6308a6d817a22b4b85afa35230d2b145cc",
+    "license_path": "LICENSE",
+    "license_sha256": "7e6fdc32986a1ea86933be194a15266419c74963187d9ebf02e2d116a473af29",
+    "notice_git_blob": "6761d0af83e34903b42bc2d4ee38c67180099ea6",
+    "notice_path": "NOTICE.md",
+    "notice_sha256": "cba16f2312c5866182513c58d46822a34beec24b32b6521511d24a64d78db7d2"
+  },
+  "lockfiles": {
+    "cargo_lock_sha256": "67fa301327a87135b37c11a7dc759a99c2ae9bfbf8ddecb2fdaddf7e6553d258",
+    "pnpm_lock_sha256": "aae73d8537740491fab9cfc75c8966f6f1af97a98fc3c3e1d39663217eed278f"
+  },
+  "observed_branch_head": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+  "package_versions": [
+    {
+      "surface": "rust-workspace",
+      "version": "0.1.0"
+    },
+    {
+      "surface": "npm-umbrella",
+      "version": "0.6.1"
+    },
+    {
+      "surface": "embed-kit-latest",
+      "version": "0.2.16"
+    }
+  ],
+  "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+  "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+  "release_streams": [
+    "embed-kit-github",
+    "onda-engine-npm",
+    "scoped-github-packages"
+  ],
+  "repository": "https://github.com/onda-engine/onda-engine.git",
+  "research_policy_version": "R0.01-v1",
+  "schema_version": "cinekernel.research.onda.r0.01.v1",
+  "unresolved": [
+    "scoped GitHub Packages registry state requires authentication",
+    "legal effect of future-license dates"
+  ]
+}

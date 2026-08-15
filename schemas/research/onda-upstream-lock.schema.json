@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cinekernel.dev/schemas/research/onda-upstream-lock.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "captured_at_utc", "cinekernel_base_revision", "repository", "default_branch", "observed_branch_head", "pinned_commit", "pinned_tree", "commit_author_date", "commit_committer_date", "commit_signature_status", "license", "lockfiles", "release_streams", "package_versions", "research_policy_version", "unresolved"],
+  "properties": {
+    "schema_version": {"const": "cinekernel.research.onda.r0.01.v1"},
+    "captured_at_utc": {"type": "string", "format": "date-time"},
+    "cinekernel_base_revision": {"$ref": "#/$defs/gitSha"},
+    "repository": {"const": "https://github.com/onda-engine/onda-engine.git"},
+    "default_branch": {"const": "main"},
+    "observed_branch_head": {"$ref": "#/$defs/gitSha"},
+    "pinned_commit": {"const": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"},
+    "pinned_tree": {"const": "639df83ebf0262afccd6d021bf6d16ef19777d85"},
+    "commit_author_date": {"type": "string", "format": "date-time"},
+    "commit_committer_date": {"type": "string", "format": "date-time"},
+    "commit_signature_status": {
+      "type": "object", "additionalProperties": false,
+      "required": ["local_git", "github_api_verified", "github_api_reason", "status"],
+      "properties": {"local_git": {"const": "NOT_USED_FOR_TRUST_DECISION"}, "github_api_verified": {"const": true}, "github_api_reason": {"const": "valid"}, "status": {"const": "VERIFIED_BY_GITHUB_API"}}
+    },
+    "license": {
+      "type": "object", "additionalProperties": false,
+      "required": ["declared_spdx", "license_path", "license_git_blob", "license_sha256", "future_license_path", "future_license_git_blob", "future_license_sha256", "notice_path", "notice_git_blob", "notice_sha256"],
+      "properties": {
+        "declared_spdx": {"const": "FSL-1.1-ALv2"}, "license_path": {"const": "LICENSE"}, "license_git_blob": {"$ref": "#/$defs/gitSha"}, "license_sha256": {"$ref": "#/$defs/sha256"},
+        "future_license_path": {"const": "LICENSE-APACHE"}, "future_license_git_blob": {"$ref": "#/$defs/gitSha"}, "future_license_sha256": {"$ref": "#/$defs/sha256"},
+        "notice_path": {"const": "NOTICE.md"}, "notice_git_blob": {"$ref": "#/$defs/gitSha"}, "notice_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "lockfiles": {"type": "object", "additionalProperties": false, "required": ["cargo_lock_sha256", "pnpm_lock_sha256"], "properties": {"cargo_lock_sha256": {"$ref": "#/$defs/sha256"}, "pnpm_lock_sha256": {"$ref": "#/$defs/sha256"}}},
+    "release_streams": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"enum": ["embed-kit-github", "onda-engine-npm", "scoped-github-packages"]}},
+    "package_versions": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"type": "object", "additionalProperties": false, "required": ["surface", "version"], "properties": {"surface": {"type": "string", "minLength": 1}, "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"}}}},
+    "research_policy_version": {"const": "R0.01-v1"},
+    "unresolved": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+  },
+  "$defs": {"gitSha": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

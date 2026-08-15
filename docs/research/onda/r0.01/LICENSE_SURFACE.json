@@ -1,0 +1,191 @@
+{
+  "future_license": {
+    "availability_evidence": [
+      {
+        "date": "2026-07-20T01:21:12Z",
+        "kind": "commit"
+      },
+      {
+        "date": "2026-07-20T03:12:08.488Z",
+        "kind": "npm-publication",
+        "version": "0.6.1"
+      }
+    ],
+    "candidate_future_license_date": "2028-07-20",
+    "software_version": "repository pin and each released package separately",
+    "status": [
+      "CURRENT_FSL",
+      "FUTURE_APACHE_TEXT_PRESENT",
+      "CANDIDATE_DATE_CALCULATED",
+      "LEGAL_EFFECTIVE_DATE_NOT_CONFIRMED"
+    ]
+  },
+  "hotspots": [
+    {
+      "confidence": "HIGH for declared dependency/distribution chain; no legal conclusion",
+      "declared": "FSL-1.1-ALv2",
+      "distributed_in_output": "release/feature dependent",
+      "fact": "Current source is source-available, not Apache-2.0 today.",
+      "human_legal_review_required": true,
+      "id": "LIC-001",
+      "source_repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_url": "https://github.com/onda-engine/onda-engine/tree/3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "status": "LEGAL_REVIEW_REQUIRED",
+      "surface": "ONDA source",
+      "version": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"
+    },
+    {
+      "confidence": "HIGH for declared dependency/distribution chain; no legal conclusion",
+      "declared": "Apache-2.0 text present",
+      "distributed_in_output": "release/feature dependent",
+      "fact": "Per-version candidate date is two years after availability evidence; legal effective date is unconfirmed.",
+      "human_legal_review_required": true,
+      "id": "LIC-002",
+      "source_repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_url": "https://github.com/onda-engine/onda-engine/tree/3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "status": "LEGAL_EFFECTIVE_DATE_NOT_CONFIRMED",
+      "surface": "future license",
+      "version": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"
+    },
+    {
+      "confidence": "HIGH for declared dependency/distribution chain; no legal conclusion",
+      "declared": "MPL-2.0",
+      "distributed_in_output": "release/feature dependent",
+      "fact": "NOTICE identifies MPL surfaces; derived graph must govern completeness.",
+      "human_legal_review_required": true,
+      "id": "LIC-003",
+      "source_repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_url": "https://github.com/onda-engine/onda-engine/tree/3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "status": "LEGAL_REVIEW_REQUIRED",
+      "surface": "MPL dependencies",
+      "version": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"
+    },
+    {
+      "chain": "onda-cli video -> onda-video -> external FFmpeg",
+      "confidence": "HIGH for declared dependency/distribution chain; no legal conclusion",
+      "declared": "build-dependent LGPL/GPL",
+      "distributed_in_output": "release/feature dependent",
+      "human_legal_review_required": true,
+      "id": "LIC-004",
+      "source_repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_url": "https://github.com/onda-engine/onda-engine/tree/3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "status": "LEGAL_REVIEW_REQUIRED",
+      "surface": "FFmpeg",
+      "version": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"
+    },
+    {
+      "chain": "segment/speak -> ort -> ONNX Runtime binaries",
+      "confidence": "HIGH for declared dependency/distribution chain; no legal conclusion",
+      "declared": "MIT plus notices",
+      "distributed_in_output": "release/feature dependent",
+      "human_legal_review_required": true,
+      "id": "LIC-005",
+      "source_repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_url": "https://github.com/onda-engine/onda-engine/tree/3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "status": "LEGAL_REVIEW_REQUIRED",
+      "surface": "ONNX Runtime",
+      "version": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"
+    },
+    {
+      "chain": "onda-cli transcribe -> onda-transcribe -> whisper-rs/whisper.cpp -> model artifact",
+      "confidence": "HIGH for declared dependency/distribution chain; no legal conclusion",
+      "declared": "MIT code; model terms separate",
+      "distributed_in_output": "release/feature dependent",
+      "human_legal_review_required": true,
+      "id": "LIC-006",
+      "source_repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_url": "https://github.com/onda-engine/onda-engine/tree/3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "status": "LEGAL_REVIEW_REQUIRED",
+      "surface": "Whisper",
+      "version": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"
+    },
+    {
+      "chain": "onda-cli segment -> onda-segment -> downloaded model",
+      "confidence": "HIGH for declared dependency/distribution chain; no legal conclusion",
+      "declared": "model/data license",
+      "distributed_in_output": "release/feature dependent",
+      "human_legal_review_required": true,
+      "id": "LIC-007",
+      "source_repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_url": "https://github.com/onda-engine/onda-engine/tree/3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "status": "LEGAL_REVIEW_REQUIRED",
+      "surface": "U2-Net model",
+      "version": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"
+    },
+    {
+      "chain": "onda-cli speak -> onda-tts -> espeak-rs -> eSpeak NG source/data; plus Kokoro ONNX and voices",
+      "confidence": "HIGH for declared dependency/distribution chain; no legal conclusion",
+      "declared": "mixed code/model/data terms",
+      "distributed_in_output": "release/feature dependent",
+      "human_legal_review_required": true,
+      "id": "LIC-008",
+      "source_repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_url": "https://github.com/onda-engine/onda-engine/tree/3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "status": "LEGAL_REVIEW_REQUIRED",
+      "surface": "Kokoro model/voices and eSpeak NG",
+      "version": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"
+    },
+    {
+      "confidence": "HIGH for declared dependency/distribution chain; no legal conclusion",
+      "declared": "multiple dependency expressions",
+      "distributed_in_output": "release/feature dependent",
+      "fact": "Distribution-specific obligations require dependency-level review.",
+      "human_legal_review_required": true,
+      "id": "LIC-009",
+      "source_repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_url": "https://github.com/onda-engine/onda-engine/tree/3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "status": "LEGAL_REVIEW_REQUIRED",
+      "surface": "Vello/wgpu, font, SVG, audio stacks",
+      "version": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"
+    }
+  ],
+  "notice_completeness": "UPSTREAM_NOTICE_DECLARED_INCOMPLETE",
+  "observed_expressions": [
+    "(Apache-2.0 OR MIT) AND BSD-3-Clause",
+    "(MIT OR Apache-2.0) AND Unicode-3.0",
+    "0BSD OR MIT OR Apache-2.0",
+    "Apache-2.0",
+    "Apache-2.0 AND ISC",
+    "Apache-2.0 OR GPL-2.0-only",
+    "Apache-2.0 OR ISC OR MIT",
+    "Apache-2.0 OR MIT",
+    "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+    "Apache-2.0/MIT",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BSD-3-Clause OR Apache-2.0",
+    "CC0-1.0",
+    "CDLA-Permissive-2.0",
+    "FSL-1.1-ALv2",
+    "ISC",
+    "LGPL-3.0-or-later",
+    "MIT",
+    "MIT OR Apache-2.0",
+    "MIT OR Apache-2.0 OR LGPL-2.1-or-later",
+    "MIT OR Apache-2.0 OR Zlib",
+    "MIT OR Zlib OR Apache-2.0",
+    "MIT/Apache-2.0",
+    "MPL-2.0",
+    "SEE LICENSE IN LICENSE.md",
+    "UNKNOWN/CUSTOM",
+    "UNLICENSED",
+    "Unicode-3.0",
+    "Unlicense",
+    "Unlicense OR MIT",
+    "Zlib",
+    "Zlib OR Apache-2.0 OR MIT"
+  ],
+  "schema_version": "cinekernel.research.onda.r0.01.v1",
+  "source_license": {
+    "declared_spdx": "FSL-1.1-ALv2",
+    "future_license_git_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+    "future_license_path": "LICENSE-APACHE",
+    "future_license_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "license_git_blob": "1137ce6308a6d817a22b4b85afa35230d2b145cc",
+    "license_path": "LICENSE",
+    "license_sha256": "7e6fdc32986a1ea86933be194a15266419c74963187d9ebf02e2d116a473af29",
+    "notice_git_blob": "6761d0af83e34903b42bc2d4ee38c67180099ea6",
+    "notice_path": "NOTICE.md",
+    "notice_sha256": "cba16f2312c5866182513c58d46822a34beec24b32b6521511d24a64d78db7d2"
+  }
+}

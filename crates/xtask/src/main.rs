@@ -16,6 +16,8 @@ use std::process::{Command, ExitCode};
 use std::time::{Duration, Instant};
 
 mod process;
+mod research_onda;
+mod research_onda_pnpm;
 use process::{run_supervised, write_log};
 
 const EXIT_MISSING_DEPENDENCY: u8 = 1;
@@ -51,6 +53,18 @@ enum TopCommand {
     Phase0 {
         #[command(subcommand)]
         command: Phase0Command,
+    },
+    Research {
+        #[command(subcommand)]
+        command: ResearchCommand,
+    },
+}
+
+#[derive(Subcommand)]
+enum ResearchCommand {
+    Onda {
+        #[command(subcommand)]
+        command: research_onda::OndaCommand,
     },
 }
 
@@ -272,6 +286,9 @@ fn execute(cli: &Cli) -> AppResult<Value> {
                     scope: CleanScope::Generated,
                 },
         } => clean_generated(&root),
+        TopCommand::Research {
+            command: ResearchCommand::Onda { command },
+        } => research_onda::execute(&root, command),
     }
 }
 

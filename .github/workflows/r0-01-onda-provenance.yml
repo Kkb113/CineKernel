@@ -1,0 +1,81 @@
+name: R0.01 ONDA provenance reproduction
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/r0-01-onda-provenance.yml"
+      - "crates/xtask/src/main.rs"
+      - "crates/xtask/src/research_onda.rs"
+      - "crates/xtask/src/research_onda_pnpm.rs"
+      - "docs/research/onda/r0.01/**"
+      - "reports/research/r0.01/**"
+      - "schemas/research/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r0-01-onda-provenance-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  reproduce:
+    name: reproduce immutable R0.01 evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Check out reviewed commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+
+      - name: Enable pinned package managers
+        run: corepack enable
+
+      - name: Validate R0.01 harness tests
+        run: cargo test -p xtask research_onda
+
+      - name: Generate evidence twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pass in 1 2; do
+            echo "R0.01 generation pass ${pass}"
+            cargo xtask research onda sync --json
+            cargo xtask research onda verify --json
+            cargo xtask research onda inventory --json
+            cargo xtask research onda report --json
+            cargo xtask research onda guard --json
+          done
+
+      - name: Confirm committed evidence is byte-stable
+        run: git diff --exit-code -- docs/research/onda/r0.01 schemas/research reports/research/r0.01
+
+      - name: Verify committed integrity manifest independently
+        run: cargo xtask research onda integrity --check --json
+
+      - name: Re-run absolute-path and independence guards
+        run: cargo xtask research onda guard --json
+
+      - name: Upload raw R0.01 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r0-01-onda-provenance-${{ github.run_id }}
+          retention-days: 90
+          if-no-files-found: error
+          include-hidden-files: true
+          path: .cinekernel/research/onda/r0.01/

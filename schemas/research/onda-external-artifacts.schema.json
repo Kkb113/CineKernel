@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cinekernel.dev/schemas/research/onda-external-artifacts.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "artifacts"],
+  "properties": {
+    "schema_version": {"const": "cinekernel.research.onda.r0.01.v1"},
+    "artifacts": {"type": "array", "minItems": 19, "uniqueItems": true, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "name", "purpose", "kind", "required_by", "phase", "optional", "license", "status", "confidence", "human_legal_review_required", "distributed_in_output", "provenance_pin"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^ART-[0-9]{3}$"}, "name": {"type": "string", "minLength": 1}, "purpose": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["system executable", "system dependency", "build tool", "runtime tool", "downloaded model", "downloaded binary", "registry package", "vendored source in dependency", "data dependency"]},
+        "required_by": {"type": "string", "minLength": 1}, "phase": {"enum": ["BUILD_TIME", "RUNTIME_EXTERNAL", "MODEL_DATA"]}, "optional": {"type": "boolean"},
+        "platform": {"type": "string"}, "version_pin": {"type": ["string", "null"]}, "license": {"type": "string", "minLength": 1},
+        "status": {"enum": ["VERIFIED_AT_PIN", "UNRESOLVED", "LEGAL_REVIEW_REQUIRED"]}, "source": {"type": "string"},
+        "cache_path": {"type": "string", "minLength": 1}, "source_url": {"type": "string", "format": "uri"}, "source_repository": {"type": "string", "format": "uri"},
+        "expected_size": {"type": "string", "minLength": 1}, "digest_algorithm": {"type": ["string", "null"]}, "digest": {"type": ["string", "null"]},
+        "onda_verification": {"type": "string", "minLength": 1}, "reconciliation": {"type": "string", "minLength": 1},
+        "confidence": {"type": "string", "minLength": 1}, "human_legal_review_required": {"type": "boolean"}, "distributed_in_output": {"type": "string", "minLength": 1},
+        "provenance_pin": {"const": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"}
+      },
+      "allOf": [
+        {"if": {"properties": {"kind": {"const": "downloaded model"}}, "required": ["kind"]}, "then": {"required": ["cache_path", "source_url", "source_repository", "expected_size", "digest_algorithm", "digest", "onda_verification"]}},
+        {"if": {"properties": {"kind": {"const": "downloaded binary"}}, "required": ["kind"]}, "then": {"required": ["cache_path", "source_url", "source_repository", "expected_size", "digest_algorithm", "digest", "onda_verification"]}}
+      ]
+    }}
+  }
+}

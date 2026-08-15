@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cinekernel.dev/schemas/research/onda-release-map.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "streams", "observed_public_versions", "pr_41"],
+  "properties": {
+    "schema_version": {"const": "cinekernel.research.onda.r0.01.v1"},
+    "streams": {
+      "type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true,
+      "items": {"oneOf": [{"$ref": "#/$defs/githubRelease"}, {"$ref": "#/$defs/npmRelease"}, {"$ref": "#/$defs/scopedRelease"}]},
+      "allOf": [
+        {"contains": {"properties": {"id": {"const": "embed-kit-github"}}, "required": ["id"]}, "minContains": 1, "maxContains": 1},
+        {"contains": {"properties": {"id": {"const": "onda-engine-npm"}}, "required": ["id"]}, "minContains": 1, "maxContains": 1},
+        {"contains": {"properties": {"id": {"const": "scoped-github-packages"}}, "required": ["id"]}, "minContains": 1, "maxContains": 1}
+      ]
+    },
+    "observed_public_versions": {"type": "array", "minItems": 8, "uniqueItems": true, "items": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"}},
+    "pr_41": {"type": "object", "additionalProperties": false, "required": ["number", "merge_commit", "finding"], "properties": {"number": {"const": 41}, "merge_commit": {"const": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"}, "finding": {"type": "string", "minLength": 1}}}
+  },
+  "$defs": {
+    "asset": {"type": "object", "additionalProperties": false, "required": ["id", "name", "size", "digest_algorithm", "digest", "platform"], "properties": {"id": {"const": 475692944}, "name": {"const": "onda-embed-kit-v0.2.16-x86_64-linux.tar.gz"}, "size": {"type": "integer", "minimum": 1}, "digest_algorithm": {"const": "sha256"}, "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "platform": {"const": "x86_64-linux"}}},
+    "githubRelease": {"type": "object", "additionalProperties": false, "required": ["id", "kind", "tag_pattern", "latest_tag", "tag_target", "release_id", "published_at", "asset", "workflow", "evidence_record"], "properties": {"id": {"const": "embed-kit-github"}, "kind": {"const": "github-release"}, "tag_pattern": {"const": "v*"}, "latest_tag": {"const": "v0.2.16"}, "tag_target": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "release_id": {"const": 353301462}, "published_at": {"type": "string", "format": "date-time"}, "asset": {"$ref": "#/$defs/asset"}, "workflow": {"const": ".github/workflows/release.yml"}, "evidence_record": {"const": "EVID-GITHUB-RELEASE"}}},
+    "npmRelease": {"type": "object", "additionalProperties": false, "required": ["id", "kind", "tag_pattern", "source_version", "published_version", "latest", "published_at", "matching_github_release", "tarball", "shasum", "integrity", "registry_signature_count", "registry_file_count", "registry_unpacked_size", "local_scripts_disabled_pack", "provenance", "workflow", "evidence_record"], "properties": {
+      "id": {"const": "onda-engine-npm"}, "kind": {"const": "npm-public"}, "tag_pattern": {"const": "onda-engine-v*"}, "source_version": {"const": "0.6.1"}, "published_version": {"const": "0.6.1"}, "latest": {"const": "0.6.1"}, "published_at": {"type": "string", "format": "date-time"}, "matching_github_release": {"const": "NOT_OBSERVED_FOR_0.6.1"}, "tarball": {"type": "string", "format": "uri"},
+      "shasum": {"type": "object", "additionalProperties": false, "required": ["algorithm", "value"], "properties": {"algorithm": {"const": "sha1"}, "value": {"type": "string", "pattern": "^[0-9a-f]{40}$"}}},
+      "integrity": {"type": "object", "additionalProperties": false, "required": ["algorithm", "value"], "properties": {"algorithm": {"const": "sha512-sri"}, "value": {"type": "string", "pattern": "^sha512-[A-Za-z0-9+/=]+$"}}},
+      "registry_signature_count": {"type": "integer", "minimum": 1}, "registry_file_count": {"type": "integer", "minimum": 1}, "registry_unpacked_size": {"type": "integer", "minimum": 1},
+      "local_scripts_disabled_pack": {"type": "object", "additionalProperties": false, "required": ["entry_count", "unpacked_size", "interpretation"], "properties": {"entry_count": {"type": "integer", "minimum": 1}, "unpacked_size": {"type": "integer", "minimum": 1}, "interpretation": {"type": "string", "minLength": 1}}},
+      "provenance": {"const": "NO_PROVENANCE_ATTESTATION_OBSERVED"}, "workflow": {"const": ".github/workflows/release-npm.yml"}, "evidence_record": {"const": "EVID-NPM-0.6.1"}
+    }},
+    "scopedRelease": {"type": "object", "additionalProperties": false, "required": ["id", "kind", "tag_pattern", "manifest_versions", "registry_state", "workflow"], "properties": {"id": {"const": "scoped-github-packages"}, "kind": {"const": "github-packages"}, "tag_pattern": {"const": "@onda-engine/*@*"}, "manifest_versions": {"const": "independent"}, "registry_state": {"const": "AUTH_REQUIRED_NOT_VERIFIED"}, "workflow": {"const": "release configuration"}}}
+  }
+}

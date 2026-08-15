@@ -1,0 +1,304 @@
+{
+  "modules": [
+    {
+      "classification": "application",
+      "ecosystem": "javascript",
+      "license": null,
+      "name": "benchmark",
+      "path": "apps/benchmark/package.json",
+      "private": true,
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.0.1"
+    },
+    {
+      "classification": "application",
+      "ecosystem": "javascript",
+      "license": null,
+      "name": "playground",
+      "path": "apps/playground/package.json",
+      "private": true,
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.0.1"
+    },
+    {
+      "classification": "application",
+      "ecosystem": "javascript",
+      "license": null,
+      "name": "@onda-engine/preview",
+      "path": "apps/preview/package.json",
+      "private": true,
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.0.3"
+    },
+    {
+      "classification": "application",
+      "ecosystem": "javascript",
+      "license": null,
+      "name": "@onda-engine/site",
+      "path": "apps/site/package.json",
+      "private": true,
+      "status": "VERIFIED_AT_PIN",
+      "version": null
+    },
+    {
+      "classification": "typescript-package",
+      "ecosystem": "javascript",
+      "license": "FSL-1.1-ALv2",
+      "name": "@onda-engine/cinema",
+      "path": "packages/cinema/package.json",
+      "private": null,
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.3"
+    },
+    {
+      "classification": "typescript-package",
+      "ecosystem": "javascript",
+      "license": "FSL-1.1-ALv2",
+      "name": "@onda-engine/components",
+      "path": "packages/components/package.json",
+      "private": null,
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.3.0"
+    },
+    {
+      "classification": "typescript-package",
+      "ecosystem": "javascript",
+      "license": "FSL-1.1-ALv2",
+      "name": "@onda-engine/player",
+      "path": "packages/player/package.json",
+      "private": null,
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.1"
+    },
+    {
+      "classification": "typescript-package",
+      "ecosystem": "javascript",
+      "license": "FSL-1.1-ALv2",
+      "name": "@onda-engine/react",
+      "path": "packages/react/package.json",
+      "private": null,
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.1"
+    },
+    {
+      "classification": "typescript-package",
+      "ecosystem": "javascript",
+      "license": "FSL-1.1-ALv2",
+      "name": "@onda-engine/render",
+      "path": "packages/render/package.json",
+      "private": null,
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.1"
+    },
+    {
+      "classification": "typescript-package",
+      "ecosystem": "javascript",
+      "license": "FSL-1.1-ALv2",
+      "name": "onda-engine",
+      "path": "packages/umbrella/package.json",
+      "private": null,
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.6.1"
+    },
+    {
+      "classification": "typescript-package",
+      "ecosystem": "javascript",
+      "license": "FSL-1.1-ALv2",
+      "name": "@onda-engine/wasm-audio",
+      "path": "packages/wasm-audio/package.json",
+      "private": null,
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.1"
+    },
+    {
+      "classification": "wasm-vello",
+      "ecosystem": "javascript",
+      "license": "FSL-1.1-ALv2",
+      "name": "@onda-engine/wasm-vello",
+      "path": "packages/wasm-vello/package.json",
+      "private": null,
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.1"
+    },
+    {
+      "classification": "wasm",
+      "ecosystem": "javascript",
+      "license": "FSL-1.1-ALv2",
+      "name": "@onda-engine/wasm",
+      "path": "packages/wasm/package.json",
+      "private": null,
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.1"
+    },
+    {
+      "classification": "animation",
+      "ecosystem": "rust",
+      "name": "onda-animation",
+      "path": "packages/animation-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "audio",
+      "ecosystem": "rust",
+      "name": "onda-audio",
+      "path": "packages/audio-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "benchmark",
+      "ecosystem": "rust",
+      "name": "onda-bench",
+      "path": "packages/bench-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "cli",
+      "ecosystem": "rust",
+      "name": "onda-cli",
+      "path": "packages/cli-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "DOCUMENTED_OR_COMMENTED_BUT_ABSENT",
+      "ecosystem": "rust",
+      "name": "codecs-rs",
+      "path": "packages/codecs-rs",
+      "status": "DOCUMENTED_OR_COMMENTED_BUT_ABSENT",
+      "version": null
+    },
+    {
+      "classification": "core-types",
+      "ecosystem": "rust",
+      "name": "onda-core",
+      "path": "packages/core-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "images",
+      "ecosystem": "rust",
+      "name": "onda-image",
+      "path": "packages/image-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "layout",
+      "ecosystem": "rust",
+      "name": "onda-layout",
+      "path": "packages/layout-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "cpu-renderer",
+      "ecosystem": "rust",
+      "name": "onda-renderer",
+      "path": "packages/renderer-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "scene-graph",
+      "ecosystem": "rust",
+      "name": "onda-scene",
+      "path": "packages/scene-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "segmentation",
+      "ecosystem": "rust",
+      "name": "onda-segment",
+      "path": "packages/segment-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "svg",
+      "ecosystem": "rust",
+      "name": "onda-svg",
+      "path": "packages/svg-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "transcription",
+      "ecosystem": "rust",
+      "name": "onda-transcribe",
+      "path": "packages/transcribe-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "tts",
+      "ecosystem": "rust",
+      "name": "onda-tts",
+      "path": "packages/tts-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "typography",
+      "ecosystem": "rust",
+      "name": "onda-typography",
+      "path": "packages/typography-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "DOCUMENTED_OR_COMMENTED_BUT_ABSENT",
+      "ecosystem": "rust",
+      "name": "vector-rs",
+      "path": "packages/vector-rs",
+      "status": "DOCUMENTED_OR_COMMENTED_BUT_ABSENT",
+      "version": null
+    },
+    {
+      "classification": "gpu-vello-renderer",
+      "ecosystem": "rust",
+      "name": "onda-vello",
+      "path": "packages/vello-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "video",
+      "ecosystem": "rust",
+      "name": "onda-video",
+      "path": "packages/video-rs/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "audio",
+      "ecosystem": "rust",
+      "name": "onda-wasm-audio",
+      "path": "packages/wasm-audio/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "wasm-vello",
+      "ecosystem": "rust",
+      "name": "onda-wasm-vello",
+      "path": "packages/wasm-vello/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    },
+    {
+      "classification": "wasm",
+      "ecosystem": "rust",
+      "name": "onda-wasm",
+      "path": "packages/wasm/Cargo.toml",
+      "status": "VERIFIED_AT_PIN",
+      "version": "0.1.0"
+    }
+  ],
+  "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+  "schema_version": "cinekernel.research.onda.r0.01.v1"
+}
