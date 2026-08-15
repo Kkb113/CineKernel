@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cinekernel.dev/schemas/research/onda-release-map.schema.json",
+  "type": "object",
+  "required": ["schema_version", "streams", "observed_public_versions", "pr_41"],
+  "properties": {
+    "schema_version": {"const": "cinekernel.research.onda.r0.01.v1"},
+    "streams": {"type": "array", "minItems": 3, "items": {"type": "object", "required": ["id", "kind"]}},
+    "observed_public_versions": {"type": "array"},
+    "pr_41": {"type": "object"}
+  }
+}

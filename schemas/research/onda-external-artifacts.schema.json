@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cinekernel.dev/schemas/research/onda-external-artifacts.schema.json",
+  "type": "object",
+  "required": ["schema_version", "artifacts"],
+  "properties": {
+    "schema_version": {"const": "cinekernel.research.onda.r0.01.v1"},
+    "artifacts": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["name", "purpose", "kind", "required_by", "phase", "optional", "status"]}}
+  }
+}

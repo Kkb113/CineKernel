@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cinekernel.dev/schemas/research/onda-dependency-inventory.schema.json",
+  "type": "object",
+  "required": ["schema_version", "pinned_commit", "cargo", "javascript", "reachability"],
+  "properties": {
+    "schema_version": {"const": "cinekernel.research.onda.r0.01.v1"},
+    "pinned_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "cargo": {"type": "object", "required": ["package_count", "workspace_member_count", "packages"]},
+    "javascript": {"type": "object", "required": ["workspace_package_count", "dependencies"]},
+    "reachability": {"type": "object"}
+  }
+}
