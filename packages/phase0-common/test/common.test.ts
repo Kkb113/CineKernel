@@ -142,6 +142,9 @@ test("macOS probe attestation reuses retained canonical evidence without rerunni
   assert.match(workflow,/source_run_id/);
   assert.match(workflow,/source_revision/);
   assert.match(workflow,/phase0-\$\{\{ inputs\.source_revision \}\}-macos-latest-full-all/);
+  assert.match(workflow,/cargo xtask upstream sync/);
+  assert.match(workflow,/cargo xtask upstream verify --json/);
+  assert.match(workflow,/cargo xtask phase0 prepare --json/);
   assert.match(workflow,/cargo xtask phase0 verify --canonical --json/);
   assert.match(workflow,/CINEKERNEL_REMOTION_GL: angle/);
   assert.match(workflow,/phase0 probes --canonical --exclude G --json/);
