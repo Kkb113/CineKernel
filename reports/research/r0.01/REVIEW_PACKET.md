@@ -1,6 +1,7 @@
 # R0.01 reviewer packet
 
-- Status: CONDITIONAL PASS — remote reproduction pending
+- Status: PASS
+- Remote reproduction: PASS — run `31886829885`, artifact `r0-01-onda-provenance-31886829885`, https://github.com/Kkb113/CineKernel/actions/runs/31886829885
 - CineKernel base: `5f47f341aa546b4ceb115fcad71d576d0ab85f29`
 - Research branch: `research/r0.01-onda-provenance`
 - Harness/schemas/tests commit: `d35e31615ab7d9ef6e348ccde1a4b243dc364bc8`

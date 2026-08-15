@@ -1310,12 +1310,27 @@ fn acceptance_report(root: &Path, summary: &Value, _guard: &Value) -> Result<Str
 
 fn review_packet(root: &Path, summary: &Value) -> Result<String> {
     let lock: Value = serde_json::from_slice(&fs::read(docs(root).join("UPSTREAM_LOCK.json"))?)?;
-    let status = if remote_attestation(root)?.is_some() {
-        "PASS"
-    } else {
-        "CONDITIONAL PASS — remote reproduction pending"
-    };
-    Ok(format!("# R0.01 reviewer packet\n\n- Status: {status}\n- CineKernel base: `{BASE}`\n- Research branch: `research/r0.01-onda-provenance`\n- ONDA repository: `{REPOSITORY}`\n- ONDA pin: `{PIN}`\n- ONDA tree: `{TREE}`\n- LICENSE SHA-256: `{}`\n- LICENSE-APACHE SHA-256: `{}`\n- NOTICE SHA-256: `{}`\n- Cargo.lock SHA-256: `{}`\n- pnpm-lock.yaml SHA-256: `{}`\n- Rust workspace members: {}\n- Resolved Rust packages: {}\n- pnpm workspace packages: {}\n- Resolved pnpm packages: {}\n- External models/artifacts: {} total records\n- Release streams: {}\n- License hotspots: {}\n- Guards: dependency PASS; tracked-source PASS; exact-copy PASS; Phase 0 immutability PASS; absolute-path leakage PASS\n\n## Reproduction\n\n```text\ncargo xtask research onda sync\ncargo xtask research onda verify --json\ncargo xtask research onda inventory --json\ncargo xtask research onda report --json\ncargo xtask research onda guard --json\ncargo xtask research onda integrity --check --json\n```\n\nThe dedicated workflow runs the generation pipeline twice, requires a byte-clean Git diff, and uploads raw evidence without building or executing ONDA. Raw evidence is written only below ignored `.cinekernel/research/onda/r0.01/`.\n",lock["license"]["license_sha256"].as_str().unwrap_or(""),lock["license"]["future_license_sha256"].as_str().unwrap_or(""),lock["license"]["notice_sha256"].as_str().unwrap_or(""),lock["lockfiles"]["cargo_lock_sha256"].as_str().unwrap_or(""),lock["lockfiles"]["pnpm_lock_sha256"].as_str().unwrap_or(""),summary["rust_workspace_members"],summary["rust_resolved_packages"],summary["javascript_workspace_packages"],summary["javascript_resolved_packages"],summary["external_artifacts"],summary["release_streams"],summary["license_hotspots"]))
+    let remote = remote_attestation(root)?;
+    let (status, remote_line) = remote.as_ref().map_or_else(
+        || {
+            (
+                "CONDITIONAL PASS — remote reproduction pending",
+                "- Remote reproduction: PENDING".to_owned(),
+            )
+        },
+        |attestation| {
+            (
+                "PASS",
+                format!(
+                    "- Remote reproduction: PASS — run `{}`, artifact `{}`, {}",
+                    attestation["run_id"],
+                    attestation["artifact_name"].as_str().unwrap_or(""),
+                    attestation["run_url"].as_str().unwrap_or("")
+                ),
+            )
+        },
+    );
+    Ok(format!("# R0.01 reviewer packet\n\n- Status: {status}\n{remote_line}\n- CineKernel base: `{BASE}`\n- Research branch: `research/r0.01-onda-provenance`\n- ONDA repository: `{REPOSITORY}`\n- ONDA pin: `{PIN}`\n- ONDA tree: `{TREE}`\n- LICENSE SHA-256: `{}`\n- LICENSE-APACHE SHA-256: `{}`\n- NOTICE SHA-256: `{}`\n- Cargo.lock SHA-256: `{}`\n- pnpm-lock.yaml SHA-256: `{}`\n- Rust workspace members: {}\n- Resolved Rust packages: {}\n- pnpm workspace packages: {}\n- Resolved pnpm packages: {}\n- External models/artifacts: {} total records\n- Release streams: {}\n- License hotspots: {}\n- Guards: dependency PASS; tracked-source PASS; exact-copy PASS; Phase 0 immutability PASS; absolute-path leakage PASS\n\n## Reproduction\n\n```text\ncargo xtask research onda sync\ncargo xtask research onda verify --json\ncargo xtask research onda inventory --json\ncargo xtask research onda report --json\ncargo xtask research onda guard --json\ncargo xtask research onda integrity --check --json\n```\n\nThe dedicated workflow runs the generation pipeline twice, requires a byte-clean Git diff, and uploads raw evidence without building or executing ONDA. Raw evidence is written only below ignored `.cinekernel/research/onda/r0.01/`.\n",lock["license"]["license_sha256"].as_str().unwrap_or(""),lock["license"]["future_license_sha256"].as_str().unwrap_or(""),lock["license"]["notice_sha256"].as_str().unwrap_or(""),lock["lockfiles"]["cargo_lock_sha256"].as_str().unwrap_or(""),lock["lockfiles"]["pnpm_lock_sha256"].as_str().unwrap_or(""),summary["rust_workspace_members"],summary["rust_resolved_packages"],summary["javascript_workspace_packages"],summary["javascript_resolved_packages"],summary["external_artifacts"],summary["release_streams"],summary["license_hotspots"]))
 }
 
 const CLEAN_ROOM_POLICY: &str = r#"# R0.01 clean-room policy
