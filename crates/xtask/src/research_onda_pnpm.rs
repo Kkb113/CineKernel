@@ -98,7 +98,26 @@ fn normalize_repository(value: &Value) -> Option<String> {
         .or_else(|| value.get("url").and_then(Value::as_str).map(str::to_owned))
 }
 
-fn run_license_inventory(upstream: &Path, raw: &Path) -> Result<BTreeMap<(String, String), Value>> {
+fn platform_license_family(name: &str) -> Option<&'static str> {
+    [
+        ("@biomejs/cli-", "@biomejs/cli-platform"),
+        ("@esbuild/", "@esbuild/platform"),
+        ("@img/sharp-libvips-", "@img/sharp-libvips-platform"),
+        ("@img/sharp-", "@img/sharp-platform"),
+        ("@pagefind/", "@pagefind/platform"),
+        ("@remotion/compositor-", "@remotion/compositor-platform"),
+        ("@rollup/rollup-", "@rollup/rollup-platform"),
+        ("@rspack/binding-", "@rspack/binding-platform"),
+    ]
+    .into_iter()
+    .find_map(|(prefix, family)| name.starts_with(prefix).then_some(family))
+}
+
+fn run_license_inventory(
+    upstream: &Path,
+    raw: &Path,
+    packages: &BTreeMap<String, PackageRecord>,
+) -> Result<BTreeMap<(String, String), Value>> {
     let corepack = if cfg!(windows) {
         "corepack.cmd"
     } else {
@@ -170,7 +189,71 @@ fn run_license_inventory(upstream: &Path, raw: &Path) -> Result<BTreeMap<(String
             }
         }
     }
+    let mut canonical_platform_packages = BTreeMap::new();
+    for key in packages.keys() {
+        let Some((name, version)) = split_package_key(key) else {
+            continue;
+        };
+        if let Some(family) = platform_license_family(&name) {
+            canonical_platform_packages
+                .entry((family.to_owned(), version))
+                .and_modify(|canonical: &mut String| {
+                    if name < *canonical {
+                        *canonical = name.clone();
+                    }
+                })
+                .or_insert(name);
+        }
+    }
+    let mut normalized_families = BTreeMap::new();
+    for ((family, version), package_name) in canonical_platform_packages {
+        let spec = format!("{package_name}@{version}");
+        let output = Command::new(if cfg!(windows) { "npm.cmd" } else { "npm" })
+            .args(["view", &spec, "license", "repository", "homepage", "--json"])
+            .current_dir(upstream)
+            .output()?;
+        if !output.status.success() {
+            bail!(
+                "npm registry metadata lookup failed for {spec}: {}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+        }
+        let metadata: Value = serde_json::from_slice(&output.stdout)?;
+        let expression = metadata["license"].as_str().unwrap_or("UNKNOWN/CUSTOM");
+        normalized_families.insert(
+            (family, version),
+            json!({
+                "expression":expression,
+                "repository":normalize_repository(&metadata["repository"]),
+                "homepage":metadata["homepage"].as_str(),
+                "source":"npm registry exact package metadata; platform-family normalized",
+                "status":if expression == "UNKNOWN/CUSTOM" { "UNRESOLVED" } else { "VERIFIED_AT_PIN" },
+                "canonical_package":package_name
+            }),
+        );
+    }
+    let family_evidence = normalized_families
+        .iter()
+        .map(|((family, version), record)| {
+            json!({"family":family,"version":version,"record":record})
+        })
+        .collect::<Vec<_>>();
+    write_json_value(raw.join("platform-family-licenses.json"), &family_evidence)?;
+    for (key, mut record) in normalized_families {
+        record
+            .as_object_mut()
+            .expect("license record")
+            .remove("canonical_package");
+        licenses.insert(key, record);
+    }
     Ok(licenses)
+}
+
+fn write_json_value(path: PathBuf, value: &impl serde::Serialize) -> Result<()> {
+    let mut bytes = serde_json::to_vec_pretty(value)?;
+    bytes.push(b'\n');
+    fs::write(path, bytes)?;
+    Ok(())
 }
 
 fn snapshot_target(name: &str, resolution: &str) -> Option<String> {
@@ -195,7 +278,7 @@ pub(crate) fn build_graph(upstream: &Path, raw: &Path, declarations: &[Value]) -
         .context("pnpm snapshots section")?;
     let packages = parse_packages(&lines, packages_start, snapshots_start);
     let snapshots = parse_snapshots(&lines, snapshots_start + 1);
-    let licenses = run_license_inventory(upstream, raw)?;
+    let licenses = run_license_inventory(upstream, raw, &packages)?;
 
     let mut direct = BTreeSet::new();
     let mut classifications: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
@@ -252,8 +335,13 @@ pub(crate) fn build_graph(upstream: &Path, raw: &Path, declarations: &[Value]) -
             split_package_key(key).unwrap_or_else(|| (key.clone(), "UNRESOLVED".to_owned()));
         let package_key = format!("{name}@{version}");
         let package = packages.get(&package_key);
-        let license = licenses
-            .get(&(name.clone(), version.clone()))
+        let exact_license_key = (name.clone(), version.clone());
+        let family_license_key =
+            platform_license_family(&name).map(|family| (family.to_owned(), version.clone()));
+        let license = family_license_key
+            .as_ref()
+            .and_then(|key| licenses.get(key))
+            .or_else(|| licenses.get(&exact_license_key))
             .cloned()
             .unwrap_or_else(|| {
                 json!({
@@ -367,5 +455,22 @@ mod tests {
         assert_eq!(forbidden_lock_nodes(forbidden), ["onda-engine@0.6.1"]);
         let clean = "packages:\n  'react@19.0.0':\n    resolution: {integrity: sha512-x}\nsnapshots:\n  'react@19.0.0': {}\n";
         assert!(forbidden_lock_nodes(clean).is_empty());
+    }
+
+    #[test]
+    fn platform_license_families_are_host_neutral() {
+        assert_eq!(
+            platform_license_family("@esbuild/linux-x64"),
+            platform_license_family("@esbuild/win32-x64")
+        );
+        assert_eq!(
+            platform_license_family("@rollup/rollup-linux-x64-gnu"),
+            platform_license_family("@rollup/rollup-win32-x64-msvc")
+        );
+        assert_ne!(
+            platform_license_family("@img/sharp-linux-x64"),
+            platform_license_family("@img/sharp-libvips-linux-x64")
+        );
+        assert_eq!(platform_license_family("react"), None);
     }
 }
