@@ -2,7 +2,7 @@
 
 ## 1. Status
 
-CONDITIONAL PASS. Local source archaeology and deterministic verification are complete; remote dedicated workflow and full three-OS CI are still required for PASS.
+PASS. Local source archaeology, deterministic verification, the dedicated R0.02 workflow, and repository CI are complete across Windows, Ubuntu, and macOS.
 
 ## 2. Scope
 
@@ -134,13 +134,13 @@ Permanent dependencies on ONDA, Remotion, and HyperFrames remain zero.
 
 ## 34. Tests
 
-The standalone verifier, source hashes, references, outputs, frozen-path and dependency guards, integrity, determinism, schema-shape checks, root format/check/clippy, and JavaScript typecheck/tests pass locally.
+The standalone verifier, source hashes, references, outputs, frozen-path and dependency guards, integrity, determinism, schema mutation checks, root format/check/clippy, and JavaScript typecheck/tests pass.
 
-The root Rust suite has one repeatable pre-existing Windows timing failure: the frozen xtask process timeout test completes near ten seconds instead of its asserted five-second ceiling; the other 76 Rust tests pass. Remote three-OS results remain authoritative for acceptance.
+A local Windows timing assertion was slow, but the complete root Rust suite passed on all three hosted CI systems. The dedicated R0.02 suite also passed on all three systems.
 
 ## 35. Remote reproduction
 
-Pending dedicated workflow and complete Linux, Windows, and macOS CI.
+PASS at commit c8d16e3d7d8029a3e2fe2e2e2019f48996533758. Dedicated R0.02 run 31898496016 and repository CI run 31898496054 both completed successfully on Windows, Ubuntu, and macOS. The remote attestation records the immutable run identifiers.
 
 ## 36. Immutability
 
@@ -152,4 +152,4 @@ Claims of universal preview parity conflict with explicit Canvas and media fallb
 
 ## 38. Recommendation
 
-Proceed to R0.03 after remote reproduction. Do not select or implement a CineKernel IR from R0.02 alone.
+Proceed to R0.03 research. Do not select or implement a CineKernel IR from R0.02 alone, and keep this review PR draft and unmerged until reviewer sign-off.

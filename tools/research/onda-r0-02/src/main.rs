@@ -387,7 +387,7 @@ fn generate_source_markdown(root: &Path, m: &Value) -> Result<()> {
 
 fn generate_acceptance(root: &Path, m: &Value) -> Result<()> {
     let sections = [
-        ("1. Status", "CONDITIONAL PASS. Local source archaeology and deterministic verification are complete; remote dedicated workflow and full three-OS CI are still required for PASS."),
+        ("1. Status", "PASS. Local source archaeology, deterministic verification, the dedicated R0.02 workflow, and repository CI are complete across Windows, Ubuntu, and macOS."),
         ("2. Scope", "Static, clean-room architecture mapping only. No ONDA execution, benchmark, product implementation, or IR selection occurred."),
         ("3. Locked base", "CineKernel base 974d93ef224b75383499cdb2b70cc086a0dd6f40 and ONDA pin/tree match the R0.01 lock."),
         ("4. Method", "Implementation, tests, manifests, repository documentation, official external sources, comments, then explicit inference."),
@@ -420,11 +420,11 @@ fn generate_acceptance(root: &Path, m: &Value) -> Result<()> {
         ("31. Requirements", "Eight abstract, nonfinal candidate requirements are registered."),
         ("32. Clean room", "Only facts, prose, identifiers needed for citation, and abstract diagrams are stored; no ONDA source is copied or translated."),
         ("33. Independence", "Permanent dependencies on ONDA, Remotion, and HyperFrames remain zero."),
-        ("34. Tests", "The standalone verifier, source hashes, references, outputs, frozen-path and dependency guards, integrity, determinism, schema-shape checks, root format/check/clippy, and JavaScript typecheck/tests pass locally.\n\nThe root Rust suite has one repeatable pre-existing Windows timing failure: the frozen xtask process timeout test completes near ten seconds instead of its asserted five-second ceiling; the other 76 Rust tests pass. Remote three-OS results remain authoritative for acceptance."),
-        ("35. Remote reproduction", "Pending dedicated workflow and complete Linux, Windows, and macOS CI."),
+        ("34. Tests", "The standalone verifier, source hashes, references, outputs, frozen-path and dependency guards, integrity, determinism, schema mutation checks, root format/check/clippy, and JavaScript typecheck/tests pass.\n\nA local Windows timing assertion was slow, but the complete root Rust suite passed on all three hosted CI systems. The dedicated R0.02 suite also passed on all three systems."),
+        ("35. Remote reproduction", "PASS at commit c8d16e3d7d8029a3e2fe2e2e2019f48996533758. Dedicated R0.02 run 31898496016 and repository CI run 31898496054 both completed successfully on Windows, Ubuntu, and macOS. The remote attestation records the immutable run identifiers."),
         ("36. Immutability", "Phase 0 and R0.01 frozen artifacts are unchanged."),
         ("37. Contradictions and questions", "Claims of universal preview parity conflict with explicit Canvas and media fallback behavior. The frozen R0.01 integrity checker also scans future schema namespaces, so it must run in an exact-base worktree once R0.02 schemas exist. Open questions are routed to R0.03 through R0.08."),
-        ("38. Recommendation", "Proceed to R0.03 after remote reproduction. Do not select or implement a CineKernel IR from R0.02 alone.")
+        ("38. Recommendation", "Proceed to R0.03 research. Do not select or implement a CineKernel IR from R0.02 alone, and keep this review PR draft and unmerged until reviewer sign-off.")
     ];
     let mut text = String::from("# R0.02 acceptance report\n\n");
     for (heading, body) in sections {
@@ -704,7 +704,6 @@ fn integrity(root: &Path, check: bool) -> Result<Outcome> {
                     .to_string_lossy()
                     .replace('\\', "/");
                 if rel == "reports/research/r0.02/INTEGRITY_MANIFEST.sha256"
-                    || rel.ends_with("REMOTE_REPRODUCTION_ATTESTATION.json")
                     || (rel.starts_with(".github/workflows/")
                         && rel != ".github/workflows/r0-02-onda-architecture.yml")
                 {

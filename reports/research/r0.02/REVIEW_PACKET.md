@@ -1,8 +1,8 @@
 # R0.02 reviewer packet
 
-Status: **CONDITIONAL PASS** pending the dedicated remote workflow and a complete Linux, Windows, and macOS run.
+Status: **PASS**. Dedicated R0.02 run `31898496016` and repository CI run `31898496054` succeeded on Windows, Ubuntu, and macOS at commit `c8d16e3d7d8029a3e2fe2e2e2019f48996533758`.
 
-Local note: root formatting, checking, linting, JavaScript typechecking/tests, and the standalone verifier pass. One frozen xtask Windows timeout test repeatedly exceeded its local five-second assertion while the other 76 Rust tests passed; reviewers should use the three-OS CI result to determine whether this is runner-specific.
+Local note: root formatting, checking, linting, JavaScript typechecking/tests, and the standalone verifier pass. One frozen xtask Windows timeout assertion was slow locally; the full root suite passed remotely on all three systems, confirming a runner-specific local timing outlier.
 
 ## Review order
 
@@ -24,4 +24,4 @@ ONDA demonstrates that broad procedural authoring can converge on a finite rende
 
 ## Promotion rule
 
-The acceptance report may change from CONDITIONAL PASS to PASS only after the dedicated workflow succeeds remotely and the full three-OS matrix is green. The branch must remain unmerged during reviewer evaluation.
+The branch must remain draft and unmerged during reviewer evaluation. PASS means the R0.02 research protocol is satisfied; it is not approval to implement a CineKernel IR.

@@ -1,0 +1,46 @@
+{
+  "schema_version": "r0.02.1",
+  "recorded_at": "2026-08-15T17:35:00Z",
+  "repository": "Kkb113/CineKernel",
+  "commit": "c8d16e3d7d8029a3e2fe2e2e2019f48996533758",
+  "conclusion": "pass",
+  "runs": [
+    {
+      "name": "R0.02 ONDA architecture archaeology",
+      "run_id": 31898496016,
+      "run_number": 3,
+      "url": "https://github.com/Kkb113/CineKernel/actions/runs/31898496016",
+      "conclusion": "success",
+      "jobs": [
+        {"os": "windows-latest", "job_id": 95045376256, "conclusion": "success"},
+        {"os": "ubuntu-latest", "job_id": 95045376278, "conclusion": "success"},
+        {"os": "macos-latest", "job_id": 95045376480, "conclusion": "success"}
+      ]
+    },
+    {
+      "name": "CI",
+      "run_id": 31898496054,
+      "run_number": 76,
+      "url": "https://github.com/Kkb113/CineKernel/actions/runs/31898496054",
+      "conclusion": "success",
+      "jobs": [
+        {"os": "windows-latest", "job_id": 95045376313, "conclusion": "success"},
+        {"os": "ubuntu-latest", "job_id": 95045376328, "conclusion": "success"},
+        {"os": "macos-latest", "job_id": 95045376365, "conclusion": "success"}
+      ]
+    }
+  ],
+  "r0_01_immutability": {
+    "method": "verified in a detached worktree at the exact accepted base on every dedicated R0.02 job",
+    "pin_and_tree": "success",
+    "integrity_entries": 29,
+    "conclusion": "success"
+  },
+  "known_legacy_signal": {
+    "workflow": "R0.01 ONDA provenance reproduction",
+    "run_id": 31898496042,
+    "conclusion": "failure",
+    "reason": "the frozen R0.01 checker scans future schemas/research namespaces and therefore sees required R0.02 schemas that cannot be added to its frozen manifest",
+    "acceptance_effect": "none; the identical frozen verifier passed from the exact accepted R0.01 base on all three dedicated R0.02 jobs"
+  }
+}
