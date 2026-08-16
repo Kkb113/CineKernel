@@ -1,27 +1,32 @@
 # State and time ownership
 
-Authoring frame context is evaluation-scoped. Fonts, warmers, springs, decoded video frames, and some engine coordination are module or process scoped. Player playback is instance-scoped, while a shared GPU engine is protected against reentrant mutation. Time crosses composition frames, local frames, seconds, wall-clock milliseconds, audio context time, and bucketed video source time.
+The model records **12 state owners** and **12 temporal conversions**.
+
+| State | Scope | Authority | Mutability | Reentrancy finding |
+|---|---|---|---|---|
+| Cinema payload | serialized document | AUTHORITATIVE | IMMUTABLE_DATA | UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state |
+| React element evaluation | one requested frame | TRANSIENT | PER_FRAME_REBUILT | UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state |
+| module-level activeFrameState and activeDof | process/module | TRANSIENT | GLOBAL_MUTABLE | UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state |
+| HostNode tree | one reconciliation | TRANSIENT | MUTABLE_TREE | UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state |
+| Scene snapshot | frame/document | AUTHORITATIVE | IMMUTABLE_DATA | UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state |
+| Rust Timeline | document | AUTHORITATIVE | IMMUTABLE_DATA | UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state |
+| layout-resolved Scene | prepass | DERIVED | CLONED_AND_MUTATED | UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state |
+| image-resolved Scene | prepass/cache | CACHE | CACHE_MUTABLE | UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state |
+| player transport | component instance | PRESENTATION_ONLY | INSTANCE_MUTABLE | UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state |
+| GPU engine coordination | browser process | EXTERNAL_RUNTIME | GLOBAL_MUTABLE | UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state |
+| audio transport | AudioContext | EXTERNAL_RUNTIME | EXTERNAL_RUNTIME | UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state |
+| temporary frames JSON | export invocation | DERIVED | IMMUTABLE_DATA | UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state |
 
 ```mermaid
-flowchart TD
-  Wall[Wall clock] -->|floor by fps and rate| CF[Composition frame]
-  CF -->|subtract start| LF[Local frame]
-  CF -->|divide by fps| Sec[Seconds]
-  Sec --> Audio[Audio clock mapping]
-  Sec -->|nearest 1/30| Video[Video cache bucket]
+flowchart LR
+  Seconds[Cinema seconds] -->|round × fps| Frames[Composition frames]
+  Frames -->|subtract start| Local[Sequence-local frames]
+  Frames -->|fractional samples| Blur[Motion-blur subframes]
+  Frames -->|÷ fps| Time[Timeline seconds]
+  Wall[RAF wall time] -->|floor by fps/rate| Frames
+  Frames --> Audio[AudioContext transport]
+  Frames --> Timestamp[Encoded timestamps]
+  Time --> Media[Source-media seconds]
 ```
 
-## Evidence
-
-- **C-001 — verified:** React authoring is programmatic, but its render boundary is a finite scene vocabulary. (confidence 0.99). Sources: S-REACT-HOST, S-REACT-LOWER, S-SCENE.
-- **C-002 — verified:** React component state is not retained between output frames because every frame uses a fresh root that is unmounted. (confidence 0.99). Sources: S-REACT-LOWER, S-REACT-TEST.
-- **C-003 — verified:** Cinema retains more editorial identity and intent than Scene, while its inspector is a parallel high-level analysis path. (confidence 0.98). Sources: S-CINEMA-TYPES, S-CINEMA-INSPECT, S-CINEMA-RESOLVE.
-- **C-004 — verified:** Cinema roles, choreography names, brand identity, and most string ids do not survive as first-class Scene fields. (confidence 0.96). Sources: S-CINEMA-COMPILER, S-CINEMA-TYPES, S-SCENE.
-- **C-005 — verified:** Direct Scene JSON and typed Rust construction converge at the same finite Scene contract. (confidence 0.99). Sources: S-SCENE, S-CLI, S-WASM.
-- **C-006 — verified:** Layout, SVG, image, video, and timeline behavior includes destructive or materializing prepasses rather than a single immutable IR pipeline. (confidence 0.97). Sources: S-LAYOUT, S-SVG, S-IMAGE, S-VIDEO, S-CLI.
-- **C-007 — verified:** GPU and CPU preview can share renderer semantics with native export, but browser media resolution and scheduling keep end-to-end parity conditional. (confidence 0.96). Sources: S-PLAYER, S-VIDEO, S-AUDIO, S-WASM, S-WASM-VELLO, S-CLI.
-- **C-008 — verified:** Canvas2D is an explicit approximation and not a parity path. (confidence 0.99). Sources: S-CANVAS, S-PLAYER.
-- **C-009 — verified:** Full React export materializes every evaluated frame before the native export call, creating duration-proportional scene memory and JSON I/O. (confidence 0.99). Sources: S-REACT-LOWER, S-NODE-EXPORT.
-- **C-010 — verified:** Global registries and caches require explicit isolation if authoring evaluation is parallelized or made multi-tenant. (confidence 0.94). Sources: S-REACT-STATE, S-REACT-WARM, S-PLAYER, S-VIDEO.
-- **C-011 — candidate:** A future CineKernel IR should preserve stable identity, semantic intent, time domains, diagnostics, and capability requirements until explicit lowering stages. (confidence 0.91). Sources: S-CINEMA-TYPES, S-CINEMA-RESOLVE, S-SCENE, E-MLIR, E-GSTREAMER.
-- **C-012 — verified:** React's render and commit model is analogous only at a high level; ONDA deliberately remounts per frame rather than preserving a committed application tree. (confidence 0.97). Sources: S-REACT-LOWER, E-REACT.
+Every conversion records rounding, clamping, negative/fractional behavior, rate ownership, and precision risk in the machine output.

@@ -1,146 +1,237 @@
 {
   "$schema": "../../../../schemas/research/r0.02/boundary-contracts.schema.json",
   "data": {
-    "claims": [
+    "boundary_contracts": [
       {
-        "confidence": 0.99,
-        "id": "C-001",
+        "boundary_id": "BC-AE-01",
+        "consumer": "N-CINEMA-VALIDATE",
+        "data_form": "Cinema payload",
+        "error_behavior": "structured diagnostics",
+        "producer": "N-CINEMA",
+        "semantic_disposition": "intent retained",
         "source_refs": [
-          "S-REACT-HOST",
-          "S-REACT-LOWER",
-          "S-SCENE"
+          "S-CINEMA-TEST",
+          "S-CINEMA-COMPILER"
         ],
-        "statement": "React authoring is programmatic, but its render boundary is a finite scene vocabulary.",
-        "status": "verified"
+        "validation": "schema and semantic checks"
       },
       {
-        "confidence": 0.99,
-        "id": "C-002",
+        "boundary_id": "BC-AE-02",
+        "consumer": "N-INSPECT",
+        "data_form": "Cinema payload",
+        "error_behavior": "inspection findings",
+        "producer": "N-CINEMA",
+        "semantic_disposition": "roles and paths retained",
         "source_refs": [
-          "S-REACT-LOWER",
-          "S-REACT-TEST"
-        ],
-        "statement": "React component state is not retained between output frames because every frame uses a fresh root that is unmounted.",
-        "status": "verified"
-      },
-      {
-        "confidence": 0.98,
-        "id": "C-003",
-        "source_refs": [
-          "S-CINEMA-TYPES",
           "S-CINEMA-INSPECT",
           "S-CINEMA-RESOLVE"
         ],
-        "statement": "Cinema retains more editorial identity and intent than Scene, while its inspector is a parallel high-level analysis path.",
-        "status": "verified"
+        "validation": "payload accepted for analysis"
       },
       {
-        "confidence": 0.96,
-        "id": "C-004",
+        "boundary_id": "BC-AE-03",
+        "consumer": "N-REACT",
+        "data_form": "React element program",
+        "error_behavior": "warnings, placeholders, or throw",
+        "producer": "N-CINEMA",
+        "semantic_disposition": "named intent partly consumed",
         "source_refs": [
-          "S-CINEMA-COMPILER",
-          "S-CINEMA-TYPES",
-          "S-SCENE"
+          "S-CINEMA-COMPILER"
         ],
-        "statement": "Cinema roles, choreography names, brand identity, and most string ids do not survive as first-class Scene fields.",
-        "status": "verified"
+        "validation": "post-validation construction"
       },
       {
-        "confidence": 0.99,
-        "id": "C-005",
+        "boundary_id": "BC-AE-04",
+        "consumer": "N-RECONCILER",
+        "data_form": "React elements and frame context",
+        "error_behavior": "unsupported host error",
+        "producer": "N-REACT",
+        "semantic_disposition": "component structure evaluated",
+        "source_refs": [
+          "S-REACT-LOWER",
+          "S-REACT-HOST"
+        ],
+        "validation": "host element contract"
+      },
+      {
+        "boundary_id": "BC-AE-05",
+        "consumer": "N-HOST",
+        "data_form": "host commits",
+        "error_behavior": "commit failure",
+        "producer": "N-RECONCILER",
+        "semantic_disposition": "React tree materialized",
+        "source_refs": [
+          "S-REACT-HOST"
+        ],
+        "validation": "host-config validation"
+      },
+      {
+        "boundary_id": "BC-AE-06",
+        "consumer": "N-SCENE",
+        "data_form": "finite host primitives",
+        "error_behavior": "conversion error",
+        "producer": "N-HOST",
+        "semantic_disposition": "React key and component provenance dropped unless explicit",
+        "source_refs": [
+          "S-REACT-LOWER"
+        ],
+        "validation": "toNode conversion"
+      },
+      {
+        "boundary_id": "BC-AE-07",
+        "consumer": "N-SCENE",
+        "data_form": "Scene plus tracks",
+        "error_behavior": "missing target or property behavior",
+        "producer": "N-TIMELINE",
+        "semantic_disposition": "keyframes materialized into values",
+        "source_refs": [
+          "S-ANIMATION"
+        ],
+        "validation": "target lookup"
+      },
+      {
+        "boundary_id": "BC-AE-08",
+        "consumer": "N-SERIAL",
+        "data_form": "Scene or Scene array",
+        "error_behavior": "serialization error",
+        "producer": "N-SCENE",
+        "semantic_disposition": "renderer data preserved",
         "source_refs": [
           "S-SCENE",
+          "S-NODE-EXPORT"
+        ],
+        "validation": "serde serialization"
+      },
+      {
+        "boundary_id": "BC-AE-09",
+        "consumer": "N-PREPASSES",
+        "data_form": "Scene JSON",
+        "error_behavior": "parse or version error",
+        "producer": "N-SERIAL",
+        "semantic_disposition": "authoring semantics unavailable",
+        "source_refs": [
           "S-CLI",
           "S-WASM"
         ],
-        "statement": "Direct Scene JSON and typed Rust construction converge at the same finite Scene contract.",
-        "status": "verified"
+        "validation": "serde and version handling"
       },
       {
-        "confidence": 0.97,
-        "id": "C-006",
+        "boundary_id": "BC-AE-10",
+        "consumer": "N-PREPASSES",
+        "data_form": "Scene",
+        "error_behavior": "prepass error",
+        "producer": "N-SCENE",
+        "semantic_disposition": "layout and document structure materialized",
         "source_refs": [
           "S-LAYOUT",
-          "S-SVG",
           "S-IMAGE",
-          "S-VIDEO",
-          "S-CLI"
+          "S-SVG"
         ],
-        "statement": "Layout, SVG, image, video, and timeline behavior includes destructive or materializing prepasses rather than a single immutable IR pipeline.",
-        "status": "verified"
+        "validation": "media/layout/SVG resolution"
       },
       {
-        "confidence": 0.96,
-        "id": "C-007",
+        "boundary_id": "BC-AE-11",
+        "consumer": "N-CPU",
+        "data_form": "resolved Scene",
+        "error_behavior": "renderer failure",
+        "producer": "N-PREPASSES",
+        "semantic_disposition": "supported visual semantics rasterized",
         "source_refs": [
-          "S-PLAYER",
-          "S-VIDEO",
-          "S-AUDIO",
           "S-WASM",
+          "S-CLI"
+        ],
+        "validation": "CPU capability checks"
+      },
+      {
+        "boundary_id": "BC-AE-12",
+        "consumer": "N-GPU",
+        "data_form": "resolved Scene",
+        "error_behavior": "GPU failure",
+        "producer": "N-PREPASSES",
+        "semantic_disposition": "supported visual semantics rasterized",
+        "source_refs": [
           "S-WASM-VELLO",
           "S-CLI"
         ],
-        "statement": "GPU and CPU preview can share renderer semantics with native export, but browser media resolution and scheduling keep end-to-end parity conditional.",
-        "status": "verified"
+        "validation": "GPU capability checks"
       },
       {
-        "confidence": 0.99,
-        "id": "C-008",
+        "boundary_id": "BC-AE-13",
+        "consumer": "N-CPU",
+        "data_form": "resolved Scene",
+        "error_behavior": "diagnosed or runtime fallback",
+        "producer": "N-GPU",
+        "semantic_disposition": "GPU-only fidelity may reduce",
+        "source_refs": [
+          "S-PLAYER",
+          "S-MANDATORY-PACKAGES-PLAYER-SRC-ENGINE-DRAWER-TS"
+        ],
+        "validation": "runtime capability/failure"
+      },
+      {
+        "boundary_id": "BC-AE-14",
+        "consumer": "N-CANVAS",
+        "data_form": "Scene subset",
+        "error_behavior": "preview fallback",
+        "producer": "N-CPU",
+        "semantic_disposition": "unsupported features approximated or omitted",
         "source_refs": [
           "S-CANVAS",
           "S-PLAYER"
         ],
-        "statement": "Canvas2D is an explicit approximation and not a parity path.",
-        "status": "verified"
+        "validation": "Canvas support checks"
       },
       {
-        "confidence": 0.99,
-        "id": "C-009",
+        "boundary_id": "BC-AE-15",
+        "consumer": "N-CANVAS",
+        "data_form": "Scene subset",
+        "error_behavior": "unsupported node handling",
+        "producer": "N-SCENE",
+        "semantic_disposition": "finite subset rendered approximately",
         "source_refs": [
-          "S-REACT-LOWER",
-          "S-NODE-EXPORT"
+          "S-CANVAS"
         ],
-        "statement": "Full React export materializes every evaluated frame before the native export call, creating duration-proportional scene memory and JSON I/O.",
-        "status": "verified"
+        "validation": "Canvas dispatch"
       },
       {
-        "confidence": 0.94,
-        "id": "C-010",
+        "boundary_id": "BC-AE-16",
+        "consumer": "N-REACT",
+        "data_form": "requested output frame",
+        "error_behavior": "playback diagnostic",
+        "producer": "N-PLAYER",
+        "semantic_disposition": "frame choice only",
         "source_refs": [
-          "S-REACT-STATE",
-          "S-REACT-WARM",
-          "S-PLAYER",
-          "S-VIDEO"
+          "S-PLAYER"
         ],
-        "statement": "Global registries and caches require explicit isolation if authoring evaluation is parallelized or made multi-tenant.",
-        "status": "verified"
+        "validation": "playback range and rate"
       },
       {
-        "confidence": 0.91,
-        "id": "C-011",
+        "boundary_id": "BC-AE-17",
+        "consumer": "N-ENCODER",
+        "data_form": "ordered pixel frames",
+        "error_behavior": "CLI/encoder failure",
+        "producer": "N-CPU",
+        "semantic_disposition": "scene semantics become timestamps and pixels",
         "source_refs": [
-          "S-CINEMA-TYPES",
-          "S-CINEMA-RESOLVE",
-          "S-SCENE",
-          "E-MLIR",
-          "E-GSTREAMER"
+          "S-CLI"
         ],
-        "statement": "A future CineKernel IR should preserve stable identity, semantic intent, time domains, diagnostics, and capability requirements until explicit lowering stages.",
-        "status": "candidate"
+        "validation": "encoder contract"
       },
       {
-        "confidence": 0.97,
-        "id": "C-012",
+        "boundary_id": "BC-AE-18",
+        "consumer": "N-ENCODER",
+        "data_form": "ordered pixel frames",
+        "error_behavior": "CLI/encoder failure",
+        "producer": "N-GPU",
+        "semantic_disposition": "scene semantics become timestamps and pixels",
         "source_refs": [
-          "S-REACT-LOWER",
-          "E-REACT"
+          "S-CLI"
         ],
-        "statement": "React's render and commit model is analogous only at a high level; ONDA deliberately remounts per frame rather than preserving a committed application tree.",
-        "status": "verified"
+        "validation": "encoder contract"
       }
     ]
   },
-  "generated_at": "2026-08-15T00:00:00Z",
+  "generated_at": "2026-08-16T00:00:00Z",
   "model_ref": "R0_02_RESEARCH_MODEL.json",
-  "schema_version": "r0.02.1"
+  "schema_version": "r0.02.2"
 }

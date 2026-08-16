@@ -1,27 +1,83 @@
 # R0.02 reviewer packet
 
-Status: **PASS**. Dedicated R0.02 run `31898496016` and repository CI run `31898496054` succeeded on Windows, Ubuntu, and macOS at commit `c8d16e3d7d8029a3e2fe2e2e2019f48996533758`.
+## Status
 
-Local note: root formatting, checking, linting, JavaScript typechecking/tests, and the standalone verifier pass. One frozen xtask Windows timeout assertion was slow locally; the full root suite passed remotely on all three systems, confirming a runner-specific local timing outlier.
+**CONDITIONAL PASS pending final remediation-head remote reproduction.** PR #13 must remain draft and unmerged.
 
-## Review order
+## Locked identity
 
-1. Confirm the CineKernel base and ONDA pin/tree in `R0_02_RESEARCH_MODEL.json` match the immutable R0.01 lock.
-2. Read `R0_02_ACCEPTANCE_REPORT.md` for the bounded verdict.
-3. Review `ARCHITECTURE_OVERVIEW.md`, then the authoring, lowering, state/time, parity, and scalability reports.
-4. Inspect `SOURCE_INDEX.json` for blob, SHA-256, line-range, and official-source traceability.
-5. Verify R0.01 inside an exact-base worktree, because its frozen integrity checker intentionally predates and broadly scans later schema namespaces.
-6. Run the standalone `verify`, `inventory`, `guard`, `report`, and `integrity --check` commands with JSON output.
-7. Confirm two consecutive report generations leave the worktree byte-clean.
+- CineKernel base SHA: `974d93ef224b75383499cdb2b70cc086a0dd6f40`
+- CineKernel base tree: `80ebf050ebc298b7647a403159ab59f94811468f`
+- ONDA repository: `https://github.com/onda-engine/onda-engine.git`
+- ONDA pin: `3ddf1780c9799bf038ac90cec7d8cadb61acafbe`
+- ONDA tree: `639df83ebf0262afccd6d021bf6d16ef19777d85`
+- Branch: `research/r0.02-onda-scene-compiler-archaeology`
 
-## Scope boundaries
+## Counts
 
-This packet contains architecture research only. It does not implement a CineKernel IR or compiler, execute ONDA, benchmark ONDA, copy ONDA source, or add a permanent ONDA, Remotion, or HyperFrames dependency.
+| Evidence | Count |
+|---|---:|
+| Pinned ONDA files | 50 |
+| External official references | 3 |
+| Claims | 12 |
+| Authoring surfaces | 5 |
+| Graph nodes | 15 |
+| Graph edges | 18 |
+| State owners | 12 |
+| Time conversions | 12 |
+| Identity transitions | 10 |
+| Semantic-preservation rows | 31 |
+| Fallback/error rows | 21 |
+| Preview/export comparisons | 7 |
+| Candidate requirements | 8 |
+| Contradictions | 3 |
+| Open questions | 6 |
+| Deferred topics | 6 |
+| Generated machine projections | 16 |
+| Generated human reports | 20 |
+| Strict schemas | 17 |
+| Standalone verifier tests | 63 |
+| Integrity-manifest entries | 68 |
 
-## Central finding
+## Gate results
 
-ONDA demonstrates that broad procedural authoring can converge on a finite renderer graph, but it also shows the cost of lowering editorial identity, time ownership, diagnostics, and capability information too early. CineKernel should continue research, while deferring any IR decision until the later R0 phases test materialization, rendering, compatibility, media clocks, creative ceiling, and round-trip editability.
+- R0.01 authoritative lock parsing: PASS
+- checkout remote/detached HEAD/pin/tree/clean validation: PASS
+- complete mandatory source coverage and blob/SHA/symbol/line checks: PASS
+- strict nested Draft 2020-12 schemas: PASS
+- exact-file and normalized multiline clean-room guard: PASS
+- dependency alias and Git dependency guard: PASS
+- absolute path and tracked-upstream guard: PASS
+- Phase 0 and R0.01 frozen paths: PASS
+- two-run byte equality: run during final reproduction
+- remote workflow and artifacts: pending remediation-head run
+- standard three-OS CI: pending remediation-head run
 
-## Promotion rule
+## Known check behavior
 
-The branch must remain draft and unmerged during reviewer evaluation. PASS means the R0.02 research protocol is satisfied; it is not approval to implement a CineKernel IR.
+The standalone frozen R0.01 workflow scans future `schemas/research/**` paths against its frozen manifest. R0.02 therefore runs the unchanged verifier in an exact-base worktree on every OS. No R0.01 file is modified.
+
+## Review paths
+
+- `docs/research/onda/r0.02/R0_02_ACCEPTANCE_REPORT.md`
+- `docs/research/onda/r0.02/R0_02_RESEARCH_MODEL.json`
+- `docs/research/onda/r0.02/SOURCE_INDEX.json`
+- `docs/research/onda/r0.02/ARCHITECTURE_GRAPH.json`
+- `reports/research/r0.02/INTEGRITY_MANIFEST.sha256`
+- `reports/research/r0.02/REMOTE_REPRODUCTION_ATTESTATION.json`
+
+## Reproduction commands
+
+```text
+cargo xtask research onda sync --json
+cargo xtask research onda verify --json
+cargo xtask research onda integrity --check --json
+cargo fmt --manifest-path tools/research/onda-r0-02/Cargo.toml --all --check
+cargo clippy --locked --manifest-path tools/research/onda-r0-02/Cargo.toml --all-targets -- -D warnings
+cargo test --locked --manifest-path tools/research/onda-r0-02/Cargo.toml
+cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- inventory --json
+cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- verify --json
+cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- report --json
+cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- guard --json
+cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- integrity --check --json
+```

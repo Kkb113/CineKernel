@@ -3,96 +3,268 @@
   "data": {
     "candidate_requirements": [
       {
-        "id": "REQ-CAND-001",
-        "priority": "high",
-        "source_refs": [
-          "S-CINEMA-RESOLVE",
-          "S-SCENE",
-          "E-MLIR"
+        "abstract_requirement": "Preserve stable source identity and source-map chains across lowering stages.",
+        "affected_cinekernel_programs": [
+          "authoring",
+          "compiler",
+          "preview",
+          "export"
         ],
-        "status": "nonfinal",
-        "text": "Preserve stable source identity and source-map chains across all lowering stages."
-      },
-      {
-        "id": "REQ-CAND-002",
-        "priority": "high",
-        "source_refs": [
-          "S-CINEMA-TIME",
-          "S-ANIMATION",
-          "S-PLAYER",
-          "S-VIDEO"
+        "creative_programming_impact": "retains general composition without black-boxing intent",
+        "independent_primary_source_refs": [
+          "E-MLIR",
+          "E-REACT"
         ],
-        "status": "nonfinal",
-        "text": "Represent time domains and every rounding or sampling conversion explicitly."
-      },
-      {
-        "id": "REQ-CAND-003",
-        "priority": "high",
-        "source_refs": [
-          "S-CANVAS",
-          "S-VIDEO",
-          "S-CINEMA-COMPILER"
+        "onda_observation_refs": [
+          "C-001"
         ],
-        "status": "nonfinal",
-        "text": "Make semantic loss, approximations and backend capability requirements machine-readable diagnostics."
-      },
-      {
-        "id": "REQ-CAND-004",
-        "priority": "high",
-        "source_refs": [
+        "onda_source_refs": [
+          "S-CINEMA-COMPILER",
           "S-REACT-LOWER",
-          "S-NODE-EXPORT",
-          "E-GSTREAMER"
-        ],
-        "status": "nonfinal",
-        "text": "Support bounded streaming evaluation and rendering without whole-video scene materialization."
-      },
-      {
-        "id": "REQ-CAND-005",
-        "priority": "high",
-        "source_refs": [
-          "S-LAYOUT",
-          "S-IMAGE",
-          "S-SVG"
-        ],
-        "status": "nonfinal",
-        "text": "Separate immutable authored intent from materialized assets, layout, and backend resources."
-      },
-      {
-        "id": "REQ-CAND-006",
-        "priority": "medium",
-        "source_refs": [
           "S-SCENE"
         ],
-        "status": "nonfinal",
-        "text": "Define version negotiation and unknown-field behavior with compatibility fixtures."
-      },
-      {
-        "id": "REQ-CAND-007",
-        "priority": "high",
-        "source_refs": [
-          "S-PLAYER",
-          "S-CANVAS",
-          "S-WASM",
-          "S-CLI"
+        "performance_impact": "requires later measurement; no R0.02 performance claim",
+        "problem_addressed": "Early identity loss weakens inspection and repair",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
+        "quality_impact": "preserves intentional output and makes degradation visible",
+        "required_follow_up_research": [
+          "R0.03",
+          "R0.04"
         ],
-        "status": "nonfinal",
-        "text": "Treat preview/export equivalence as a capability matrix, not a universal boolean."
+        "requirement_id": "CK-R002-REQ-001",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "improves traceability and repairability"
       },
       {
-        "id": "REQ-CAND-008",
-        "priority": "high",
-        "source_refs": [
+        "abstract_requirement": "Represent time domains and conversions explicitly.",
+        "affected_cinekernel_programs": [
+          "authoring",
+          "compiler",
+          "preview",
+          "export"
+        ],
+        "creative_programming_impact": "retains general composition without black-boxing intent",
+        "independent_primary_source_refs": [
+          "E-GSTREAMER"
+        ],
+        "onda_observation_refs": [
+          "C-002"
+        ],
+        "onda_source_refs": [
+          "S-CINEMA-COMPILER",
           "S-REACT-LOWER",
-          "S-SCENE",
-          "S-COMPONENTS"
+          "S-SCENE"
         ],
-        "status": "nonfinal",
-        "text": "Retain an open procedural escape hatch while keeping renderer inputs finite and validateable."
+        "performance_impact": "requires later measurement; no R0.02 performance claim",
+        "problem_addressed": "Fragmented clocks, rounding, and sampling obscure determinism",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
+        "quality_impact": "preserves intentional output and makes degradation visible",
+        "required_follow_up_research": [
+          "R0.04",
+          "R0.06"
+        ],
+        "requirement_id": "CK-R002-REQ-002",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "improves traceability and repairability"
+      },
+      {
+        "abstract_requirement": "Separate semantic authoring IR from renderer IR through explicit lowering contracts.",
+        "affected_cinekernel_programs": [
+          "authoring",
+          "compiler",
+          "preview",
+          "export"
+        ],
+        "creative_programming_impact": "retains general composition without black-boxing intent",
+        "independent_primary_source_refs": [
+          "E-MLIR",
+          "E-REACT"
+        ],
+        "onda_observation_refs": [
+          "C-003"
+        ],
+        "onda_source_refs": [
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "performance_impact": "requires later measurement; no R0.02 performance claim",
+        "problem_addressed": "High-level intent is consumed before rendering",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
+        "quality_impact": "preserves intentional output and makes degradation visible",
+        "required_follow_up_research": [
+          "R0.03"
+        ],
+        "requirement_id": "CK-R002-REQ-003",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "improves traceability and repairability"
+      },
+      {
+        "abstract_requirement": "Make capability fallback typed, diagnosed, and quality-classified.",
+        "affected_cinekernel_programs": [
+          "authoring",
+          "compiler",
+          "preview",
+          "export"
+        ],
+        "creative_programming_impact": "retains general composition without black-boxing intent",
+        "independent_primary_source_refs": [
+          "E-MLIR",
+          "E-REACT"
+        ],
+        "onda_observation_refs": [
+          "C-004"
+        ],
+        "onda_source_refs": [
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "performance_impact": "requires later measurement; no R0.02 performance claim",
+        "problem_addressed": "Automatic fallback can alter visible semantics",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
+        "quality_impact": "preserves intentional output and makes degradation visible",
+        "required_follow_up_research": [
+          "R0.03",
+          "R0.05"
+        ],
+        "requirement_id": "CK-R002-REQ-004",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "improves traceability and repairability"
+      },
+      {
+        "abstract_requirement": "Support bounded streaming frame generation.",
+        "affected_cinekernel_programs": [
+          "authoring",
+          "compiler",
+          "preview",
+          "export"
+        ],
+        "creative_programming_impact": "retains general composition without black-boxing intent",
+        "independent_primary_source_refs": [
+          "E-MLIR",
+          "E-REACT"
+        ],
+        "onda_observation_refs": [
+          "C-005"
+        ],
+        "onda_source_refs": [
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "performance_impact": "requires later measurement; no R0.02 performance claim",
+        "problem_addressed": "Whole-video Scene materialization scales with duration and graph size",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
+        "quality_impact": "preserves intentional output and makes degradation visible",
+        "required_follow_up_research": [
+          "R0.06"
+        ],
+        "requirement_id": "CK-R002-REQ-005",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "improves traceability and repairability"
+      },
+      {
+        "abstract_requirement": "Version serialized boundaries with compatibility fixtures and negotiation.",
+        "affected_cinekernel_programs": [
+          "authoring",
+          "compiler",
+          "preview",
+          "export"
+        ],
+        "creative_programming_impact": "retains general composition without black-boxing intent",
+        "independent_primary_source_refs": [
+          "E-MLIR",
+          "E-REACT"
+        ],
+        "onda_observation_refs": [
+          "C-006"
+        ],
+        "onda_source_refs": [
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "performance_impact": "requires later measurement; no R0.02 performance claim",
+        "problem_addressed": "Current compatibility guarantees are incomplete",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
+        "quality_impact": "preserves intentional output and makes degradation visible",
+        "required_follow_up_research": [
+          "R0.03",
+          "R0.08"
+        ],
+        "requirement_id": "CK-R002-REQ-006",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "improves traceability and repairability"
+      },
+      {
+        "abstract_requirement": "Preserve deterministic random, media, and global-state ownership contracts.",
+        "affected_cinekernel_programs": [
+          "authoring",
+          "compiler",
+          "preview",
+          "export"
+        ],
+        "creative_programming_impact": "retains general composition without black-boxing intent",
+        "independent_primary_source_refs": [
+          "E-MLIR",
+          "E-REACT"
+        ],
+        "onda_observation_refs": [
+          "C-007"
+        ],
+        "onda_source_refs": [
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "performance_impact": "requires later measurement; no R0.02 performance claim",
+        "problem_addressed": "Module-global and external runtime state complicate reentrancy",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
+        "quality_impact": "preserves intentional output and makes degradation visible",
+        "required_follow_up_research": [
+          "R0.04",
+          "R0.06"
+        ],
+        "requirement_id": "CK-R002-REQ-007",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "improves traceability and repairability"
+      },
+      {
+        "abstract_requirement": "Keep open-ended host-language escape hatches while retaining inspectable primitives.",
+        "affected_cinekernel_programs": [
+          "authoring",
+          "compiler",
+          "preview",
+          "export"
+        ],
+        "creative_programming_impact": "retains general composition without black-boxing intent",
+        "independent_primary_source_refs": [
+          "E-MLIR",
+          "E-REACT"
+        ],
+        "onda_observation_refs": [
+          "C-008"
+        ],
+        "onda_source_refs": [
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "performance_impact": "requires later measurement; no R0.02 performance claim",
+        "problem_addressed": "Finite catalogs alone cannot guarantee novel-scene expressibility",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
+        "quality_impact": "preserves intentional output and makes degradation visible",
+        "required_follow_up_research": [
+          "R0.05"
+        ],
+        "requirement_id": "CK-R002-REQ-008",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "improves traceability and repairability"
       }
     ]
   },
-  "generated_at": "2026-08-15T00:00:00Z",
+  "generated_at": "2026-08-16T00:00:00Z",
   "model_ref": "R0_02_RESEARCH_MODEL.json",
-  "schema_version": "r0.02.1"
+  "schema_version": "r0.02.2"
 }

@@ -3,13 +3,111 @@
   "additionalProperties": false,
   "properties": {
     "$schema": {
-      "pattern": "^\\.\\./\\.\\./\\.\\./\\.\\./schemas/research/r0\\.02/.+\\.schema\\.json$",
+      "minLength": 1,
       "type": "string"
     },
     "data": {
       "additionalProperties": false,
       "properties": {
         "candidate_requirements": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "abstract_requirement": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "affected_cinekernel_programs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "creative_programming_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "independent_primary_source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "onda_observation_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "onda_source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "performance_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "problem_addressed": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "prohibited_reuse_note": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "quality_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "required_follow_up_research": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "requirement_id": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "status": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "trust_impact": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "abstract_requirement",
+              "affected_cinekernel_programs",
+              "creative_programming_impact",
+              "independent_primary_source_refs",
+              "onda_observation_refs",
+              "onda_source_refs",
+              "performance_impact",
+              "problem_addressed",
+              "prohibited_reuse_note",
+              "quality_impact",
+              "required_follow_up_research",
+              "requirement_id",
+              "status",
+              "trust_impact"
+            ],
+            "type": "object"
+          },
           "minItems": 1,
           "type": "array"
         }
@@ -24,18 +122,20 @@
       "type": "string"
     },
     "model_ref": {
-      "const": "R0_02_RESEARCH_MODEL.json"
+      "minLength": 1,
+      "type": "string"
     },
     "schema_version": {
-      "const": "r0.02.1"
+      "minLength": 1,
+      "type": "string"
     }
   },
   "required": [
     "$schema",
-    "schema_version",
-    "model_ref",
+    "data",
     "generated_at",
-    "data"
+    "model_ref",
+    "schema_version"
   ],
   "type": "object"
 }

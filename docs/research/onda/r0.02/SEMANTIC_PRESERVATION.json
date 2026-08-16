@@ -3,58 +3,628 @@
   "data": {
     "semantic_preservation": [
       {
-        "item": "geometry, paint, transform, opacity, effects, media source",
-        "outcome": "preserved or materialized",
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "scene purpose",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "DROPPED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-001",
         "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
           "S-REACT-LOWER",
           "S-SCENE"
         ],
-        "stage": "Scene"
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
       },
       {
-        "item": "Cinema role, labels, choreography and transition names",
-        "outcome": "lost as first-class metadata",
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "entry role",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "USED_ONLY_DURING_LOWERING",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-002",
         "source_refs": [
           "S-CINEMA-TYPES",
-          "S-CINEMA-COMPILER"
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
         ],
-        "stage": "Cinema to React"
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
       },
       {
-        "item": "brand token identity",
-        "outcome": "materialized into resolved values",
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "focal/support/ambient hierarchy",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "USED_ONLY_DURING_LOWERING",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-003",
         "source_refs": [
-          "S-CINEMA-COMPILER"
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
         ],
-        "stage": "Cinema component expansion"
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
       },
       {
-        "item": "flex layout intent",
-        "outcome": "replaced by absolute translations",
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "scene ID",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "DROPPED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-004",
         "source_refs": [
-          "S-LAYOUT"
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
         ],
-        "stage": "layout prepass"
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
       },
       {
-        "item": "SVG document structure",
-        "outcome": "lowered to supported shapes with unsupported-feature loss",
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "track ID",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "DROPPED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-005",
         "source_refs": [
-          "S-SVG"
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
         ],
-        "stage": "SVG prepass"
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
       },
       {
-        "item": "image source encoding",
-        "outcome": "decoded, optionally resized, attached as skipped runtime pixels",
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "entry ID",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "USED_ONLY_AS_REACT_KEY",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-006",
         "source_refs": [
-          "S-IMAGE"
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
         ],
-        "stage": "image prepass"
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "labels",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "DROPPED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-007",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "component name",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "USED_ONLY_DURING_LOWERING",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-008",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "component property semantics",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "MATERIALIZED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-009",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "choreography pattern",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "MATERIALIZED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-010",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "choreography parameters",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "MATERIALIZED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-011",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "transition name",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "MATERIALIZED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-012",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "transition options",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "MATERIALIZED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-013",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "camera intent",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "MATERIALIZED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-014",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "brand-token identity",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "DROPPED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-015",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "responsive intent",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "MATERIALIZED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-016",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "placement intent",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "MATERIALIZED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-017",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "size-role intent",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "MATERIALIZED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-018",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "morph key",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "USED_ONLY_DURING_LOWERING",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-019",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "matte intent",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "PRESERVED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "PARTIAL",
+        "semantic_id": "SEM-020",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "clip intent",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "PRESERVED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "PARTIAL",
+        "semantic_id": "SEM-021",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "effect intent",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "PRESERVED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "PARTIAL",
+        "semantic_id": "SEM-022",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "depth intent",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "MATERIALIZED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-023",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "3D placement intent",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "MATERIALIZED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-024",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "source asset reference",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "PRESERVED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "PARTIAL",
+        "semantic_id": "SEM-025",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "audio relationship",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "PRESERVED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "PARTIAL",
+        "semantic_id": "SEM-026",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "timing intent",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "NORMALIZED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "PARTIAL",
+        "semantic_id": "SEM-027",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "diagnostics",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "DROPPED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-028",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "fidelity classification",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "DROPPED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-029",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "backend requirement",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "UNRESOLVED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-030",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
+      },
+      {
+        "agent_repair_impact": "agent may need to reconstruct authoring context",
+        "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+        "concept": "source provenance",
+        "confidence": "MEDIUM",
+        "diagnostic_impact": "errors cannot always identify the originating intent",
+        "disposition": "DROPPED",
+        "editing_impact": "semantic edits become value-level edits after lowering",
+        "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+        "reversibility": "NO",
+        "semantic_id": "SEM-031",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "source_representation": "Cinema, React, or direct authoring representation",
+        "target_representation": "renderer-facing Scene or pixels"
       }
     ]
   },
-  "generated_at": "2026-08-15T00:00:00Z",
+  "generated_at": "2026-08-16T00:00:00Z",
   "model_ref": "R0_02_RESEARCH_MODEL.json",
-  "schema_version": "r0.02.1"
+  "schema_version": "r0.02.2"
 }

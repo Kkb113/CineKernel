@@ -1,31 +1,23 @@
-# Creative programmability assessment
+# Creative-programmability assessment
 
-The architecture is not limited to templates: React permits arbitrary procedural code that emits primitives, and a custom Cinema registry can add components. The creative ceiling is nevertheless bounded by the finite Scene and renderer capability set. General materials, shaders, constraints, simulations, and durable semantic subgraphs are not demonstrated.
+**Verdict:** MULTI_LAYER_PROGRAMMABILITY_WITH_FINITE_RENDERER_VOCABULARY. No numeric creativity score is assigned; each capability is an evidence-backed categorical finding.
+
+| Surface | primitives | procedural logic | component extension | registry-dependent | descends to primitives | source mapping | black-box risk |
+|---|---:|---:|---:|---:|---:|---:|---|
+| AS-CINEMA | true | true | true | true | true | false | MEDIUM |
+| AS-REACT | true | true | true | true | false | false | MEDIUM |
+| AS-JSON | true | false | true | false | false | false | MEDIUM |
+| AS-RUST | true | true | true | true | false | false | MEDIUM |
+| AS-COMPONENTS | false | true | true | true | false | true | MEDIUM |
 
 ```mermaid
-quadrantChart
-  x-axis Finite catalog --> Procedural authoring
-  y-axis Low-level pixels --> Semantic intent
-  quadrant-1 Strong target
-  quadrant-2 Guided authoring
-  quadrant-3 Renderer primitives
-  quadrant-4 Procedural lowering
-  Cinema: [0.55, 0.72]
-  React: [0.88, 0.48]
-  Scene: [0.42, 0.18]
+flowchart TD
+  Cinema[Guided semantic payload] --> React[Host-language escape hatch]
+  Components[Finite/extensible registry] --> React
+  React --> Primitives[Inspectable finite primitives]
+  JSON[Direct declarative Scene] --> Primitives
+  Rust[Typed host language] --> Primitives
+  Primitives --> Renderer[Finite renderer vocabulary]
 ```
 
-## Evidence
-
-- **C-001 — verified:** React authoring is programmatic, but its render boundary is a finite scene vocabulary. (confidence 0.99). Sources: S-REACT-HOST, S-REACT-LOWER, S-SCENE.
-- **C-002 — verified:** React component state is not retained between output frames because every frame uses a fresh root that is unmounted. (confidence 0.99). Sources: S-REACT-LOWER, S-REACT-TEST.
-- **C-003 — verified:** Cinema retains more editorial identity and intent than Scene, while its inspector is a parallel high-level analysis path. (confidence 0.98). Sources: S-CINEMA-TYPES, S-CINEMA-INSPECT, S-CINEMA-RESOLVE.
-- **C-004 — verified:** Cinema roles, choreography names, brand identity, and most string ids do not survive as first-class Scene fields. (confidence 0.96). Sources: S-CINEMA-COMPILER, S-CINEMA-TYPES, S-SCENE.
-- **C-005 — verified:** Direct Scene JSON and typed Rust construction converge at the same finite Scene contract. (confidence 0.99). Sources: S-SCENE, S-CLI, S-WASM.
-- **C-006 — verified:** Layout, SVG, image, video, and timeline behavior includes destructive or materializing prepasses rather than a single immutable IR pipeline. (confidence 0.97). Sources: S-LAYOUT, S-SVG, S-IMAGE, S-VIDEO, S-CLI.
-- **C-007 — verified:** GPU and CPU preview can share renderer semantics with native export, but browser media resolution and scheduling keep end-to-end parity conditional. (confidence 0.96). Sources: S-PLAYER, S-VIDEO, S-AUDIO, S-WASM, S-WASM-VELLO, S-CLI.
-- **C-008 — verified:** Canvas2D is an explicit approximation and not a parity path. (confidence 0.99). Sources: S-CANVAS, S-PLAYER.
-- **C-009 — verified:** Full React export materializes every evaluated frame before the native export call, creating duration-proportional scene memory and JSON I/O. (confidence 0.99). Sources: S-REACT-LOWER, S-NODE-EXPORT.
-- **C-010 — verified:** Global registries and caches require explicit isolation if authoring evaluation is parallelized or made multi-tenant. (confidence 0.94). Sources: S-REACT-STATE, S-REACT-WARM, S-PLAYER, S-VIDEO.
-- **C-011 — candidate:** A future CineKernel IR should preserve stable identity, semantic intent, time domains, diagnostics, and capability requirements until explicit lowering stages. (confidence 0.91). Sources: S-CINEMA-TYPES, S-CINEMA-RESOLVE, S-SCENE, E-MLIR, E-GSTREAMER.
-- **C-012 — verified:** React's render and commit model is analogous only at a high level; ONDA deliberately remounts per frame rather than preserving a committed application tree. (confidence 0.97). Sources: S-REACT-LOWER, E-REACT.
+No numeric creativity score is used. Reusable components are not classified as fixed templates.

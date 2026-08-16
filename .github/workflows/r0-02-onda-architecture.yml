@@ -29,31 +29,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
       - name: Materialize immutable R0.01 base
-        run: git worktree add .r001-base 974d93ef224b75383499cdb2b70cc086a0dd6f40
+        run: git worktree add "${{ runner.temp }}/r001-base" 974d93ef224b75383499cdb2b70cc086a0dd6f40
       - name: Restore locked ONDA source checkout at R0.01 base
-        working-directory: .r001-base
+        working-directory: ${{ runner.temp }}/r001-base
         run: cargo xtask research onda sync --json
       - name: Verify R0.01 upstream lock at R0.01 base
-        working-directory: .r001-base
+        working-directory: ${{ runner.temp }}/r001-base
         env:
           GH_TOKEN: ${{ github.token }}
         run: cargo xtask research onda verify --json
       - name: Verify R0.01 integrity at R0.01 base
-        working-directory: .r001-base
+        working-directory: ${{ runner.temp }}/r001-base
         run: cargo xtask research onda integrity --check --json
       - name: Restore locked ONDA source checkout for R0.02
         run: cargo xtask research onda sync --json
       - name: Format standalone verifier
         run: cargo fmt --manifest-path tools/research/onda-r0-02/Cargo.toml --check
       - name: Lint standalone verifier
-        run: cargo clippy --manifest-path tools/research/onda-r0-02/Cargo.toml --all-targets -- -D warnings
+        run: cargo clippy --locked --manifest-path tools/research/onda-r0-02/Cargo.toml --all-targets -- -D warnings
       - name: Test standalone verifier
-        run: cargo test --manifest-path tools/research/onda-r0-02/Cargo.toml
+        run: cargo test --locked --manifest-path tools/research/onda-r0-02/Cargo.toml
       - name: Verify source inventory
         run: cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- inventory --json
       - name: Verify canonical model
@@ -65,16 +66,22 @@ jobs:
       - name: Regenerate first copy
         run: cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- report --json
       - name: Require deterministic clean tree
-        run: git diff --exit-code
+        shell: bash
+        run: |
+          git diff --exit-code
+          test -z "$(git status --porcelain --untracked-files=all)"
       - name: Regenerate second copy
         run: cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- report --json
       - name: Require second deterministic clean tree
-        run: git diff --exit-code
+        shell: bash
+        run: |
+          git diff --exit-code
+          test -z "$(git status --porcelain --untracked-files=all)"
       - name: Archive raw verifier evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: r0-02-${{ matrix.os }}-evidence
           path: .cinekernel/research/onda/r0.02/
-          if-no-files-found: ignore
+          if-no-files-found: error
           retention-days: 90

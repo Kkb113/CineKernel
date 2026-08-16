@@ -1,29 +1,37 @@
 # Validation, errors, and fallbacks
 
-The architecture mixes hard errors, warnings, placeholders, silent omission, held frames, and renderer demotion. This is resilient for preview, but diagnostics are not represented by one typed contract and fallback behavior can change visible semantics.
+21 behaviors cover the mandatory error and fallback cases.
+
+| Trigger | Behavior | Informed | Quality reducing | Visual outcome |
+|---|---|---:|---:|---|
+| unknown component | VALIDATION_ERROR | true | false | visible build placeholder or stop |
+| unknown choreography | WARNING | true | false | static or default motion |
+| unknown transition | WARNING | true | false | cut/default transition |
+| unknown property | MALFORMED_VALUE_DROPPED | false | false | default or unchanged value |
+| invalid time specification | VALIDATION_ERROR | true | false | build stops |
+| malformed finish or LUT | DEFAULT_SUBSTITUTION | true | true | default finish |
+| unsupported React host element | HARD_ERROR | true | false | evaluation stops |
+| raw text in wrong parent | HARD_ERROR | true | false | evaluation stops |
+| missing root Composition | HARD_ERROR | true | false | evaluation stops |
+| GPU-only component on CPU | UNSUPPORTED | true | false | placeholder, omission, or failure |
+| degraded component fidelity | APPROXIMATION | true | true | approximate rendering |
+| renderer runtime failure | AUTOMATIC_BACKEND_FALLBACK | true | true | GPU to CPU |
+| CPU renderer failure | AUTOMATIC_BACKEND_FALLBACK | true | true | CPU to Canvas preview |
+| failed font load | ASYNC_RETRY_OR_REPAINT | true | false | retry or repaint |
+| missing image | VISUAL_PLACEHOLDER | true | true | placeholder or skipped draw |
+| cross-origin video preview | DEFAULT_SUBSTITUTION | true | true | media-element fallback |
+| malformed progress message | MALFORMED_VALUE_DROPPED | false | false | continue without update |
+| CLI process failure | HARD_ERROR | true | false | process error |
+| direct JSON deserialization | HARD_ERROR | true | false | parse failure |
+| future scene version | UNSUPPORTED | true | false | reject or retain version depending boundary |
+| unknown scene fields | UNKNOWN | false | false | serde behavior requires fixture |
 
 ```mermaid
 flowchart TD
   Input --> Validate
-  Validate -->|hard error| Stop
-  Validate -->|warning| Continue
-  Continue --> Render
-  Render -->|GPU failure| CPU
-  CPU -->|failure| Canvas
-  Media -->|decode failure| HoldOrSkip
+  Validate -->|hard/validation error| Stop
+  Validate -->|warning/default| Continue
+  Continue --> GPU
+  GPU -. runtime/capability fallback .-> CPU
+  CPU -. preview-only approximation .-> Canvas
 ```
-
-## Evidence
-
-- **C-001 — verified:** React authoring is programmatic, but its render boundary is a finite scene vocabulary. (confidence 0.99). Sources: S-REACT-HOST, S-REACT-LOWER, S-SCENE.
-- **C-002 — verified:** React component state is not retained between output frames because every frame uses a fresh root that is unmounted. (confidence 0.99). Sources: S-REACT-LOWER, S-REACT-TEST.
-- **C-003 — verified:** Cinema retains more editorial identity and intent than Scene, while its inspector is a parallel high-level analysis path. (confidence 0.98). Sources: S-CINEMA-TYPES, S-CINEMA-INSPECT, S-CINEMA-RESOLVE.
-- **C-004 — verified:** Cinema roles, choreography names, brand identity, and most string ids do not survive as first-class Scene fields. (confidence 0.96). Sources: S-CINEMA-COMPILER, S-CINEMA-TYPES, S-SCENE.
-- **C-005 — verified:** Direct Scene JSON and typed Rust construction converge at the same finite Scene contract. (confidence 0.99). Sources: S-SCENE, S-CLI, S-WASM.
-- **C-006 — verified:** Layout, SVG, image, video, and timeline behavior includes destructive or materializing prepasses rather than a single immutable IR pipeline. (confidence 0.97). Sources: S-LAYOUT, S-SVG, S-IMAGE, S-VIDEO, S-CLI.
-- **C-007 — verified:** GPU and CPU preview can share renderer semantics with native export, but browser media resolution and scheduling keep end-to-end parity conditional. (confidence 0.96). Sources: S-PLAYER, S-VIDEO, S-AUDIO, S-WASM, S-WASM-VELLO, S-CLI.
-- **C-008 — verified:** Canvas2D is an explicit approximation and not a parity path. (confidence 0.99). Sources: S-CANVAS, S-PLAYER.
-- **C-009 — verified:** Full React export materializes every evaluated frame before the native export call, creating duration-proportional scene memory and JSON I/O. (confidence 0.99). Sources: S-REACT-LOWER, S-NODE-EXPORT.
-- **C-010 — verified:** Global registries and caches require explicit isolation if authoring evaluation is parallelized or made multi-tenant. (confidence 0.94). Sources: S-REACT-STATE, S-REACT-WARM, S-PLAYER, S-VIDEO.
-- **C-011 — candidate:** A future CineKernel IR should preserve stable identity, semantic intent, time domains, diagnostics, and capability requirements until explicit lowering stages. (confidence 0.91). Sources: S-CINEMA-TYPES, S-CINEMA-RESOLVE, S-SCENE, E-MLIR, E-GSTREAMER.
-- **C-012 — verified:** React's render and commit model is analogous only at a high level; ONDA deliberately remounts per frame rather than preserving a committed application tree. (confidence 0.97). Sources: S-REACT-LOWER, E-REACT.

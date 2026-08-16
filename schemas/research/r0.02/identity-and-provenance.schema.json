@@ -3,13 +3,83 @@
   "additionalProperties": false,
   "properties": {
     "$schema": {
-      "pattern": "^\\.\\./\\.\\./\\.\\./\\.\\./schemas/research/r0\\.02/.+\\.schema\\.json$",
+      "minLength": 1,
       "type": "string"
     },
     "data": {
       "additionalProperties": false,
       "properties": {
         "identity_and_provenance": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "concept": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "diagnostic_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "disposition": {
+                "enum": [
+                  "PRESERVED",
+                  "REMAPPED",
+                  "USED_ONLY_DURING_LOWERING",
+                  "USED_ONLY_AS_REACT_KEY",
+                  "CONVERTED_TO_NUMERIC_ID",
+                  "DROPPED",
+                  "NOT_REPRESENTABLE",
+                  "UNKNOWN",
+                  "NORMALIZED",
+                  "EXPANDED",
+                  "MATERIALIZED",
+                  "APPROXIMATED",
+                  "FALLBACK_SUBSTITUTED",
+                  "UNRESOLVED"
+                ],
+                "type": "string"
+              },
+              "final_scene_traceable": {
+                "type": "boolean"
+              },
+              "identity_id": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "source_map_available": {
+                "type": "boolean"
+              },
+              "source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "source_representation": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "target_representation": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "concept",
+              "diagnostic_impact",
+              "disposition",
+              "final_scene_traceable",
+              "identity_id",
+              "source_map_available",
+              "source_refs",
+              "source_representation",
+              "target_representation"
+            ],
+            "type": "object"
+          },
           "minItems": 1,
           "type": "array"
         }
@@ -24,18 +94,20 @@
       "type": "string"
     },
     "model_ref": {
-      "const": "R0_02_RESEARCH_MODEL.json"
+      "minLength": 1,
+      "type": "string"
     },
     "schema_version": {
-      "const": "r0.02.1"
+      "minLength": 1,
+      "type": "string"
     }
   },
   "required": [
     "$schema",
-    "schema_version",
-    "model_ref",
+    "data",
     "generated_at",
-    "data"
+    "model_ref",
+    "schema_version"
   ],
   "type": "object"
 }

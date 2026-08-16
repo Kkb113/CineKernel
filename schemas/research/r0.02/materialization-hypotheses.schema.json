@@ -3,13 +3,50 @@
   "additionalProperties": false,
   "properties": {
     "$schema": {
-      "pattern": "^\\.\\./\\.\\./\\.\\./\\.\\./schemas/research/r0\\.02/.+\\.schema\\.json$",
+      "minLength": 1,
       "type": "string"
     },
     "data": {
       "additionalProperties": false,
       "properties": {
         "materialization_hypotheses": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "risk": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "statement": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "status": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "risk",
+              "source_refs",
+              "statement",
+              "status"
+            ],
+            "type": "object"
+          },
           "minItems": 1,
           "type": "array"
         }
@@ -24,18 +61,20 @@
       "type": "string"
     },
     "model_ref": {
-      "const": "R0_02_RESEARCH_MODEL.json"
+      "minLength": 1,
+      "type": "string"
     },
     "schema_version": {
-      "const": "r0.02.1"
+      "minLength": 1,
+      "type": "string"
     }
   },
   "required": [
     "$schema",
-    "schema_version",
-    "model_ref",
+    "data",
     "generated_at",
-    "data"
+    "model_ref",
+    "schema_version"
   ],
   "type": "object"
 }

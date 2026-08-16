@@ -3,37 +3,156 @@
   "data": {
     "identity_and_provenance": [
       {
-        "identity": "scene, track, entry strings and payload path",
-        "preserved_to_next": true,
-        "preserved_to_scene": false,
+        "concept": "Cinema scene ID",
+        "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+        "disposition": "USED_ONLY_DURING_LOWERING",
+        "final_scene_traceable": false,
+        "identity_id": "ID-01",
+        "source_map_available": false,
         "source_refs": [
           "S-CINEMA-TYPES",
-          "S-CINEMA-RESOLVE"
-        ],
-        "stage": "Cinema"
-      },
-      {
-        "identity": "element keys and optional numeric id prop",
-        "preserved_to_next": "partial",
-        "preserved_to_scene": "only explicit numeric id",
-        "source_refs": [
-          "S-REACT-HOST",
+          "S-CINEMA-RESOLVE",
           "S-REACT-LOWER"
         ],
-        "stage": "React"
+        "source_representation": "Cinema scene",
+        "target_representation": "React composition"
       },
       {
-        "identity": "optional numeric NodeId",
-        "preserved_to_next": true,
-        "preserved_to_scene": true,
+        "concept": "Cinema track ID",
+        "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+        "disposition": "USED_ONLY_DURING_LOWERING",
+        "final_scene_traceable": false,
+        "identity_id": "ID-02",
+        "source_map_available": false,
         "source_refs": [
-          "S-SCENE"
+          "S-CINEMA-TYPES",
+          "S-CINEMA-RESOLVE",
+          "S-REACT-LOWER"
         ],
-        "stage": "Scene"
+        "source_representation": "Cinema track",
+        "target_representation": "React grouping"
+      },
+      {
+        "concept": "Cinema entry ID",
+        "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+        "disposition": "USED_ONLY_AS_REACT_KEY",
+        "final_scene_traceable": false,
+        "identity_id": "ID-03",
+        "source_map_available": false,
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-RESOLVE",
+          "S-REACT-LOWER"
+        ],
+        "source_representation": "Cinema entry",
+        "target_representation": "React key"
+      },
+      {
+        "concept": "Cinema morph key",
+        "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+        "disposition": "USED_ONLY_DURING_LOWERING",
+        "final_scene_traceable": false,
+        "identity_id": "ID-04",
+        "source_map_available": false,
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-RESOLVE",
+          "S-REACT-LOWER"
+        ],
+        "source_representation": "Cinema entry",
+        "target_representation": "transition matching"
+      },
+      {
+        "concept": "React key",
+        "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+        "disposition": "DROPPED",
+        "final_scene_traceable": false,
+        "identity_id": "ID-05",
+        "source_map_available": false,
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-RESOLVE",
+          "S-REACT-LOWER"
+        ],
+        "source_representation": "React element",
+        "target_representation": "HostNode/Scene"
+      },
+      {
+        "concept": "React host node",
+        "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+        "disposition": "REMAPPED",
+        "final_scene_traceable": false,
+        "identity_id": "ID-06",
+        "source_map_available": false,
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-RESOLVE",
+          "S-REACT-LOWER"
+        ],
+        "source_representation": "HostNode tree",
+        "target_representation": "Scene Node"
+      },
+      {
+        "concept": "numeric Scene NodeId",
+        "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+        "disposition": "PRESERVED",
+        "final_scene_traceable": true,
+        "identity_id": "ID-07",
+        "source_map_available": false,
+        "source_refs": [
+          "S-SCENE",
+          "S-ANIMATION"
+        ],
+        "source_representation": "Scene",
+        "target_representation": "renderer/timeline"
+      },
+      {
+        "concept": "Timeline target NodeId",
+        "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+        "disposition": "PRESERVED",
+        "final_scene_traceable": true,
+        "identity_id": "ID-08",
+        "source_map_available": false,
+        "source_refs": [
+          "S-SCENE",
+          "S-ANIMATION"
+        ],
+        "source_representation": "Timeline",
+        "target_representation": "Scene mutation target"
+      },
+      {
+        "concept": "renderer element identity",
+        "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+        "disposition": "USED_ONLY_DURING_LOWERING",
+        "final_scene_traceable": false,
+        "identity_id": "ID-09",
+        "source_map_available": false,
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-RESOLVE",
+          "S-REACT-LOWER"
+        ],
+        "source_representation": "Scene Node",
+        "target_representation": "render pass"
+      },
+      {
+        "concept": "preview selection identity",
+        "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+        "disposition": "NOT_REPRESENTABLE",
+        "final_scene_traceable": false,
+        "identity_id": "ID-10",
+        "source_map_available": false,
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-RESOLVE",
+          "S-REACT-LOWER"
+        ],
+        "source_representation": "Cinema inspector",
+        "target_representation": "rendered node"
       }
     ]
   },
-  "generated_at": "2026-08-15T00:00:00Z",
+  "generated_at": "2026-08-16T00:00:00Z",
   "model_ref": "R0_02_RESEARCH_MODEL.json",
-  "schema_version": "r0.02.1"
+  "schema_version": "r0.02.2"
 }

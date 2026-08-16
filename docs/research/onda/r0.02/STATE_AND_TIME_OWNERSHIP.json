@@ -2,97 +2,392 @@
   "$schema": "../../../../schemas/research/r0.02/state-and-time-ownership.schema.json",
   "data": {
     "state_and_time": {
-      "state": [
+      "state_records": [
         {
-          "mutable": true,
-          "owner": "React frame evaluation",
-          "reentrant": "isolated by fresh root",
-          "scope": "one evaluation",
+          "authority": "AUTHORITATIVE",
+          "carries_source_provenance": true,
+          "mutability": "IMMUTABLE_DATA",
+          "owner_scope": "serialized document",
+          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "representation": "Cinema payload",
+          "shared": false,
+          "source_refs": [
+            "S-CINEMA-TYPES"
+          ],
+          "state_id": "ST-CINEMA",
+          "survives_frame_evaluation": true,
+          "thread_safe": false
+        },
+        {
+          "authority": "TRANSIENT",
+          "carries_source_provenance": false,
+          "mutability": "PER_FRAME_REBUILT",
+          "owner_scope": "one requested frame",
+          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "representation": "React element evaluation",
+          "shared": false,
           "source_refs": [
             "S-REACT-LOWER"
-          ]
+          ],
+          "state_id": "ST-REACT",
+          "survives_frame_evaluation": false,
+          "thread_safe": false
         },
         {
-          "mutable": true,
-          "owner": "font and warmer registries",
-          "reentrant": "requires coordination",
-          "scope": "process",
+          "authority": "TRANSIENT",
+          "carries_source_provenance": false,
+          "mutability": "GLOBAL_MUTABLE",
+          "owner_scope": "process/module",
+          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "representation": "module-level activeFrameState and activeDof",
+          "shared": true,
           "source_refs": [
-            "S-REACT-STATE",
-            "S-REACT-WARM"
-          ]
+            "S-REACT-LOWER"
+          ],
+          "state_id": "ST-ACTIVE",
+          "survives_frame_evaluation": false,
+          "thread_safe": false
         },
         {
-          "mutable": true,
-          "owner": "Player",
-          "reentrant": "GPU engine serialized globally",
-          "scope": "component instance",
+          "authority": "TRANSIENT",
+          "carries_source_provenance": false,
+          "mutability": "MUTABLE_TREE",
+          "owner_scope": "one reconciliation",
+          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "representation": "HostNode tree",
+          "shared": false,
           "source_refs": [
-            "S-PLAYER"
-          ]
+            "S-REACT-HOST"
+          ],
+          "state_id": "ST-HOST",
+          "survives_frame_evaluation": false,
+          "thread_safe": false
         },
         {
-          "mutable": true,
-          "owner": "video caches",
-          "reentrant": "seeks serialized per source",
-          "scope": "browser module",
+          "authority": "AUTHORITATIVE",
+          "carries_source_provenance": false,
+          "mutability": "IMMUTABLE_DATA",
+          "owner_scope": "frame/document",
+          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "representation": "Scene snapshot",
+          "shared": true,
           "source_refs": [
-            "S-VIDEO"
-          ]
-        }
-      ],
-      "time_domains": [
+            "S-SCENE"
+          ],
+          "state_id": "ST-SCENE",
+          "survives_frame_evaluation": true,
+          "thread_safe": true
+        },
         {
-          "conversion": "seconds = frame / fps",
-          "name": "composition frame",
-          "rounding": "surface-dependent",
+          "authority": "AUTHORITATIVE",
+          "carries_source_provenance": false,
+          "mutability": "IMMUTABLE_DATA",
+          "owner_scope": "document",
+          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "representation": "Rust Timeline",
+          "shared": true,
           "source_refs": [
-            "S-REACT-FRAME",
-            "S-CINEMA-TIME",
             "S-ANIMATION"
           ],
-          "unit": "frame"
+          "state_id": "ST-TIMELINE",
+          "survives_frame_evaluation": true,
+          "thread_safe": true
         },
         {
-          "conversion": "outer frame minus sequence start",
-          "name": "sequence-local frame",
-          "rounding": "none",
+          "authority": "DERIVED",
+          "carries_source_provenance": false,
+          "mutability": "CLONED_AND_MUTATED",
+          "owner_scope": "prepass",
+          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "representation": "layout-resolved Scene",
+          "shared": false,
+          "source_refs": [
+            "S-LAYOUT"
+          ],
+          "state_id": "ST-LAYOUT",
+          "survives_frame_evaluation": true,
+          "thread_safe": false
+        },
+        {
+          "authority": "CACHE",
+          "carries_source_provenance": false,
+          "mutability": "CACHE_MUTABLE",
+          "owner_scope": "prepass/cache",
+          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "representation": "image-resolved Scene",
+          "shared": true,
+          "source_refs": [
+            "S-IMAGE"
+          ],
+          "state_id": "ST-IMAGE",
+          "survives_frame_evaluation": true,
+          "thread_safe": false
+        },
+        {
+          "authority": "PRESENTATION_ONLY",
+          "carries_source_provenance": false,
+          "mutability": "INSTANCE_MUTABLE",
+          "owner_scope": "component instance",
+          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "representation": "player transport",
+          "shared": false,
+          "source_refs": [
+            "S-PLAYER"
+          ],
+          "state_id": "ST-PLAYER",
+          "survives_frame_evaluation": false,
+          "thread_safe": false
+        },
+        {
+          "authority": "EXTERNAL_RUNTIME",
+          "carries_source_provenance": false,
+          "mutability": "GLOBAL_MUTABLE",
+          "owner_scope": "browser process",
+          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "representation": "GPU engine coordination",
+          "shared": true,
+          "source_refs": [
+            "S-MANDATORY-PACKAGES-PLAYER-SRC-ENGINE-DRAWER-TS"
+          ],
+          "state_id": "ST-GPU",
+          "survives_frame_evaluation": false,
+          "thread_safe": false
+        },
+        {
+          "authority": "EXTERNAL_RUNTIME",
+          "carries_source_provenance": false,
+          "mutability": "EXTERNAL_RUNTIME",
+          "owner_scope": "AudioContext",
+          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "representation": "audio transport",
+          "shared": true,
+          "source_refs": [
+            "S-AUDIO",
+            "S-MANDATORY-PACKAGES-PLAYER-SRC-AUDIO-TS"
+          ],
+          "state_id": "ST-AUDIO",
+          "survives_frame_evaluation": false,
+          "thread_safe": false
+        },
+        {
+          "authority": "DERIVED",
+          "carries_source_provenance": false,
+          "mutability": "IMMUTABLE_DATA",
+          "owner_scope": "export invocation",
+          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "representation": "temporary frames JSON",
+          "shared": false,
+          "source_refs": [
+            "S-NODE-EXPORT"
+          ],
+          "state_id": "ST-FRAMES",
+          "survives_frame_evaluation": true,
+          "thread_safe": false
+        }
+      ],
+      "time_conversions": [
+        {
+          "clamping_behavior": "none established",
+          "conversion_id": "TC-01",
+          "fractional_time_behavior": "fraction removed",
+          "negative_time_behavior": "negative values possible before validation",
+          "operation": "round seconds multiplied by fps",
+          "owner": "Cinema timing",
+          "precision_risk": "rounding changes authored timing",
+          "rate_behavior": "fps multiplication",
+          "rounding_behavior": "nearest integer",
+          "source_domain": "SECONDS_NUMBER",
+          "source_refs": [
+            "S-CINEMA-TIME"
+          ],
+          "target_domain": "COMPOSITION_FRAME_LOCAL"
+        },
+        {
+          "clamping_behavior": "validated by Cinema",
+          "conversion_id": "TC-02",
+          "fractional_time_behavior": "fraction removed",
+          "negative_time_behavior": "integer frames",
+          "operation": "duration and transition overlap derivation",
+          "owner": "Cinema compiler",
+          "precision_risk": "overlap accumulation",
+          "rate_behavior": "fps-dependent",
+          "rounding_behavior": "rounding from TimeSpec",
+          "source_domain": "COMPOSITION_FRAME_LOCAL",
+          "source_refs": [
+            "S-CINEMA-TIME",
+            "S-CINEMA-COMPILER"
+          ],
+          "target_domain": "FRAME_INDEX_INTEGER"
+        },
+        {
+          "clamping_behavior": "inherits output-frame range",
+          "conversion_id": "TC-03",
+          "fractional_time_behavior": "preserved",
+          "negative_time_behavior": "fractional samples introduced",
+          "operation": "motion-blur sample offsets",
+          "owner": "React exporter",
+          "precision_risk": "floating sample precision",
+          "rate_behavior": "sample-count dependent",
+          "rounding_behavior": "none",
+          "source_domain": "FRAME_INDEX_INTEGER",
+          "source_refs": [
+            "S-NODE-EXPORT",
+            "S-REACT-LOWER"
+          ],
+          "target_domain": "FRAME_INDEX_FLOAT"
+        },
+        {
+          "clamping_behavior": "negative behavior unresolved",
+          "conversion_id": "TC-04",
+          "fractional_time_behavior": "preserved",
+          "negative_time_behavior": "preserved",
+          "operation": "FrameContext assignment",
+          "owner": "React frame evaluator",
+          "precision_risk": "module-global ownership",
+          "rate_behavior": "fps-independent",
+          "rounding_behavior": "none",
+          "source_domain": "FRAME_INDEX_FLOAT",
+          "source_refs": [
+            "S-REACT-FRAME",
+            "S-REACT-LOWER"
+          ],
+          "target_domain": "COMPOSITION_FRAME_LOCAL"
+        },
+        {
+          "clamping_behavior": "negative local frames can be outside active range",
+          "conversion_id": "TC-05",
+          "fractional_time_behavior": "preserved",
+          "negative_time_behavior": "preserved",
+          "operation": "subtract sequence start",
+          "owner": "Sequence",
+          "precision_risk": "boundary semantics",
+          "rate_behavior": "fps-independent",
+          "rounding_behavior": "none",
+          "source_domain": "COMPOSITION_FRAME_LOCAL",
           "source_refs": [
             "S-REACT-SEQUENCE"
           ],
-          "unit": "frame"
+          "target_domain": "SEQUENCE_FRAME_LOCAL"
         },
         {
-          "conversion": "frame / fps before interpolation",
-          "name": "Rust keyframe time",
-          "rounding": "none",
+          "clamping_behavior": "negative time possible",
+          "conversion_id": "TC-06",
+          "fractional_time_behavior": "preserved",
+          "negative_time_behavior": "preserved",
+          "operation": "divide frame by fps",
+          "owner": "Rust Timeline evaluator",
+          "precision_risk": "floating precision",
+          "rate_behavior": "fps division",
+          "rounding_behavior": "none",
+          "source_domain": "FRAME_INDEX_FLOAT",
           "source_refs": [
             "S-ANIMATION"
           ],
-          "unit": "second"
+          "target_domain": "SECONDS_NUMBER"
         },
         {
-          "conversion": "floor elapsed scaled by rate over frame duration",
-          "name": "preview wall clock",
-          "rounding": "floor and skipped frames",
+          "clamping_behavior": "source bounds may clamp",
+          "conversion_id": "TC-07",
+          "fractional_time_behavior": "fractional seconds retained or bucketed",
+          "negative_time_behavior": "media-specific",
+          "operation": "map node frame/start/rate to source time",
+          "owner": "video node/player",
+          "precision_risk": "decoder and bucket precision",
+          "rate_behavior": "playback-rate dependent",
+          "rounding_behavior": "surface-specific",
+          "source_domain": "COMPOSITION_FRAME_LOCAL",
+          "source_refs": [
+            "S-VIDEO",
+            "S-SCENE"
+          ],
+          "target_domain": "SOURCE_MEDIA_SECONDS"
+        },
+        {
+          "clamping_behavior": "clip bounds",
+          "conversion_id": "TC-08",
+          "fractional_time_behavior": "fractional source time",
+          "negative_time_behavior": "negative source time unresolved",
+          "operation": "clip placement plus source offset divided by rate",
+          "owner": "timeline/prepass",
+          "precision_risk": "clip/source boundary",
+          "rate_behavior": "clip-rate dependent",
+          "rounding_behavior": "implementation-specific",
+          "source_domain": "TIMELINE_CLIP_FRAME",
+          "source_refs": [
+            "S-SCENE",
+            "S-CLI"
+          ],
+          "target_domain": "SOURCE_MEDIA_SECONDS"
+        },
+        {
+          "clamping_behavior": "playback range clamp",
+          "conversion_id": "TC-09",
+          "fractional_time_behavior": "fraction discarded",
+          "negative_time_behavior": "seek/range controlled",
+          "operation": "floor elapsed time times fps and playback rate",
+          "owner": "Player",
+          "precision_risk": "skipped frames under load",
+          "rate_behavior": "playback-rate dependent",
+          "rounding_behavior": "floor",
+          "source_domain": "RAF_WALL_TIME",
           "source_refs": [
             "S-PLAYER"
           ],
-          "unit": "millisecond"
+          "target_domain": "FRAME_INDEX_INTEGER"
         },
         {
-          "conversion": "rounded to one-thirtieth-second cache bucket",
-          "name": "preview video source",
-          "rounding": "nearest bucket",
+          "clamping_behavior": "playback range",
+          "conversion_id": "TC-10",
+          "fractional_time_behavior": "seconds preserved",
+          "negative_time_behavior": "seek before zero controlled",
+          "operation": "map visual frame to context transport time",
+          "owner": "audio engine",
+          "precision_risk": "two-clock drift",
+          "rate_behavior": "playback-rate dependent",
+          "rounding_behavior": "implementation-specific",
+          "source_domain": "FRAME_INDEX_INTEGER",
+          "source_refs": [
+            "S-AUDIO",
+            "S-PLAYER"
+          ],
+          "target_domain": "AUDIO_CONTEXT_SECONDS"
+        },
+        {
+          "clamping_behavior": "output range",
+          "conversion_id": "TC-11",
+          "fractional_time_behavior": "timebase rational",
+          "negative_time_behavior": "not applicable",
+          "operation": "ordered output frame converted by encoder timebase",
+          "owner": "native encoder",
+          "precision_risk": "timestamp quantization",
+          "rate_behavior": "fps/timebase dependent",
+          "rounding_behavior": "encoder-defined",
+          "source_domain": "FRAME_INDEX_INTEGER",
+          "source_refs": [
+            "S-CLI"
+          ],
+          "target_domain": "ENCODED_TIMESTAMP"
+        },
+        {
+          "clamping_behavior": "source-dependent",
+          "conversion_id": "TC-12",
+          "fractional_time_behavior": "quantized",
+          "negative_time_behavior": "negative behavior unresolved",
+          "operation": "round to one-thirtieth-second preview cache bucket",
+          "owner": "video preview cache",
+          "precision_risk": "preview/export frame mismatch",
+          "rate_behavior": "independent of composition fps",
+          "rounding_behavior": "nearest 1/30",
+          "source_domain": "SOURCE_MEDIA_SECONDS",
           "source_refs": [
             "S-VIDEO"
           ],
-          "unit": "second"
+          "target_domain": "SOURCE_MEDIA_SECONDS"
         }
       ]
     }
   },
-  "generated_at": "2026-08-15T00:00:00Z",
+  "generated_at": "2026-08-16T00:00:00Z",
   "model_ref": "R0_02_RESEARCH_MODEL.json",
-  "schema_version": "r0.02.1"
+  "schema_version": "r0.02.2"
 }

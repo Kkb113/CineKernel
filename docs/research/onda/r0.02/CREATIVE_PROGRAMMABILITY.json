@@ -2,29 +2,128 @@
   "$schema": "../../../../schemas/research/r0.02/creative-programmability.schema.json",
   "data": {
     "creative_programmability": {
-      "limits": [
-        "high-level Cinema vocabulary is finite",
-        "semantic identities disappear early",
-        "no demonstrated general shader/material authoring surface",
-        "cross-object constraints and reusable semantic subgraphs are weak",
-        "preview fallback can hide unsupported output"
-      ],
-      "source_refs": [
-        "S-REACT-LOWER",
-        "S-CINEMA-COMPILER",
-        "S-SCENE",
-        "S-COMPONENTS"
-      ],
-      "strengths": [
-        "host-language procedural authoring",
-        "composable finite primitives",
-        "custom component registry",
-        "2D, selected 3D, effects, media and SVG paths"
-      ],
-      "verdict": "capable but uneven"
+      "overall_verdict": "MULTI_LAYER_PROGRAMMABILITY_WITH_FINITE_RENDERER_VOCABULARY",
+      "scoring_policy": "No numeric creativity score is assigned; each capability is an evidence-backed categorical finding.",
+      "surface_assessments": [
+        {
+          "black_box_risk": "MEDIUM",
+          "can_descend_to_primitives": true,
+          "custom_animation": false,
+          "custom_component_extension": true,
+          "custom_geometry": "Only composition of supported Scene geometry; arbitrary shader geometry is not established.",
+          "escape_hatch_evidence": "Host-language or direct primitive construction is evidenced.",
+          "general_primitive_access": true,
+          "inspectability": true,
+          "named_pattern_dependence": true,
+          "novel_scene_expressibility": true,
+          "post_generation_editability": true,
+          "procedural_logic": true,
+          "registry_dependence": true,
+          "source_mapping": false,
+          "source_refs": [
+            "S-CINEMA-COMPILER",
+            "S-REACT-LOWER",
+            "S-SCENE",
+            "S-COMPONENTS"
+          ],
+          "surface_id": "AS-CINEMA"
+        },
+        {
+          "black_box_risk": "MEDIUM",
+          "can_descend_to_primitives": false,
+          "custom_animation": false,
+          "custom_component_extension": true,
+          "custom_geometry": "Only composition of supported Scene geometry; arbitrary shader geometry is not established.",
+          "escape_hatch_evidence": "Host-language or direct primitive construction is evidenced.",
+          "general_primitive_access": true,
+          "inspectability": true,
+          "named_pattern_dependence": false,
+          "novel_scene_expressibility": true,
+          "post_generation_editability": true,
+          "procedural_logic": true,
+          "registry_dependence": true,
+          "source_mapping": false,
+          "source_refs": [
+            "S-CINEMA-COMPILER",
+            "S-REACT-LOWER",
+            "S-SCENE",
+            "S-COMPONENTS"
+          ],
+          "surface_id": "AS-REACT"
+        },
+        {
+          "black_box_risk": "MEDIUM",
+          "can_descend_to_primitives": false,
+          "custom_animation": false,
+          "custom_component_extension": true,
+          "custom_geometry": "Only composition of supported Scene geometry; arbitrary shader geometry is not established.",
+          "escape_hatch_evidence": "Host-language or direct primitive construction is evidenced.",
+          "general_primitive_access": true,
+          "inspectability": true,
+          "named_pattern_dependence": false,
+          "novel_scene_expressibility": true,
+          "post_generation_editability": true,
+          "procedural_logic": false,
+          "registry_dependence": false,
+          "source_mapping": false,
+          "source_refs": [
+            "S-CINEMA-COMPILER",
+            "S-REACT-LOWER",
+            "S-SCENE",
+            "S-COMPONENTS"
+          ],
+          "surface_id": "AS-JSON"
+        },
+        {
+          "black_box_risk": "MEDIUM",
+          "can_descend_to_primitives": false,
+          "custom_animation": false,
+          "custom_component_extension": true,
+          "custom_geometry": "Only composition of supported Scene geometry; arbitrary shader geometry is not established.",
+          "escape_hatch_evidence": "Host-language or direct primitive construction is evidenced.",
+          "general_primitive_access": true,
+          "inspectability": true,
+          "named_pattern_dependence": false,
+          "novel_scene_expressibility": true,
+          "post_generation_editability": true,
+          "procedural_logic": true,
+          "registry_dependence": true,
+          "source_mapping": false,
+          "source_refs": [
+            "S-CINEMA-COMPILER",
+            "S-REACT-LOWER",
+            "S-SCENE",
+            "S-COMPONENTS"
+          ],
+          "surface_id": "AS-RUST"
+        },
+        {
+          "black_box_risk": "MEDIUM",
+          "can_descend_to_primitives": false,
+          "custom_animation": false,
+          "custom_component_extension": true,
+          "custom_geometry": "Only composition of supported Scene geometry; arbitrary shader geometry is not established.",
+          "escape_hatch_evidence": "Host-language or direct primitive construction is evidenced.",
+          "general_primitive_access": false,
+          "inspectability": true,
+          "named_pattern_dependence": true,
+          "novel_scene_expressibility": true,
+          "post_generation_editability": true,
+          "procedural_logic": true,
+          "registry_dependence": true,
+          "source_mapping": true,
+          "source_refs": [
+            "S-CINEMA-COMPILER",
+            "S-REACT-LOWER",
+            "S-SCENE",
+            "S-COMPONENTS"
+          ],
+          "surface_id": "AS-COMPONENTS"
+        }
+      ]
     }
   },
-  "generated_at": "2026-08-15T00:00:00Z",
+  "generated_at": "2026-08-16T00:00:00Z",
   "model_ref": "R0_02_RESEARCH_MODEL.json",
-  "schema_version": "r0.02.1"
+  "schema_version": "r0.02.2"
 }

@@ -1,30 +1,16 @@
 # Risks and open questions
 
-The largest risks are premature commitment to a frame-materialized IR, implicit time conversion, identity loss, silent fallback, shared mutable caches, and overstating creative capability from a finite catalog. Performance thresholds, renderer capability contracts, version evolution, media clocks, advanced materials, and editability remain open.
+## Contradictions
 
-Repository verification also exposed that the frozen R0.01 integrity checker scans later schema namespaces; R0.02 therefore verifies R0.01 inside an exact-base worktree.
+- **CON-001:** Fresh React roots isolate host trees, but module-global active frame and depth-of-field state leave concurrent or nested reentrancy unresolved.
+- **CON-002:** Renderer sharing does not imply end-to-end preview/export parity because media scheduling and fallbacks differ.
+- **CON-003:** A universal Scene vocabulary is still finite and Canvas preview explicitly approximates only a subset.
 
-```mermaid
-flowchart TD
-  Materialization --> R003[R0.03]
-  Renderers --> R004[R0.04]
-  Versioning --> R005[R0.05]
-  MediaTime --> R006[R0.06]
-  Materials --> R007[R0.07]
-  Editability --> R008[R0.08]
-```
+## Open questions
 
-## Evidence
-
-- **C-001 — verified:** React authoring is programmatic, but its render boundary is a finite scene vocabulary. (confidence 0.99). Sources: S-REACT-HOST, S-REACT-LOWER, S-SCENE.
-- **C-002 — verified:** React component state is not retained between output frames because every frame uses a fresh root that is unmounted. (confidence 0.99). Sources: S-REACT-LOWER, S-REACT-TEST.
-- **C-003 — verified:** Cinema retains more editorial identity and intent than Scene, while its inspector is a parallel high-level analysis path. (confidence 0.98). Sources: S-CINEMA-TYPES, S-CINEMA-INSPECT, S-CINEMA-RESOLVE.
-- **C-004 — verified:** Cinema roles, choreography names, brand identity, and most string ids do not survive as first-class Scene fields. (confidence 0.96). Sources: S-CINEMA-COMPILER, S-CINEMA-TYPES, S-SCENE.
-- **C-005 — verified:** Direct Scene JSON and typed Rust construction converge at the same finite Scene contract. (confidence 0.99). Sources: S-SCENE, S-CLI, S-WASM.
-- **C-006 — verified:** Layout, SVG, image, video, and timeline behavior includes destructive or materializing prepasses rather than a single immutable IR pipeline. (confidence 0.97). Sources: S-LAYOUT, S-SVG, S-IMAGE, S-VIDEO, S-CLI.
-- **C-007 — verified:** GPU and CPU preview can share renderer semantics with native export, but browser media resolution and scheduling keep end-to-end parity conditional. (confidence 0.96). Sources: S-PLAYER, S-VIDEO, S-AUDIO, S-WASM, S-WASM-VELLO, S-CLI.
-- **C-008 — verified:** Canvas2D is an explicit approximation and not a parity path. (confidence 0.99). Sources: S-CANVAS, S-PLAYER.
-- **C-009 — verified:** Full React export materializes every evaluated frame before the native export call, creating duration-proportional scene memory and JSON I/O. (confidence 0.99). Sources: S-REACT-LOWER, S-NODE-EXPORT.
-- **C-010 — verified:** Global registries and caches require explicit isolation if authoring evaluation is parallelized or made multi-tenant. (confidence 0.94). Sources: S-REACT-STATE, S-REACT-WARM, S-PLAYER, S-VIDEO.
-- **C-011 — candidate:** A future CineKernel IR should preserve stable identity, semantic intent, time domains, diagnostics, and capability requirements until explicit lowering stages. (confidence 0.91). Sources: S-CINEMA-TYPES, S-CINEMA-RESOLVE, S-SCENE, E-MLIR, E-GSTREAMER.
-- **C-012 — verified:** React's render and commit model is analogous only at a high level; ONDA deliberately remounts per frame rather than preserving a committed application tree. (confidence 0.97). Sources: S-REACT-LOWER, E-REACT.
+- **Q-001:** What scene-size and duration thresholds make full frame materialization unacceptable on target machines?
+- **Q-002:** Which renderer capabilities are intentionally stable across CPU, Vello, and browser hosts?
+- **Q-003:** What serialization evolution policy is promised beyond current version handling?
+- **Q-004:** How should media clocks, frame rates, variable frame rate, and audio resampling compose?
+- **Q-005:** What general material, shader, constraint, and simulation model is required for the target creative ceiling?
+- **Q-006:** Which authoring semantics must remain editable after lowering and round-trip serialization?

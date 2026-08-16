@@ -3,13 +3,69 @@
   "additionalProperties": false,
   "properties": {
     "$schema": {
-      "pattern": "^\\.\\./\\.\\./\\.\\./\\.\\./schemas/research/r0\\.02/.+\\.schema\\.json$",
+      "minLength": 1,
       "type": "string"
     },
     "data": {
       "additionalProperties": false,
       "properties": {
         "preview_export_parity": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "certification_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "comparison_id": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "export_path": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "feature": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "known_difference": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "parity_class": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "preview_path": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "shared_authoring_evaluation": {
+                "type": "boolean"
+              },
+              "source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              }
+            },
+            "required": [
+              "certification_impact",
+              "comparison_id",
+              "export_path",
+              "feature",
+              "known_difference",
+              "parity_class",
+              "preview_path",
+              "shared_authoring_evaluation",
+              "source_refs"
+            ],
+            "type": "object"
+          },
           "minItems": 1,
           "type": "array"
         }
@@ -24,18 +80,20 @@
       "type": "string"
     },
     "model_ref": {
-      "const": "R0_02_RESEARCH_MODEL.json"
+      "minLength": 1,
+      "type": "string"
     },
     "schema_version": {
-      "const": "r0.02.1"
+      "minLength": 1,
+      "type": "string"
     }
   },
   "required": [
     "$schema",
-    "schema_version",
-    "model_ref",
+    "data",
     "generated_at",
-    "data"
+    "model_ref",
+    "schema_version"
   ],
   "type": "object"
 }

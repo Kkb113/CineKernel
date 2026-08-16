@@ -1,155 +1,153 @@
 # R0.02 acceptance report
 
-## 1. Status
+## 1. Executive status
 
-PASS. Local source archaeology, deterministic verification, the dedicated R0.02 workflow, and repository CI are complete across Windows, Ubuntu, and macOS.
+CONDITIONAL PASS pending a final remediation-head remote reproduction and updated attestation. All local remediation gates pass before publication.
 
-## 2. Scope
+## 2. CineKernel base revision
 
-Static, clean-room architecture mapping only. No ONDA execution, benchmark, product implementation, or IR selection occurred.
+Base `974d93ef224b75383499cdb2b70cc086a0dd6f40`; accepted base tree `80ebf050ebc298b7647a403159ab59f94811468f`.
 
-## 3. Locked base
+## 3. ONDA research identity
 
-CineKernel base 974d93ef224b75383499cdb2b70cc086a0dd6f40 and ONDA pin/tree match the R0.01 lock.
+The only authority is the frozen R0.01 `UPSTREAM_LOCK.json`: repository `https://github.com/onda-engine/onda-engine.git`, pin `3ddf1780c9799bf038ac90cec7d8cadb61acafbe`, tree `639df83ebf0262afccd6d021bf6d16ef19777d85`.
 
-## 4. Method
+## 4. Branch and commits
 
-Implementation, tests, manifests, repository documentation, official external sources, comments, then explicit inference.
+Branch `research/r0.02-onda-scene-compiler-archaeology`; PR #13 remains draft and unmerged. Existing commits are recorded in the reviewer packet; the final attestation distinguishes the evidence commit from any later documentation-only commit.
 
-## 5. Source coverage
+## 5. Clean-room confirmation
 
-Mandatory React, Cinema, Scene, animation, prepass, player, WASM, CLI/export, manifest, test, and repository boundaries are indexed.
+ONDA was inspected statically and never built, executed, tested, rendered, or benchmarked. Exact-file, normalized multiline-fragment, dependency-alias, Git-dependency, absolute-path, tracked-upstream, and frozen-path guards pass.
 
-## 6. Hypotheses
+## 6. Source coverage
 
-All seven registered hypotheses have a verified or rejected verdict with sources.
+50 pinned ONDA files are fully verified and 3 official external references are indexed separately. All mandatory paths are present.
 
-## 7. Authoring surfaces
+## 7. Authoring surfaces discovered
 
-Five distinct surfaces were mapped with ownership, identity, time, validation, extension, creativity, and output contracts.
+Five surfaces: Cinema, React, direct Scene JSON, typed Rust Scene/Timeline, and the component registry. The inspector is a semantic analysis route, not an authoring surface.
 
-## 8. React flow
+## 8. Complete architecture graph
 
-A new reconciler root is mounted, committed, lowered, and unmounted for every requested frame.
+15 nodes and 18 edges use controlled vocabularies and record authority, mutability, time, identity, data form, validation, semantic disposition, errors, and immutable source references.
 
-## 9. Cinema flow
+## 9. Cinema/agent authoring flow
 
-Cinema validates and resolves high-level editorial intent into React component structure.
+Cinema validates and normalizes timing and semantic payload fields, invokes registry components and named patterns, then emits React. High-level names and roles are mostly consumed before Scene.
 
-## 10. Direct JSON
+## 10. React authoring flow
 
-Scene JSON bypasses high-level authoring semantics and enters the typed renderer contract.
+Fresh roots and HostNode trees are created per requested frame, lowered, and unmounted. Module-global active frame/DOF state leaves concurrent or nested reentrancy unresolved.
 
-## 11. Rust flow
+## 11. Direct JSON flow
 
-Typed Scene and optional second-based Timeline evaluation converge on Scene.
+Direct JSON enters at Scene deserialization/version handling and therefore bypasses Cinema and React contracts.
 
-## 12. Scene graph
+## 12. Rust Scene and Timeline flow
 
-Composition plus a finite node tree is the universal renderer-facing language.
+Typed Rust construction is explicit and close to the renderer contract. Timeline evaluation clones and mutates a Scene using numeric NodeId targets.
 
-## 13. State
+## 13. Scene graph authority
 
-Evaluation, instance, module, process, and engine-shared mutable state were distinguished.
+Scene is authoritative at the renderer boundary, not at the high-level authoring boundary.
 
-## 14. Mutability
+## 14. State ownership
 
-Reconciliation and prepasses mutate or clone-and-rewrite; shared engines and media seeks require serialization.
+12 state records identify authority, scope, mutability, sharing, persistence, provenance, and reentrancy.
 
-## 15. Time
+## 15. Mutability and reentrancy
 
-Composition, local, seconds, wall clock, audio, and video-bucket domains were mapped.
+Fresh React roots isolate host trees; global frame/DOF state, shared GPU coordination, caches, and external media clocks require explicit serialization or further proof.
 
-## 16. Identity
+## 16. Time ownership
 
-High-level string identities and payload paths do not form a complete source map into Scene nodes and pixels.
+12 temporal conversions record source/target domains, operation, rounding, clamping, negative/fractional behavior, rate ownership, and precision risk.
 
-## 17. Semantic loss
+## 17. Identity and source mapping
 
-Named intent, layout intent, SVG structure, and asset representation are consumed or materialized.
+10 identity transitions distinguish preservation, remapping, lowering-only use, React-key-only use, dropping, and non-representability.
 
-## 18. Validation
+## 18. Lowering and semantic preservation
 
-Hard errors, warnings, placeholders, and omissions exist at different boundaries.
+31 semantic rows record disposition, stage, reversibility, and editing/diagnostic/repair/incremental impacts.
 
-## 19. Fallbacks
+## 19. Information loss
 
-Preview fallback improves availability but can reduce fidelity without a typed end-to-end diagnostic.
+Roles, labels, registry names, React keys, choreography names, transition names, brand-token identity, diagnostics, fidelity class, and provenance are consumed or dropped before pixels.
 
-## 20. Parity
+## 20. Validation and error behavior
 
-Core renderer parity is strong only when equivalent prepasses and media are used; end-to-end parity is conditional.
+21 failure/fallback records cover every mandatory behavior and explicitly state diagnosis, semantic/visual/timing/determinism impact, parity difference, and repairability.
 
-## 21. Serialization
+## 21. Fallbacks and approximations
 
-JSON version one is observed; a formal evolution and unknown-field contract remains open.
+Fallbacks include warnings, omission, placeholders, default substitution, asynchronous repaint, GPU-to-CPU demotion, and Canvas approximation; quality reduction is recorded explicitly.
 
-## 22. Prepasses
+## 22. Preview/export parity
 
-Source materialization, timeline selection, SVG expansion, image decode, video decode, and layout have distinct ownership.
+7 preview/export rows distinguish shared evaluation from browser/native media, scheduling, renderer, and fallback differences.
 
-## 23. Materialization
+## 23. Serialization and versioning
 
-Whole-video Scene arrays and JSON are structurally duration-proportional; no performance claim is made.
+Scene JSON is versioned, but forward compatibility and semantic migration guarantees remain unresolved and deferred.
 
-## 24. Scalability
+## 24. Prepasses
 
-Bounded streaming is a candidate requirement, not an implemented result.
+Layout, image, SVG, timeline, and media resolution materialize or rewrite Scene data before rendering.
 
-## 25. Creative programmability
+## 25. Materialization and scalability hypotheses
 
-Procedural authoring is broad; renderer vocabulary and advanced material semantics remain bounded.
+React export builds a complete Scene array and temporary JSON; motion blur multiplies evaluations. This is a scaling hypothesis only—R0.02 performed no benchmark.
 
-## 26. Laptop litmus
+## 26. Creative-programmability assessment
 
-Exploded layers are plausible with groups, transforms, assets, and depth, but semantic assembly constraints are weak.
+Five surfaces are assessed categorically across primitive access, procedural logic, extension, registry/pattern dependence, descent to primitives, inspectability, editability, source mapping, novel-scene expression, and black-box risk. No numeric score is used.
 
-## 27. Other litmus
+## 27. Laptop exploded-layers litmus
 
-Glass and chrome/liquid scenes permit stylized approximations; physical materials and simulation are not established.
+The laptop case separately covers hierarchy, segmentation, exploded-view planning, collision avoidance, geometry, materials, emissive lighting, camera, particles, timing, sound, semantic grouping, inspectability, editability, and asset truthfulness.
 
-## 28. React comparison
+## 28. Additional novel-scene litmus results
 
-The fresh-per-frame root differs materially from normal retained React identity.
+Glass-city and liquid-spacecraft cases are compared across all five surfaces. Both are partly composable but general material, lighting, and simulation capabilities are not established.
 
-## 29. MLIR comparison
+## 29. Independent primary-source comparison
 
-Explicit progressive IR levels would preserve intent and make semantic loss reviewable.
+Official React, MLIR, and GStreamer sources provide independent comparisons for render/commit purity, progressive lowering, and clock/pipeline ownership.
 
-## 30. GStreamer comparison
+## 30. CineKernel candidate requirements
 
-Explicit clocks, flow, backpressure, and diagnostics are useful reference properties.
+8 requirement candidates use CK-R002 IDs, cite ONDA and independent sources, identify affected programs and impacts, require later research, prohibit reuse, and remain CANDIDATE_ONLY.
 
-## 31. Requirements
+## 31. Contradictions found
 
-Eight abstract, nonfinal candidate requirements are registered.
+3 explicit contradictions remain recorded rather than smoothed over.
 
-## 32. Clean room
+## 32. Unresolved questions
 
-Only facts, prose, identifiers needed for citation, and abstract diagrams are stored; no ONDA source is copied or translated.
+6 unresolved questions remain open.
 
-## 33. Independence
+## 33. Deferred topics
 
-Permanent dependencies on ONDA, Remotion, and HyperFrames remain zero.
+6 topics are routed to R0.03–R0.08.
 
-## 34. Tests
+## 34. Automated tests
 
-The standalone verifier, source hashes, references, outputs, frozen-path and dependency guards, integrity, determinism, schema mutation checks, root format/check/clippy, and JavaScript typecheck/tests pass.
+63 fixture-driven unit and mutation tests pass, covering lock/checkout failures, provenance, strict nested schemas, graph integrity, semantic/fallback/requirement completeness, creative-taxonomy and novel-scene mutations, clean-room aliases and fragments, absolute paths, sorting, and two-run determinism.
 
-A local Windows timing assertion was slow, but the complete root Rust suite passed on all three hosted CI systems. The dedicated R0.02 suite also passed on all three systems.
+## 35. Deterministic generation
 
-## 35. Remote reproduction
+The report command generates 16 machine projections, 20 human reports, and 17 schemas: 53 generated files. The canonical model is an input, not a generated output.
 
-PASS at commit c8d16e3d7d8029a3e2fe2e2e2019f48996533758. Dedicated R0.02 run 31898496016 and repository CI run 31898496054 both completed successfully on Windows, Ubuntu, and macOS. The remote attestation records the immutable run identifiers.
+## 36. Remote reproduction
 
-## 36. Immutability
+Pending remediation-head Windows, Ubuntu, and macOS reproduction. The attestation is updated only after those runs complete and a nonempty raw-evidence artifact is published.
 
-Phase 0 and R0.01 frozen artifacts are unchanged.
+## 37. Phase 0 and R0.01 immutability
 
-## 37. Contradictions and questions
+No Phase 0 or R0.01 frozen file is modified. The R0.01 verifier is executed from the exact accepted base inside each R0.02 OS job.
 
-Claims of universal preview parity conflict with explicit Canvas and media fallback behavior. The frozen R0.01 integrity checker also scans future schema namespaces, so it must run in an exact-base worktree once R0.02 schemas exist. Open questions are routed to R0.03 through R0.08.
+## 38. Recommendation for R0.03
 
-## 38. Recommendation
-
-Proceed to R0.03 research. Do not select or implement a CineKernel IR from R0.02 alone, and keep this review PR draft and unmerged until reviewer sign-off.
+Do not start R0.03 until remediation-head three-OS evidence succeeds and the reviewer accepts promotion from CONDITIONAL PASS to PASS.

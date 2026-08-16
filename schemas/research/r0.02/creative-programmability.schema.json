@@ -3,14 +3,114 @@
   "additionalProperties": false,
   "properties": {
     "$schema": {
-      "pattern": "^\\.\\./\\.\\./\\.\\./\\.\\./schemas/research/r0\\.02/.+\\.schema\\.json$",
+      "minLength": 1,
       "type": "string"
     },
     "data": {
       "additionalProperties": false,
       "properties": {
         "creative_programmability": {
-          "minItems": 0,
+          "additionalProperties": false,
+          "properties": {
+            "overall_verdict": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "scoring_policy": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "surface_assessments": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "black_box_risk": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "can_descend_to_primitives": {
+                    "type": "boolean"
+                  },
+                  "custom_animation": {
+                    "type": "boolean"
+                  },
+                  "custom_component_extension": {
+                    "type": "boolean"
+                  },
+                  "custom_geometry": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "escape_hatch_evidence": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "general_primitive_access": {
+                    "type": "boolean"
+                  },
+                  "inspectability": {
+                    "type": "boolean"
+                  },
+                  "named_pattern_dependence": {
+                    "type": "boolean"
+                  },
+                  "novel_scene_expressibility": {
+                    "type": "boolean"
+                  },
+                  "post_generation_editability": {
+                    "type": "boolean"
+                  },
+                  "procedural_logic": {
+                    "type": "boolean"
+                  },
+                  "registry_dependence": {
+                    "type": "boolean"
+                  },
+                  "source_mapping": {
+                    "type": "boolean"
+                  },
+                  "source_refs": {
+                    "items": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "surface_id": {
+                    "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "black_box_risk",
+                  "can_descend_to_primitives",
+                  "custom_animation",
+                  "custom_component_extension",
+                  "custom_geometry",
+                  "escape_hatch_evidence",
+                  "general_primitive_access",
+                  "inspectability",
+                  "named_pattern_dependence",
+                  "novel_scene_expressibility",
+                  "post_generation_editability",
+                  "procedural_logic",
+                  "registry_dependence",
+                  "source_mapping",
+                  "source_refs",
+                  "surface_id"
+                ],
+                "type": "object"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "overall_verdict",
+            "scoring_policy",
+            "surface_assessments"
+          ],
           "type": "object"
         }
       },
@@ -24,18 +124,20 @@
       "type": "string"
     },
     "model_ref": {
-      "const": "R0_02_RESEARCH_MODEL.json"
+      "minLength": 1,
+      "type": "string"
     },
     "schema_version": {
-      "const": "r0.02.1"
+      "minLength": 1,
+      "type": "string"
     }
   },
   "required": [
     "$schema",
-    "schema_version",
-    "model_ref",
+    "data",
     "generated_at",
-    "data"
+    "model_ref",
+    "schema_version"
   ],
   "type": "object"
 }

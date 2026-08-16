@@ -3,90 +3,252 @@
   "data": {
     "authoring_surfaces": [
       {
-        "creativity": "open-programmable",
-        "extension": "arbitrary host-language components lowering to finite primitives",
-        "id": "AS-REACT",
-        "identity": "React keys during reconciliation; optional numeric Scene ids only when authored",
-        "input_shape": "React element tree plus frame context",
-        "name": "React composition",
-        "output": "one Scene per evaluation",
-        "owner": "JavaScript host program",
-        "source_refs": [
-          "S-REACT-HOST",
-          "S-REACT-LOWER",
-          "S-REACT-TEST"
+        "authoritative_state": "serialized payload",
+        "confidence": "HIGH",
+        "creative_programmability_class": [
+          "DECLARATIVE_SCENE_PROGRAM",
+          "EXTENSIBLE_COMPONENT_SYSTEM",
+          "FINITE_PATTERN_CATALOG"
         ],
-        "time": "integer or fractional composition frame",
-        "validation": "runtime prop checks and host-node conversion"
-      },
-      {
-        "creativity": "schema-guided-extensible",
-        "extension": "custom registry plus finite built-in choreography and transition vocabulary",
-        "id": "AS-CINEMA",
-        "identity": "scene, track, and entry strings plus payload paths",
-        "input_shape": "scenes, tracks, entries, roles, registry component names, choreography, transitions, brand",
+        "entry_points": [
+          "packages/cinema/src/index.tsx"
+        ],
+        "error_model": "validation errors, warnings, and placeholders",
+        "export_path": "React frame array then native export",
+        "extension_mechanism": "custom registry and finite named patterns",
+        "fallback_model": "named-pattern omission or placeholder",
+        "identity_model": "string scene, track, and entry identity",
+        "input_representation": "typed high-level payload",
+        "intended_user": "agent and structured authoring tools",
         "name": "Cinema payload",
-        "output": "React composition",
-        "owner": "serialized high-level document",
+        "normalization_entry_points": [
+          "timeToSeconds",
+          "resolveScene"
+        ],
+        "output_representation": "React element program",
+        "preview_path": "Cinema inspector and React preview",
+        "renderer_dependency": "React and Scene vocabulary",
+        "semantic_information_lost": [
+          "named choreography identity",
+          "brand-token identity"
+        ],
+        "semantic_information_preserved": [
+          "roles",
+          "labels",
+          "timing intent"
+        ],
+        "serialization_boundary": "JSON payload",
         "source_refs": [
           "S-CINEMA-TYPES",
           "S-CINEMA-TIME",
-          "S-CINEMA-COMPILER"
+          "S-CINEMA-COMPILER",
+          "S-MANDATORY-PACKAGES-CINEMA-SRC-PROPS-TS"
         ],
-        "time": "TimeSpec normalized to rounded frames",
-        "validation": "pre-lowering errors and warnings"
+        "state_mutability": "IMMUTABLE_DATA",
+        "status": "VERIFIED_AT_PIN",
+        "surface_id": "AS-CINEMA",
+        "time_model": "TimeSpec converted to frames",
+        "validation_entry_points": [
+          "validatePayload"
+        ]
       },
       {
-        "creativity": "low-level-open-composition",
-        "extension": "finite scene schema",
-        "id": "AS-JSON",
-        "identity": "optional numeric NodeId",
-        "input_shape": "composition plus finite NodeKind tree",
+        "authoritative_state": "host-language program",
+        "confidence": "HIGH",
+        "creative_programmability_class": [
+          "PROCEDURAL_HOST_LANGUAGE",
+          "GENERAL_PRIMITIVE_SYSTEM",
+          "EXTERNAL_CODE_ESCAPE_HATCH"
+        ],
+        "entry_points": [
+          "packages/react/src/index.ts",
+          "renderFrame"
+        ],
+        "error_model": "throws on unsupported host structure and conversion errors",
+        "export_path": "renderFrames materializes Scene snapshots",
+        "extension_mechanism": "arbitrary host-language components lowering to supported primitives",
+        "fallback_model": "host-language code can substitute supported primitives",
+        "identity_model": "React key during one reconciliation; optional numeric Scene NodeId",
+        "input_representation": "React element tree plus frame context",
+        "intended_user": "JavaScript and TypeScript authors",
+        "name": "React composition",
+        "normalization_entry_points": [
+          "reconcile",
+          "toNode"
+        ],
+        "output_representation": "one Scene snapshot",
+        "preview_path": "player requests evaluated frames",
+        "renderer_dependency": "finite host and Scene vocabulary",
+        "semantic_information_lost": [
+          "component identity",
+          "React key",
+          "hook history"
+        ],
+        "semantic_information_preserved": [
+          "computed geometry",
+          "paint",
+          "media references"
+        ],
+        "serialization_boundary": "temporary frames JSON during export",
+        "source_refs": [
+          "S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS",
+          "S-REACT-HOST",
+          "S-REACT-LOWER"
+        ],
+        "state_mutability": "PER_FRAME_REBUILT",
+        "status": "VERIFIED_AT_PIN",
+        "surface_id": "AS-REACT",
+        "time_model": "integer or fractional output frame",
+        "validation_entry_points": [
+          "host element and prop conversion"
+        ]
+      },
+      {
+        "authoritative_state": "serialized Scene document",
+        "confidence": "HIGH",
+        "creative_programmability_class": [
+          "DECLARATIVE_SCENE_PROGRAM",
+          "GENERAL_PRIMITIVE_SYSTEM"
+        ],
+        "entry_points": [
+          "Scene serde boundary",
+          "CLI JSON ingestion",
+          "WASM JSON ingestion"
+        ],
+        "error_model": "deserialization and prepass failures",
+        "export_path": "CLI ingestion",
+        "extension_mechanism": "compose supported NodeKind values",
+        "fallback_model": "renderer or preview fallback after parse",
+        "identity_model": "optional numeric NodeId",
+        "input_representation": "serialized composition and finite NodeKind tree",
+        "intended_user": "tooling and low-level integrators",
         "name": "Direct Scene JSON",
-        "output": "renderer input",
-        "owner": "document producer",
+        "normalization_entry_points": [
+          "layout, image, SVG, and timeline prepasses"
+        ],
+        "output_representation": "prepass-ready Scene",
+        "preview_path": "WASM/player ingestion",
+        "renderer_dependency": "Scene and renderer capability set",
+        "semantic_information_lost": [
+          "high-level authoring intent",
+          "React component identity"
+        ],
+        "semantic_information_preserved": [
+          "renderer-facing values",
+          "numeric IDs"
+        ],
+        "serialization_boundary": "JSON",
         "source_refs": [
           "S-SCENE",
+          "S-WASM",
           "S-CLI"
         ],
-        "time": "composition frames and media seconds",
-        "validation": "serde parse plus prepass errors"
+        "state_mutability": "IMMUTABLE_DATA",
+        "status": "VERIFIED_AT_PIN",
+        "surface_id": "AS-JSON",
+        "time_model": "composition frames plus media seconds",
+        "validation_entry_points": [
+          "JSON deserialization",
+          "version interpretation"
+        ]
       },
       {
-        "creativity": "low-level-open-composition",
-        "extension": "Rust construction within finite enums",
-        "id": "AS-RUST",
-        "identity": "optional NodeId targeted by tracks",
-        "input_shape": "typed Scene plus optional Timeline and audio tracks",
-        "name": "Rust Scene and AnimatedScene",
-        "output": "evaluated Scene",
-        "owner": "Rust caller",
+        "authoritative_state": "typed Rust values",
+        "confidence": "HIGH",
+        "creative_programmability_class": [
+          "PROCEDURAL_HOST_LANGUAGE",
+          "DECLARATIVE_SCENE_PROGRAM"
+        ],
+        "entry_points": [
+          "Scene",
+          "Timeline",
+          "AnimatedScene"
+        ],
+        "error_model": "typed construction, targeting, and runtime errors",
+        "export_path": "native renderer",
+        "extension_mechanism": "construct supported enums and custom host logic",
+        "fallback_model": "unsupported renderer features may demote",
+        "identity_model": "numeric NodeId targets",
+        "input_representation": "typed Scene with optional Timeline",
+        "intended_user": "Rust integrators",
+        "name": "Rust Scene and Timeline",
+        "normalization_entry_points": [
+          "timeline evaluation and renderer prepasses"
+        ],
+        "output_representation": "evaluated Scene",
+        "preview_path": "WASM/native adapters",
+        "renderer_dependency": "Scene and Timeline type vocabulary",
+        "semantic_information_lost": [
+          "external authoring provenance unless separately retained"
+        ],
+        "semantic_information_preserved": [
+          "numeric identity",
+          "keyframe data"
+        ],
+        "serialization_boundary": "optional JSON",
         "source_refs": [
           "S-SCENE",
           "S-ANIMATION"
         ],
-        "time": "keyframes in seconds evaluated by frame divided by fps",
-        "validation": "type system plus serde/runtime behavior"
+        "state_mutability": "CLONED_AND_MUTATED",
+        "status": "VERIFIED_AT_PIN",
+        "surface_id": "AS-RUST",
+        "time_model": "frame divided by fps to timeline seconds",
+        "validation_entry_points": [
+          "Rust type system",
+          "serde when serialized"
+        ]
       },
       {
-        "creativity": "finite-catalog-with-code-escape",
-        "extension": "new package code or caller registry",
-        "id": "AS-COMPONENTS",
-        "identity": "component name before expansion",
-        "input_shape": "named component plus schema-described props",
-        "name": "Component catalog",
-        "output": "React primitive subtree",
-        "owner": "package registry",
-        "source_refs": [
-          "S-COMPONENTS",
-          "S-CINEMA-COMPILER"
+        "authoritative_state": "registry definition",
+        "confidence": "HIGH",
+        "creative_programmability_class": [
+          "EXTENSIBLE_COMPONENT_SYSTEM",
+          "FINITE_REGISTRY",
+          "EXTERNAL_CODE_ESCAPE_HATCH"
         ],
-        "time": "component-defined frame calculations",
-        "validation": "manifest schema and component logic"
+        "entry_points": [
+          "packages/components/src/index.ts",
+          "component manifest",
+          "Cinema registry"
+        ],
+        "error_model": "unknown component diagnostics",
+        "export_path": "React export",
+        "extension_mechanism": "package code or caller-supplied registry",
+        "fallback_model": "placeholder or omission depending on caller",
+        "identity_model": "component name before expansion",
+        "input_representation": "named component and schema-described properties",
+        "intended_user": "authors selecting or extending components",
+        "name": "Component package and registry",
+        "normalization_entry_points": [
+          "component invocation to React subtree"
+        ],
+        "output_representation": "React primitive subtree",
+        "preview_path": "React preview",
+        "renderer_dependency": "React and Scene primitives",
+        "semantic_information_lost": [
+          "registry identity after expansion"
+        ],
+        "semantic_information_preserved": [
+          "component property values"
+        ],
+        "serialization_boundary": "package exports and manifest",
+        "source_refs": [
+          "S-MANDATORY-PACKAGES-COMPONENTS-PACKAGE-JSON",
+          "S-MANDATORY-PACKAGES-COMPONENTS-SRC-INDEX-TS",
+          "S-COMPONENTS"
+        ],
+        "state_mutability": "IMMUTABLE_DATA",
+        "status": "VERIFIED_AT_PIN",
+        "surface_id": "AS-COMPONENTS",
+        "time_model": "component-defined frame computation",
+        "validation_entry_points": [
+          "manifest and component property validation"
+        ]
       }
     ]
   },
-  "generated_at": "2026-08-15T00:00:00Z",
+  "generated_at": "2026-08-16T00:00:00Z",
   "model_ref": "R0_02_RESEARCH_MODEL.json",
-  "schema_version": "r0.02.1"
+  "schema_version": "r0.02.2"
 }

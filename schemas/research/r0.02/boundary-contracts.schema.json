@@ -3,19 +3,71 @@
   "additionalProperties": false,
   "properties": {
     "$schema": {
-      "pattern": "^\\.\\./\\.\\./\\.\\./\\.\\./schemas/research/r0\\.02/.+\\.schema\\.json$",
+      "minLength": 1,
       "type": "string"
     },
     "data": {
       "additionalProperties": false,
       "properties": {
-        "claims": {
+        "boundary_contracts": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "boundary_id": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "consumer": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "data_form": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "error_behavior": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "producer": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "semantic_disposition": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "validation": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "boundary_id",
+              "consumer",
+              "data_form",
+              "error_behavior",
+              "producer",
+              "semantic_disposition",
+              "source_refs",
+              "validation"
+            ],
+            "type": "object"
+          },
           "minItems": 1,
           "type": "array"
         }
       },
       "required": [
-        "claims"
+        "boundary_contracts"
       ],
       "type": "object"
     },
@@ -24,18 +76,20 @@
       "type": "string"
     },
     "model_ref": {
-      "const": "R0_02_RESEARCH_MODEL.json"
+      "minLength": 1,
+      "type": "string"
     },
     "schema_version": {
-      "const": "r0.02.1"
+      "minLength": 1,
+      "type": "string"
     }
   },
   "required": [
     "$schema",
-    "schema_version",
-    "model_ref",
+    "data",
     "generated_at",
-    "data"
+    "model_ref",
+    "schema_version"
   ],
   "type": "object"
 }
