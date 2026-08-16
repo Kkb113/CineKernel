@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "sources": {
+          "items": {
+            "oneOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "classification": {
+                    "enum": [
+                      "UPSTREAM_SOURCE",
+                      "UPSTREAM_TEST",
+                      "UPSTREAM_MANIFEST",
+                      "UPSTREAM_DOCUMENTATION"
+                    ]
+                  },
+                  "end_line": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "facts_supported": {
+                    "items": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "file_sha256": {
+                    "pattern": "^[0-9a-f]{64}$",
+                    "type": "string"
+                  },
+                  "git_blob": {
+                    "pattern": "^[0-9a-f]{40,64}$",
+                    "type": "string"
+                  },
+                  "path": {
+                    "minLength": 1,
+                    "not": {
+                      "pattern": "(?:^|/)(?:main|master)(?:/|$)"
+                    },
+                    "type": "string"
+                  },
+                  "pinned_commit": {
+                    "const": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe"
+                  },
+                  "pinned_tree": {
+                    "const": "639df83ebf0262afccd6d021bf6d16ef19777d85"
+                  },
+                  "repository": {
+                    "const": "https://github.com/onda-engine/onda-engine.git"
+                  },
+                  "source_id": {
+                    "pattern": "^S-[A-Z0-9-]+$",
+                    "type": "string"
+                  },
+                  "start_line": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "symbol_or_section": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "source_id",
+                  "repository",
+                  "pinned_commit",
+                  "pinned_tree",
+                  "path",
+                  "git_blob",
+                  "symbol_or_section",
+                  "start_line",
+                  "end_line",
+                  "file_sha256",
+                  "classification",
+                  "facts_supported"
+                ],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "accessed_at_utc": {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "classification": {
+                    "enum": [
+                      "PRIMARY_STANDARD",
+                      "PRIMARY_IMPLEMENTATION_DOC"
+                    ]
+                  },
+                  "document_title": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "document_url": {
+                    "format": "uri",
+                    "pattern": "^https://",
+                    "type": "string"
+                  },
+                  "facts_supported": {
+                    "items": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "publisher": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "section": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "source_id": {
+                    "pattern": "^E-[A-Z0-9-]+$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "source_id",
+                  "classification",
+                  "publisher",
+                  "document_title",
+                  "document_url",
+                  "accessed_at_utc",
+                  "section",
+                  "facts_supported"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          "minItems": 50,
+          "type": "array"
+        }
+      },
+      "required": [
+        "sources"
+      ],
+      "type": "object"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "model_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema",
+    "data",
+    "generated_at",
+    "model_ref",
+    "schema_version"
+  ],
+  "type": "object"
+}

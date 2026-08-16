@@ -1,0 +1,347 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/candidate-requirements.schema.json",
+  "data": {
+    "candidate_requirements": [
+      {
+        "abstract_requirement": "Preserve stable source identity and source-map chains across lowering stages.",
+        "affected_cinekernel_programs": [
+          "P06",
+          "P07",
+          "P08",
+          "P09",
+          "P10",
+          "P14",
+          "P23",
+          "P25"
+        ],
+        "creative_programming_impact": "Preserves semantic targets for open-ended generation and repair.",
+        "independent_primary_source_refs": [
+          "E-MLIR"
+        ],
+        "onda_observation_refs": [
+          "C-003",
+          "C-004",
+          "C-011"
+        ],
+        "onda_source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-RESOLVE",
+          "S-CINEMA-COMPILER",
+          "S-SCENE"
+        ],
+        "performance_impact": "Adds metadata and lookup cost that R0.03 and R0.07 must measure.",
+        "problem_addressed": "Early identity loss weakens inspection and repair.",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+        "quality_impact": "Enables precise edits without reconstructing flattened authoring intent.",
+        "required_follow_up_research": [
+          "R0.03",
+          "R0.05",
+          "R0.07",
+          "R0.08"
+        ],
+        "requirement_id": "CK-R002-REQ-001",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "Lets agents and reviewers trace rendered results to stable authored entities."
+      },
+      {
+        "abstract_requirement": "Represent time domains and conversions explicitly.",
+        "affected_cinekernel_programs": [
+          "P01",
+          "P02",
+          "P03",
+          "P07",
+          "P08",
+          "P14",
+          "P18",
+          "P19"
+        ],
+        "creative_programming_impact": "Gives procedural animation a deterministic temporal contract.",
+        "independent_primary_source_refs": [
+          "E-GSTREAMER"
+        ],
+        "onda_observation_refs": [
+          "C-007",
+          "C-010",
+          "C-011"
+        ],
+        "onda_source_refs": [
+          "S-CINEMA-TIME",
+          "S-ANIMATION",
+          "S-PLAYER",
+          "S-VIDEO",
+          "S-AUDIO",
+          "S-CLI"
+        ],
+        "performance_impact": "Allows conversion and synchronization overhead to be measured explicitly.",
+        "problem_addressed": "Fragmented clocks, rounding, and sampling obscure determinism.",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+        "quality_impact": "Prevents timing drift across authoring, preview, media, and export.",
+        "required_follow_up_research": [
+          "R0.03",
+          "R0.06",
+          "R0.07"
+        ],
+        "requirement_id": "CK-R002-REQ-002",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "Makes rounding, rate ownership, and clock conversion auditable."
+      },
+      {
+        "abstract_requirement": "Separate semantic authoring IR from renderer IR through explicit lowering contracts.",
+        "affected_cinekernel_programs": [
+          "P05",
+          "P06",
+          "P07",
+          "P08",
+          "P09",
+          "P10",
+          "P14",
+          "P23",
+          "P25"
+        ],
+        "creative_programming_impact": "Supports novel high-level constructs without forcing them into a template catalog.",
+        "independent_primary_source_refs": [
+          "E-MLIR"
+        ],
+        "onda_observation_refs": [
+          "C-003",
+          "C-004",
+          "C-005",
+          "C-011"
+        ],
+        "onda_source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER",
+          "S-SCENE"
+        ],
+        "performance_impact": "Permits renderer IR optimization without silently changing authoring meaning.",
+        "problem_addressed": "High-level intent is consumed before rendering.",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+        "quality_impact": "Keeps authoring semantics available while renderer data stays constrained.",
+        "required_follow_up_research": [
+          "R0.03",
+          "R0.04",
+          "R0.05",
+          "R0.08"
+        ],
+        "requirement_id": "CK-R002-REQ-003",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "Makes each semantic-loss boundary explicit and reviewable."
+      },
+      {
+        "abstract_requirement": "Make capability fallback typed, diagnosed, and quality-classified.",
+        "affected_cinekernel_programs": [
+          "P05",
+          "P08",
+          "P10",
+          "P14",
+          "P20",
+          "P21",
+          "P23",
+          "P24"
+        ],
+        "creative_programming_impact": "Lets authors deliberately choose approximations without mistaking them for equivalence.",
+        "independent_primary_source_refs": [
+          "E-GSTREAMER"
+        ],
+        "onda_observation_refs": [
+          "C-007",
+          "C-008"
+        ],
+        "onda_source_refs": [
+          "S-PLAYER",
+          "S-VIDEO",
+          "S-AUDIO",
+          "S-WASM",
+          "S-WASM-VELLO",
+          "S-CANVAS",
+          "S-CLI"
+        ],
+        "performance_impact": "Supports capability-aware planning instead of repeated failing work.",
+        "problem_addressed": "Automatic fallback can alter visible semantics.",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+        "quality_impact": "Prevents silent quality loss when a backend or media capability is unavailable.",
+        "required_follow_up_research": [
+          "R0.03",
+          "R0.04",
+          "R0.06",
+          "R0.07"
+        ],
+        "requirement_id": "CK-R002-REQ-004",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "Makes every demotion visible to users, agents, and certification logic."
+      },
+      {
+        "abstract_requirement": "Support bounded streaming frame generation.",
+        "affected_cinekernel_programs": [
+          "P08",
+          "P14",
+          "P18",
+          "P19",
+          "P20",
+          "P26"
+        ],
+        "creative_programming_impact": "Allows long procedural works without requiring whole-program frame materialization.",
+        "independent_primary_source_refs": [
+          "E-GSTREAMER"
+        ],
+        "onda_observation_refs": [
+          "C-006",
+          "C-009"
+        ],
+        "onda_source_refs": [
+          "S-REACT-LOWER",
+          "S-NODE-EXPORT",
+          "S-LAYOUT",
+          "S-IMAGE",
+          "S-VIDEO",
+          "S-CLI"
+        ],
+        "performance_impact": "Bounds memory and I/O, with thresholds reserved for R0.07 measurement.",
+        "problem_addressed": "Whole-video Scene materialization scales with duration and graph size.",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+        "quality_impact": "Avoids duration-driven exhaustion that can prevent otherwise valid renders.",
+        "required_follow_up_research": [
+          "R0.03",
+          "R0.07"
+        ],
+        "requirement_id": "CK-R002-REQ-005",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "Makes buffering and materialization limits explicit failure contracts."
+      },
+      {
+        "abstract_requirement": "Version serialized boundaries with compatibility fixtures and negotiation.",
+        "affected_cinekernel_programs": [
+          "P07",
+          "P08",
+          "P09",
+          "P10",
+          "P14",
+          "P18",
+          "P19",
+          "P23",
+          "P24"
+        ],
+        "creative_programming_impact": "Protects editable creative programs across tool and runtime upgrades.",
+        "independent_primary_source_refs": [
+          "E-MLIR"
+        ],
+        "onda_observation_refs": [
+          "C-005",
+          "C-011"
+        ],
+        "onda_source_refs": [
+          "S-SCENE",
+          "S-CLI",
+          "S-WASM",
+          "S-WASM-VELLO"
+        ],
+        "performance_impact": "Makes migration cost measurable and avoids accidental full recompilation paths.",
+        "problem_addressed": "Current compatibility guarantees are incomplete.",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+        "quality_impact": "Prevents schema evolution from corrupting or rejecting valid creative documents unpredictably.",
+        "required_follow_up_research": [
+          "R0.03",
+          "R0.06",
+          "R0.08"
+        ],
+        "requirement_id": "CK-R002-REQ-006",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "Provides explicit compatibility evidence for stored and exchanged artifacts."
+      },
+      {
+        "abstract_requirement": "Preserve deterministic random, media, and global-state ownership contracts.",
+        "affected_cinekernel_programs": [
+          "P01",
+          "P02",
+          "P03",
+          "P07",
+          "P08",
+          "P14",
+          "P18",
+          "P19",
+          "P20",
+          "P21"
+        ],
+        "creative_programming_impact": "Keeps procedural randomness and media behavior reproducible for agent iteration.",
+        "independent_primary_source_refs": [
+          "E-REACT",
+          "E-GSTREAMER"
+        ],
+        "onda_observation_refs": [
+          "C-002",
+          "C-010",
+          "C-012"
+        ],
+        "onda_source_refs": [
+          "S-REACT-FRAME",
+          "S-REACT-STATE",
+          "S-REACT-WARM",
+          "S-PLAYER",
+          "S-VIDEO",
+          "S-AUDIO",
+          "S-REACT-LOWER"
+        ],
+        "performance_impact": "Enables safe parallelism only where isolation costs and benefits are known.",
+        "problem_addressed": "Module-global and external runtime state complicate reentrancy.",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+        "quality_impact": "Produces repeatable frames under concurrency, seeking, and retries.",
+        "required_follow_up_research": [
+          "R0.03",
+          "R0.06",
+          "R0.07"
+        ],
+        "requirement_id": "CK-R002-REQ-007",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "Makes nondeterministic state ownership observable and testable."
+      },
+      {
+        "abstract_requirement": "Keep open-ended host-language escape hatches while retaining inspectable primitives.",
+        "affected_cinekernel_programs": [
+          "P01",
+          "P02",
+          "P03",
+          "P05",
+          "P06",
+          "P07",
+          "P25",
+          "P26",
+          "P28"
+        ],
+        "creative_programming_impact": "Maintains the project goal of general creative programming rather than template selection.",
+        "independent_primary_source_refs": [
+          "E-REACT",
+          "E-MLIR"
+        ],
+        "onda_observation_refs": [
+          "C-001",
+          "C-003",
+          "C-005"
+        ],
+        "onda_source_refs": [
+          "S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS",
+          "S-MANDATORY-PACKAGES-REACT-SRC-COMPONENTS-TS",
+          "S-CINEMA-COMPILER",
+          "S-COMPONENTS",
+          "S-SCENE"
+        ],
+        "performance_impact": "Allows specialization while retaining analyzable primitive output and later measurement.",
+        "problem_addressed": "Finite catalogs alone cannot guarantee novel-scene expressibility.",
+        "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+        "quality_impact": "Combines reusable components with precise low-level control.",
+        "required_follow_up_research": [
+          "R0.04",
+          "R0.05",
+          "R0.06",
+          "R0.08"
+        ],
+        "requirement_id": "CK-R002-REQ-008",
+        "status": "CANDIDATE_ONLY",
+        "trust_impact": "Keeps generated structures inspectable instead of hiding behavior behind opaque presets."
+      }
+    ]
+  },
+  "generated_at": "2026-08-16T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.3"
+}

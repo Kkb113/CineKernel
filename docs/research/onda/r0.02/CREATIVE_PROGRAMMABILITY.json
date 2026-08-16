@@ -1,0 +1,129 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/creative-programmability.schema.json",
+  "data": {
+    "creative_programmability": {
+      "overall_verdict": "MULTI_LAYER_PROGRAMMABILITY_WITH_FINITE_RENDERER_VOCABULARY",
+      "scoring_policy": "No numeric creativity score is assigned; every capability uses an evidence-backed categorical state that distinguishes native, host-language, registry, lower-level, finite-catalog, partial, and unknown support.",
+      "surface_assessments": [
+        {
+          "black_box_risk": "MEDIUM",
+          "can_descend_to_primitives": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+          "custom_animation": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+          "custom_component_extension": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+          "custom_geometry": "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+          "escape_hatch_evidence": "Custom registry code can emit React and reach Scene primitives, while built-in named patterns remain finite.",
+          "general_primitive_access": "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+          "inspectability": "PARTIALLY_SUPPORTED",
+          "named_pattern_dependence": "FINITE_CATALOG_LIMIT",
+          "novel_scene_expressibility": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+          "post_generation_editability": "PARTIALLY_SUPPORTED",
+          "procedural_logic": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+          "registry_dependence": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+          "source_mapping": "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+          "source_refs": [
+            "S-CINEMA-TYPES",
+            "S-CINEMA-COMPILER",
+            "S-CINEMA-RESOLVE",
+            "S-COMPONENTS"
+          ],
+          "surface_id": "AS-CINEMA"
+        },
+        {
+          "black_box_risk": "LOW",
+          "can_descend_to_primitives": "SUPPORTED",
+          "custom_animation": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+          "custom_component_extension": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+          "custom_geometry": "FINITE_CATALOG_LIMIT",
+          "escape_hatch_evidence": "Frame hooks, interpolation, spring, sequencing, transitions, loops, and primitive nodes are directly available to host-language code.",
+          "general_primitive_access": "SUPPORTED",
+          "inspectability": "SUPPORTED",
+          "named_pattern_dependence": "NOT_NATIVE",
+          "novel_scene_expressibility": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+          "post_generation_editability": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+          "procedural_logic": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+          "registry_dependence": "NOT_NATIVE",
+          "source_mapping": "PARTIALLY_SUPPORTED",
+          "source_refs": [
+            "S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS",
+            "S-MANDATORY-PACKAGES-REACT-SRC-COMPONENTS-TS",
+            "S-MANDATORY-PACKAGES-REACT-SRC-INTERPOLATE-TS",
+            "S-MANDATORY-PACKAGES-REACT-SRC-SPRING-TS",
+            "S-MANDATORY-PACKAGES-REACT-SRC-TRANSITIONS-TS",
+            "S-REACT-LOWER"
+          ],
+          "surface_id": "AS-REACT"
+        },
+        {
+          "black_box_risk": "MEDIUM",
+          "can_descend_to_primitives": "SUPPORTED",
+          "custom_animation": "SUPPORTED",
+          "custom_component_extension": "NOT_NATIVE",
+          "custom_geometry": "FINITE_CATALOG_LIMIT",
+          "escape_hatch_evidence": "Direct JSON composes the finite Scene schema; it cannot define a new component implementation at this layer.",
+          "general_primitive_access": "SUPPORTED",
+          "inspectability": "SUPPORTED",
+          "named_pattern_dependence": "NOT_NATIVE",
+          "novel_scene_expressibility": "PARTIALLY_SUPPORTED",
+          "post_generation_editability": "SUPPORTED",
+          "procedural_logic": "NOT_NATIVE",
+          "registry_dependence": "NOT_NATIVE",
+          "source_mapping": "PARTIALLY_SUPPORTED",
+          "source_refs": [
+            "S-SCENE",
+            "S-CLI",
+            "S-WASM"
+          ],
+          "surface_id": "AS-JSON"
+        },
+        {
+          "black_box_risk": "LOW",
+          "can_descend_to_primitives": "SUPPORTED",
+          "custom_animation": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+          "custom_component_extension": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+          "custom_geometry": "FINITE_CATALOG_LIMIT",
+          "escape_hatch_evidence": "Typed Rust constructs Scene and Timeline values directly without depending on the Cinema component registry.",
+          "general_primitive_access": "SUPPORTED",
+          "inspectability": "SUPPORTED",
+          "named_pattern_dependence": "NOT_NATIVE",
+          "novel_scene_expressibility": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+          "post_generation_editability": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+          "procedural_logic": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+          "registry_dependence": "NOT_NATIVE",
+          "source_mapping": "PARTIALLY_SUPPORTED",
+          "source_refs": [
+            "S-SCENE",
+            "S-ANIMATION",
+            "S-CLI"
+          ],
+          "surface_id": "AS-RUST"
+        },
+        {
+          "black_box_risk": "MEDIUM",
+          "can_descend_to_primitives": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+          "custom_animation": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+          "custom_component_extension": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+          "custom_geometry": "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+          "escape_hatch_evidence": "Catalog identity is present before expansion, but complete component-to-Scene-to-pixel source mapping is not preserved.",
+          "general_primitive_access": "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+          "inspectability": "PARTIALLY_SUPPORTED",
+          "named_pattern_dependence": "FINITE_CATALOG_LIMIT",
+          "novel_scene_expressibility": "FINITE_CATALOG_LIMIT",
+          "post_generation_editability": "PARTIALLY_SUPPORTED",
+          "procedural_logic": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+          "registry_dependence": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+          "source_mapping": "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+          "source_refs": [
+            "S-COMPONENTS",
+            "S-MANDATORY-PACKAGES-COMPONENTS-SRC-INDEX-TS",
+            "S-CINEMA-COMPILER",
+            "S-REACT-LOWER"
+          ],
+          "surface_id": "AS-COMPONENTS"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-08-16T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.3"
+}

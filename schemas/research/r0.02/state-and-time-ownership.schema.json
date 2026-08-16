@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "state_and_time": {
+          "additionalProperties": false,
+          "properties": {
+            "state_records": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "authority": {
+                    "enum": [
+                      "AUTHORITATIVE",
+                      "DERIVED",
+                      "TRANSIENT",
+                      "CACHE",
+                      "PRESENTATION_ONLY",
+                      "EXTERNAL_RUNTIME",
+                      "UNKNOWN"
+                    ],
+                    "type": "string"
+                  },
+                  "carries_source_provenance": {
+                    "type": "boolean"
+                  },
+                  "mutability": {
+                    "enum": [
+                      "IMMUTABLE_DATA",
+                      "MUTABLE_TREE",
+                      "PER_FRAME_REBUILT",
+                      "CLONED_AND_MUTATED",
+                      "GLOBAL_MUTABLE",
+                      "INSTANCE_MUTABLE",
+                      "CACHE_MUTABLE",
+                      "EXTERNAL_RUNTIME",
+                      "UNKNOWN"
+                    ],
+                    "type": "string"
+                  },
+                  "owner_scope": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "reentrancy": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "representation": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "shared": {
+                    "type": "boolean"
+                  },
+                  "source_refs": {
+                    "items": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "state_id": {
+                    "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                    "type": "string"
+                  },
+                  "survives_frame_evaluation": {
+                    "type": "boolean"
+                  },
+                  "thread_safe": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "authority",
+                  "carries_source_provenance",
+                  "mutability",
+                  "owner_scope",
+                  "reentrancy",
+                  "representation",
+                  "shared",
+                  "source_refs",
+                  "state_id",
+                  "survives_frame_evaluation",
+                  "thread_safe"
+                ],
+                "type": "object"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "time_conversions": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "clamping_behavior": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "conversion_id": {
+                    "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                    "type": "string"
+                  },
+                  "fractional_time_behavior": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "negative_time_behavior": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "operation": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "owner": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "precision_risk": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "rate_behavior": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "rounding_behavior": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "source_domain": {
+                    "enum": [
+                      "FRAME_INDEX_INTEGER",
+                      "FRAME_INDEX_FLOAT",
+                      "COMPOSITION_FRAME_LOCAL",
+                      "SEQUENCE_FRAME_LOCAL",
+                      "SECONDS_NUMBER",
+                      "FPS_FLOAT",
+                      "SOURCE_MEDIA_SECONDS",
+                      "AUDIO_CONTEXT_SECONDS",
+                      "RAF_WALL_TIME",
+                      "ENCODED_TIMESTAMP",
+                      "TIMELINE_CLIP_FRAME",
+                      "NONE",
+                      "UNKNOWN"
+                    ],
+                    "type": "string"
+                  },
+                  "source_refs": {
+                    "items": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "target_domain": {
+                    "enum": [
+                      "FRAME_INDEX_INTEGER",
+                      "FRAME_INDEX_FLOAT",
+                      "COMPOSITION_FRAME_LOCAL",
+                      "SEQUENCE_FRAME_LOCAL",
+                      "SECONDS_NUMBER",
+                      "FPS_FLOAT",
+                      "SOURCE_MEDIA_SECONDS",
+                      "AUDIO_CONTEXT_SECONDS",
+                      "RAF_WALL_TIME",
+                      "ENCODED_TIMESTAMP",
+                      "TIMELINE_CLIP_FRAME",
+                      "NONE",
+                      "UNKNOWN"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "clamping_behavior",
+                  "conversion_id",
+                  "fractional_time_behavior",
+                  "negative_time_behavior",
+                  "operation",
+                  "owner",
+                  "precision_risk",
+                  "rate_behavior",
+                  "rounding_behavior",
+                  "source_domain",
+                  "source_refs",
+                  "target_domain"
+                ],
+                "type": "object"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "state_records",
+            "time_conversions"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "state_and_time"
+      ],
+      "type": "object"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "model_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema",
+    "data",
+    "generated_at",
+    "model_ref",
+    "schema_version"
+  ],
+  "type": "object"
+}

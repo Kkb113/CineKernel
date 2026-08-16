@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "authoring_surfaces": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "authoritative_state": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "confidence": {
+                "enum": [
+                  "HIGH",
+                  "MEDIUM",
+                  "LOW"
+                ],
+                "type": "string"
+              },
+              "creative_programmability_class": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "entry_points": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "error_model": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "export_path": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "extension_mechanism": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "fallback_model": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "identity_model": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "input_representation": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "intended_user": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "name": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "normalization_entry_points": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "output_representation": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "preview_path": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "renderer_dependency": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "semantic_information_lost": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "semantic_information_preserved": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "serialization_boundary": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "state_mutability": {
+                "enum": [
+                  "IMMUTABLE_DATA",
+                  "MUTABLE_TREE",
+                  "PER_FRAME_REBUILT",
+                  "CLONED_AND_MUTATED",
+                  "GLOBAL_MUTABLE",
+                  "INSTANCE_MUTABLE",
+                  "CACHE_MUTABLE",
+                  "EXTERNAL_RUNTIME",
+                  "UNKNOWN"
+                ],
+                "type": "string"
+              },
+              "status": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "surface_id": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "time_model": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "validation_entry_points": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              }
+            },
+            "required": [
+              "authoritative_state",
+              "confidence",
+              "creative_programmability_class",
+              "entry_points",
+              "error_model",
+              "export_path",
+              "extension_mechanism",
+              "fallback_model",
+              "identity_model",
+              "input_representation",
+              "intended_user",
+              "name",
+              "normalization_entry_points",
+              "output_representation",
+              "preview_path",
+              "renderer_dependency",
+              "semantic_information_lost",
+              "semantic_information_preserved",
+              "serialization_boundary",
+              "source_refs",
+              "state_mutability",
+              "status",
+              "surface_id",
+              "time_model",
+              "validation_entry_points"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "authoring_surfaces"
+      ],
+      "type": "object"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "model_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema",
+    "data",
+    "generated_at",
+    "model_ref",
+    "schema_version"
+  ],
+  "type": "object"
+}

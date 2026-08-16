@@ -1,0 +1,84 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/open-questions.schema.json",
+  "data": {
+    "open_questions": [
+      {
+        "defer_to": [
+          "R0.03",
+          "R0.07"
+        ],
+        "id": "Q-001",
+        "question": "What scene-size and duration thresholds make full frame materialization unacceptable on target machines?",
+        "source_refs": [
+          "S-NODE-EXPORT",
+          "S-REACT-LOWER"
+        ]
+      },
+      {
+        "defer_to": [
+          "R0.03"
+        ],
+        "id": "Q-002",
+        "question": "Which renderer capabilities are intentionally stable across CPU, Vello, and browser hosts?",
+        "source_refs": [
+          "S-WASM",
+          "S-WASM-VELLO",
+          "S-CLI"
+        ]
+      },
+      {
+        "defer_to": [
+          "R0.03",
+          "R0.08"
+        ],
+        "id": "Q-003",
+        "question": "What serialization evolution policy is promised beyond current version handling?",
+        "source_refs": [
+          "S-SCENE",
+          "S-CLI",
+          "S-WASM"
+        ]
+      },
+      {
+        "defer_to": [
+          "R0.03",
+          "R0.06",
+          "R0.07"
+        ],
+        "id": "Q-004",
+        "question": "How should media clocks, frame rates, variable frame rate, and audio resampling compose?",
+        "source_refs": [
+          "S-AUDIO",
+          "S-VIDEO",
+          "S-CLI"
+        ]
+      },
+      {
+        "defer_to": [
+          "R0.04"
+        ],
+        "id": "Q-005",
+        "question": "What general material, shader, constraint, and simulation model is required for the target creative ceiling?",
+        "source_refs": [
+          "S-SCENE",
+          "S-COMPONENTS"
+        ]
+      },
+      {
+        "defer_to": [
+          "R0.05",
+          "R0.08"
+        ],
+        "id": "Q-006",
+        "question": "Which authoring semantics must remain editable after lowering and round-trip serialization?",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-08-16T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.3"
+}

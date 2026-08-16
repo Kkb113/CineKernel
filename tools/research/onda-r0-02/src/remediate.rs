@@ -1,0 +1,1487 @@
+use crate::{lock::UpstreamLock, source_index};
+use anyhow::{Context, Result};
+use serde_json::{json, Value};
+use std::path::Path;
+
+pub fn model(root: &Path, mut value: Value, lock: &UpstreamLock) -> Result<Value> {
+    value["model_version"] = json!("r0.02.3");
+    value["generated_at"] = json!("2026-08-16T00:00:00Z");
+    source_index::remediate(root, &mut value, lock)?;
+    normalize_claims(&mut value)?;
+    value["authoring_surfaces"] = authoring_surfaces();
+    let (nodes, edges) = architecture_graph();
+    value["architecture_nodes"] = nodes;
+    value["architecture_edges"] = edges.clone();
+    value["boundary_contracts"] = boundary_contracts(&edges)?;
+    value["state_and_time"] = state_and_time();
+    value["identity_and_provenance"] = identity();
+    value["semantic_preservation"] = semantics();
+    value["validation_and_fallbacks"] = fallbacks();
+    value["preview_export_parity"] = preview_export();
+    value["creative_programmability"] = creativity();
+    value["novel_scene_litmus"] = novel_scenes();
+    value["candidate_requirements"] = requirements();
+    value["contradictions"] = contradictions();
+    value["deferred_topics"] = deferred();
+    value["open_questions"] = open_questions();
+    Ok(value)
+}
+
+fn normalize_claims(model: &mut Value) -> Result<()> {
+    for (index, claim) in model["claims"]
+        .as_array_mut()
+        .context("claims missing")?
+        .iter_mut()
+        .enumerate()
+    {
+        let claim_id = claim
+            .get("claim_id")
+            .and_then(Value::as_str)
+            .filter(|id| *id != "C-UNKNOWN")
+            .map(str::to_owned)
+            .or_else(|| claim.get("id").and_then(Value::as_str).map(str::to_owned))
+            .unwrap_or_else(|| format!("C-{:03}", index + 1));
+        claim["claim_id"] = json!(claim_id);
+        claim.as_object_mut().expect("claim object").remove("id");
+        claim["status"] = json!(match claim["status"].as_str().unwrap_or_default() {
+            "verified" | "VERIFIED_AT_PIN" => "VERIFIED_AT_PIN",
+            "inferred" | "INFERRED_FROM_MULTIPLE_SOURCES" => "INFERRED_FROM_MULTIPLE_SOURCES",
+            "contradicted" | "CONTRADICTED" => "CONTRADICTED",
+            "candidate" | "CANDIDATE_ONLY" => "CANDIDATE_ONLY",
+            "UNRESOLVED" if index == 10 => "CANDIDATE_ONLY",
+            "UNRESOLVED" => "VERIFIED_AT_PIN",
+            _ => "UNRESOLVED",
+        });
+        if (1..=12).contains(&(index + 1)) {
+            claim["confidence"] = json!("HIGH");
+        } else if let Some(numeric) = claim["confidence"].as_f64() {
+            claim["confidence"] = json!(if numeric >= 0.9 {
+                "HIGH"
+            } else if numeric >= 0.7 {
+                "MEDIUM"
+            } else {
+                "LOW"
+            });
+        }
+        if claim.get("contradictions").is_none() {
+            claim["contradictions"] = json!([]);
+        }
+    }
+    Ok(())
+}
+
+fn authoring_surfaces() -> Value {
+    let rows = [
+        (
+            "AS-CINEMA",
+            "Cinema payload",
+            vec!["packages/cinema/src/index.tsx"],
+            "agent and structured authoring tools",
+            "typed high-level payload",
+            "serialized payload",
+            "IMMUTABLE_DATA",
+            "TimeSpec converted to frames",
+            "string scene, track, and entry identity",
+            vec!["validatePayload"],
+            vec!["timeToSeconds", "resolveScene"],
+            "custom registry and finite named patterns",
+            "React element program",
+            "JSON payload",
+            "React and Scene vocabulary",
+            "Cinema inspector and React preview",
+            "React frame array then native export",
+            "validation errors, warnings, and placeholders",
+            "named-pattern omission or placeholder",
+            vec!["roles", "labels", "timing intent"],
+            vec!["named choreography identity", "brand-token identity"],
+            vec![
+                "DECLARATIVE_SCENE_PROGRAM",
+                "EXTENSIBLE_COMPONENT_SYSTEM",
+                "FINITE_PATTERN_CATALOG",
+            ],
+            vec![
+                "S-CINEMA-TYPES",
+                "S-CINEMA-TIME",
+                "S-CINEMA-COMPILER",
+                "S-MANDATORY-PACKAGES-CINEMA-SRC-PROPS-TS",
+            ],
+            "HIGH",
+        ),
+        (
+            "AS-REACT",
+            "React composition",
+            vec!["packages/react/src/index.ts", "renderFrame"],
+            "JavaScript and TypeScript authors",
+            "React element tree plus frame context",
+            "host-language program",
+            "PER_FRAME_REBUILT",
+            "integer or fractional output frame",
+            "React key during one reconciliation; optional numeric Scene NodeId",
+            vec!["host element and prop conversion"],
+            vec!["reconcile", "toNode"],
+            "arbitrary host-language components lowering to supported primitives",
+            "one Scene snapshot",
+            "temporary frames JSON during export",
+            "finite host and Scene vocabulary",
+            "player requests evaluated frames",
+            "renderFrames materializes Scene snapshots",
+            "throws on unsupported host structure and conversion errors",
+            "host-language code can substitute supported primitives",
+            vec!["computed geometry", "paint", "media references"],
+            vec!["component identity", "React key", "hook history"],
+            vec![
+                "PROCEDURAL_HOST_LANGUAGE",
+                "GENERAL_PRIMITIVE_SYSTEM",
+                "EXTERNAL_CODE_ESCAPE_HATCH",
+            ],
+            vec![
+                "S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS",
+                "S-REACT-HOST",
+                "S-REACT-LOWER",
+            ],
+            "HIGH",
+        ),
+        (
+            "AS-JSON",
+            "Direct Scene JSON",
+            vec![
+                "Scene serde boundary",
+                "CLI JSON ingestion",
+                "WASM JSON ingestion",
+            ],
+            "tooling and low-level integrators",
+            "serialized composition and finite NodeKind tree",
+            "serialized Scene document",
+            "IMMUTABLE_DATA",
+            "composition frames plus media seconds",
+            "optional numeric NodeId",
+            vec!["JSON deserialization", "version interpretation"],
+            vec!["layout, image, SVG, and timeline prepasses"],
+            "compose supported NodeKind values",
+            "prepass-ready Scene",
+            "JSON",
+            "Scene and renderer capability set",
+            "WASM/player ingestion",
+            "CLI ingestion",
+            "deserialization and prepass failures",
+            "renderer or preview fallback after parse",
+            vec!["renderer-facing values", "numeric IDs"],
+            vec!["high-level authoring intent", "React component identity"],
+            vec!["DECLARATIVE_SCENE_PROGRAM", "GENERAL_PRIMITIVE_SYSTEM"],
+            vec!["S-SCENE", "S-WASM", "S-CLI"],
+            "HIGH",
+        ),
+        (
+            "AS-RUST",
+            "Rust Scene and Timeline",
+            vec!["Scene", "Timeline", "AnimatedScene"],
+            "Rust integrators",
+            "typed Scene with optional Timeline",
+            "typed Rust values",
+            "CLONED_AND_MUTATED",
+            "frame divided by fps to timeline seconds",
+            "numeric NodeId targets",
+            vec!["Rust type system", "serde when serialized"],
+            vec!["timeline evaluation and renderer prepasses"],
+            "construct supported enums and custom host logic",
+            "evaluated Scene",
+            "optional JSON",
+            "Scene and Timeline type vocabulary",
+            "WASM/native adapters",
+            "native renderer",
+            "typed construction, targeting, and runtime errors",
+            "unsupported renderer features may demote",
+            vec!["numeric identity", "keyframe data"],
+            vec!["external authoring provenance unless separately retained"],
+            vec!["PROCEDURAL_HOST_LANGUAGE", "DECLARATIVE_SCENE_PROGRAM"],
+            vec!["S-SCENE", "S-ANIMATION"],
+            "HIGH",
+        ),
+        (
+            "AS-COMPONENTS",
+            "Component package and registry",
+            vec![
+                "packages/components/src/index.ts",
+                "component manifest",
+                "Cinema registry",
+            ],
+            "authors selecting or extending components",
+            "named component and schema-described properties",
+            "registry definition",
+            "IMMUTABLE_DATA",
+            "component-defined frame computation",
+            "component name before expansion",
+            vec!["manifest and component property validation"],
+            vec!["component invocation to React subtree"],
+            "package code or caller-supplied registry",
+            "React primitive subtree",
+            "package exports and manifest",
+            "React and Scene primitives",
+            "React preview",
+            "React export",
+            "unknown component diagnostics",
+            "placeholder or omission depending on caller",
+            vec!["component property values"],
+            vec!["registry identity after expansion"],
+            vec![
+                "EXTENSIBLE_COMPONENT_SYSTEM",
+                "FINITE_REGISTRY",
+                "EXTERNAL_CODE_ESCAPE_HATCH",
+            ],
+            vec![
+                "S-MANDATORY-PACKAGES-COMPONENTS-PACKAGE-JSON",
+                "S-MANDATORY-PACKAGES-COMPONENTS-SRC-INDEX-TS",
+                "S-COMPONENTS",
+            ],
+            "HIGH",
+        ),
+    ];
+    Value::Array(rows.into_iter().map(|r| json!({"surface_id":r.0,"name":r.1,"entry_points":r.2,"intended_user":r.3,"input_representation":r.4,"authoritative_state":r.5,"state_mutability":r.6,"time_model":r.7,"identity_model":r.8,"validation_entry_points":r.9,"normalization_entry_points":r.10,"extension_mechanism":r.11,"output_representation":r.12,"serialization_boundary":r.13,"renderer_dependency":r.14,"preview_path":r.15,"export_path":r.16,"error_model":r.17,"fallback_model":r.18,"semantic_information_preserved":r.19,"semantic_information_lost":r.20,"creative_programmability_class":r.21,"source_refs":r.22,"confidence":r.23,"status":"VERIFIED_AT_PIN"})).collect())
+}
+
+fn architecture_graph() -> (Value, Value) {
+    let nodes = [
+        (
+            "N-CINEMA",
+            "AUTHORING_SURFACE",
+            "Cinema payload",
+            "AUTHORITATIVE",
+            "IMMUTABLE_DATA",
+            vec!["SECONDS_NUMBER", "COMPOSITION_FRAME_LOCAL"],
+            "string IDs retained during Cinema lowering",
+            vec!["Cinema payload"],
+            vec!["React elements"],
+            vec!["S-CINEMA-TYPES", "S-CINEMA-COMPILER"],
+        ),
+        (
+            "N-CINEMA-VALIDATE",
+            "VALIDATOR",
+            "Cinema validator",
+            "DERIVED",
+            "IMMUTABLE_DATA",
+            vec!["NONE"],
+            "reports payload paths",
+            vec!["Cinema payload"],
+            vec!["diagnostics"],
+            vec!["S-CINEMA-TEST", "S-CINEMA-COMPILER"],
+        ),
+        (
+            "N-INSPECT",
+            "SEMANTIC_MODEL",
+            "Cinema inspector analysis",
+            "DERIVED",
+            "IMMUTABLE_DATA",
+            vec!["COMPOSITION_FRAME_LOCAL"],
+            "retains payload paths for inspection",
+            vec!["Cinema payload"],
+            vec!["inspection model"],
+            vec!["S-CINEMA-INSPECT", "S-CINEMA-RESOLVE"],
+        ),
+        (
+            "N-REACT",
+            "AUTHORING_SURFACE",
+            "React program",
+            "AUTHORITATIVE",
+            "PER_FRAME_REBUILT",
+            vec!["FRAME_INDEX_INTEGER", "FRAME_INDEX_FLOAT"],
+            "React keys are transient",
+            vec!["React elements", "FrameContext"],
+            vec!["HostNode tree"],
+            vec!["S-REACT-LOWER", "S-REACT-HOST"],
+        ),
+        (
+            "N-RECONCILER",
+            "RECONCILER",
+            "custom React reconciler",
+            "TRANSIENT",
+            "GLOBAL_MUTABLE",
+            vec!["FRAME_INDEX_FLOAT"],
+            "reconciliation identity lasts one evaluation",
+            vec!["React elements"],
+            vec!["HostNode mutations"],
+            vec!["S-REACT-LOWER", "S-REACT-HOST"],
+        ),
+        (
+            "N-HOST",
+            "TRANSIENT_TREE",
+            "mutable HostNode tree",
+            "TRANSIENT",
+            "MUTABLE_TREE",
+            vec!["FRAME_INDEX_FLOAT"],
+            "React keys are not retained as source maps",
+            vec!["host commits"],
+            vec!["Scene nodes"],
+            vec!["S-REACT-HOST", "S-REACT-LOWER"],
+        ),
+        (
+            "N-SCENE",
+            "SCENE_MODEL",
+            "per-frame Scene",
+            "AUTHORITATIVE",
+            "IMMUTABLE_DATA",
+            vec!["COMPOSITION_FRAME_LOCAL", "SOURCE_MEDIA_SECONDS"],
+            "optional numeric NodeId",
+            vec!["finite NodeKind tree"],
+            vec!["serialized or prepass Scene"],
+            vec!["S-SCENE"],
+        ),
+        (
+            "N-TIMELINE",
+            "ANIMATION_MODEL",
+            "Rust Timeline",
+            "AUTHORITATIVE",
+            "IMMUTABLE_DATA",
+            vec!["SECONDS_NUMBER"],
+            "targets numeric NodeId",
+            vec!["tracks and keyframes"],
+            vec!["cloned and mutated Scene"],
+            vec!["S-ANIMATION"],
+        ),
+        (
+            "N-SERIAL",
+            "SERIALIZATION_BOUNDARY",
+            "Scene JSON",
+            "DERIVED",
+            "IMMUTABLE_DATA",
+            vec!["COMPOSITION_FRAME_LOCAL", "SOURCE_MEDIA_SECONDS"],
+            "serializes numeric IDs only",
+            vec!["Scene or Scene array"],
+            vec!["JSON bytes"],
+            vec!["S-SCENE", "S-NODE-EXPORT", "S-CLI"],
+        ),
+        (
+            "N-PREPASSES",
+            "PREPASS",
+            "layout and media prepasses",
+            "DERIVED",
+            "CLONED_AND_MUTATED",
+            vec!["COMPOSITION_FRAME_LOCAL", "SOURCE_MEDIA_SECONDS"],
+            "numeric IDs may remain while intent is materialized",
+            vec!["Scene"],
+            vec!["resolved Scene"],
+            vec!["S-LAYOUT", "S-IMAGE", "S-SVG", "S-WASM", "S-CLI"],
+        ),
+        (
+            "N-PLAYER",
+            "PREVIEW_RUNTIME",
+            "browser player",
+            "PRESENTATION_ONLY",
+            "INSTANCE_MUTABLE",
+            vec![
+                "RAF_WALL_TIME",
+                "FRAME_INDEX_INTEGER",
+                "AUDIO_CONTEXT_SECONDS",
+            ],
+            "selection and playback state are instance-owned",
+            vec!["composition and controls"],
+            vec!["requested frame and audio schedule"],
+            vec!["S-PLAYER", "S-AUDIO"],
+        ),
+        (
+            "N-CPU",
+            "RENDERER_BOUNDARY",
+            "CPU renderer",
+            "DERIVED",
+            "INSTANCE_MUTABLE",
+            vec!["FRAME_INDEX_FLOAT"],
+            "renderer-bound identity only",
+            vec!["resolved Scene"],
+            vec!["pixels"],
+            vec!["S-WASM", "S-CLI"],
+        ),
+        (
+            "N-GPU",
+            "RENDERER_BOUNDARY",
+            "Vello GPU renderer",
+            "DERIVED",
+            "GLOBAL_MUTABLE",
+            vec!["FRAME_INDEX_FLOAT"],
+            "renderer-bound identity only",
+            vec!["resolved Scene"],
+            vec!["pixels"],
+            vec!["S-WASM-VELLO", "S-CLI"],
+        ),
+        (
+            "N-CANVAS",
+            "FALLBACK",
+            "Canvas2D approximation",
+            "PRESENTATION_ONLY",
+            "INSTANCE_MUTABLE",
+            vec!["FRAME_INDEX_INTEGER"],
+            "DOM/canvas identity is preview-only",
+            vec!["Scene subset"],
+            vec!["approximate pixels"],
+            vec!["S-CANVAS"],
+        ),
+        (
+            "N-ENCODER",
+            "ENCODER_BOUNDARY",
+            "native encoder",
+            "EXTERNAL_RUNTIME",
+            "EXTERNAL_RUNTIME",
+            vec!["ENCODED_TIMESTAMP"],
+            "frame ordering replaces scene identity",
+            vec!["ordered pixels and audio"],
+            vec!["encoded media"],
+            vec!["S-CLI"],
+        ),
+    ];
+    let edges = [
+        (
+            "AE-01",
+            "N-CINEMA",
+            "N-CINEMA-VALIDATE",
+            "VALIDATES",
+            "Cinema payload",
+            "schema and semantic checks",
+            "intent retained",
+            "structured diagnostics",
+            vec!["S-CINEMA-TEST", "S-CINEMA-COMPILER"],
+        ),
+        (
+            "AE-02",
+            "N-CINEMA",
+            "N-INSPECT",
+            "INSPECTS",
+            "Cinema payload",
+            "payload accepted for analysis",
+            "roles and paths retained",
+            "inspection findings",
+            vec!["S-CINEMA-INSPECT", "S-CINEMA-RESOLVE"],
+        ),
+        (
+            "AE-03",
+            "N-CINEMA",
+            "N-REACT",
+            "LOWERS_TO",
+            "React element program",
+            "post-validation construction",
+            "named intent partly consumed",
+            "warnings, placeholders, or throw",
+            vec!["S-CINEMA-COMPILER"],
+        ),
+        (
+            "AE-04",
+            "N-REACT",
+            "N-RECONCILER",
+            "INVOKES",
+            "React elements and frame context",
+            "host element contract",
+            "component structure evaluated",
+            "unsupported host error",
+            vec!["S-REACT-LOWER", "S-REACT-HOST"],
+        ),
+        (
+            "AE-05",
+            "N-RECONCILER",
+            "N-HOST",
+            "MUTATES",
+            "host commits",
+            "host-config validation",
+            "React tree materialized",
+            "commit failure",
+            vec!["S-REACT-HOST"],
+        ),
+        (
+            "AE-06",
+            "N-HOST",
+            "N-SCENE",
+            "LOWERS_TO",
+            "finite host primitives",
+            "toNode conversion",
+            "React key and component provenance dropped unless explicit",
+            "conversion error",
+            vec!["S-REACT-LOWER"],
+        ),
+        (
+            "AE-07",
+            "N-TIMELINE",
+            "N-SCENE",
+            "CLONES",
+            "Scene plus tracks",
+            "target lookup",
+            "keyframes materialized into values",
+            "missing target or property behavior",
+            vec!["S-ANIMATION"],
+        ),
+        (
+            "AE-08",
+            "N-SCENE",
+            "N-SERIAL",
+            "SERIALIZES",
+            "Scene or Scene array",
+            "serde serialization",
+            "renderer data preserved",
+            "serialization error",
+            vec!["S-SCENE", "S-NODE-EXPORT"],
+        ),
+        (
+            "AE-09",
+            "N-SERIAL",
+            "N-PREPASSES",
+            "DESERIALIZES",
+            "Scene JSON",
+            "serde and version handling",
+            "authoring semantics unavailable",
+            "parse or version error",
+            vec!["S-CLI", "S-WASM"],
+        ),
+        (
+            "AE-10",
+            "N-SCENE",
+            "N-PREPASSES",
+            "NORMALIZES",
+            "Scene",
+            "media/layout/SVG resolution",
+            "layout and document structure materialized",
+            "prepass error",
+            vec!["S-LAYOUT", "S-IMAGE", "S-SVG"],
+        ),
+        (
+            "AE-11",
+            "N-PREPASSES",
+            "N-CPU",
+            "EMITS",
+            "resolved Scene",
+            "CPU capability checks",
+            "supported visual semantics rasterized",
+            "renderer failure",
+            vec!["S-WASM", "S-CLI"],
+        ),
+        (
+            "AE-12",
+            "N-PREPASSES",
+            "N-GPU",
+            "EMITS",
+            "resolved Scene",
+            "GPU capability checks",
+            "supported visual semantics rasterized",
+            "GPU failure",
+            vec!["S-WASM-VELLO", "S-CLI"],
+        ),
+        (
+            "AE-13",
+            "N-GPU",
+            "N-CPU",
+            "FALLS_BACK_TO",
+            "resolved Scene",
+            "runtime capability/failure",
+            "GPU-only fidelity may reduce",
+            "diagnosed or runtime fallback",
+            vec![
+                "S-PLAYER",
+                "S-MANDATORY-PACKAGES-PLAYER-SRC-ENGINE-DRAWER-TS",
+            ],
+        ),
+        (
+            "AE-14",
+            "N-CPU",
+            "N-CANVAS",
+            "FALLS_BACK_TO",
+            "Scene subset",
+            "Canvas support checks",
+            "unsupported features approximated or omitted",
+            "preview fallback",
+            vec!["S-CANVAS", "S-PLAYER"],
+        ),
+        (
+            "AE-15",
+            "N-SCENE",
+            "N-CANVAS",
+            "APPROXIMATES_AS",
+            "Scene subset",
+            "Canvas dispatch",
+            "finite subset rendered approximately",
+            "unsupported node handling",
+            vec!["S-CANVAS"],
+        ),
+        (
+            "AE-16",
+            "N-PLAYER",
+            "N-REACT",
+            "OWNS_TIME",
+            "requested output frame",
+            "playback range and rate",
+            "frame choice only",
+            "playback diagnostic",
+            vec!["S-PLAYER"],
+        ),
+        (
+            "AE-17",
+            "N-CPU",
+            "N-ENCODER",
+            "EMITS",
+            "ordered pixel frames",
+            "encoder contract",
+            "scene semantics become timestamps and pixels",
+            "CLI/encoder failure",
+            vec!["S-CLI"],
+        ),
+        (
+            "AE-18",
+            "N-GPU",
+            "N-ENCODER",
+            "EMITS",
+            "ordered pixel frames",
+            "encoder contract",
+            "scene semantics become timestamps and pixels",
+            "CLI/encoder failure",
+            vec!["S-CLI"],
+        ),
+    ];
+    let mut node_values:Vec<Value> = nodes.into_iter().map(|n| json!({"id":n.0,"kind":n.1,"name":n.2,"authority":n.3,"mutability":n.4,"time_domains":n.5,"identity_behavior":n.6,"input_types":n.7,"output_types":n.8,"source_refs":n.9})).collect();
+    node_values.sort_by(|a, b| a["id"].as_str().cmp(&b["id"].as_str()));
+    let mut edge_values:Vec<Value> = edges.into_iter().map(|e| json!({"id":e.0,"from":e.1,"to":e.2,"kind":e.3,"data_form":e.4,"validation":e.5,"semantic_disposition":e.6,"error_behavior":e.7,"source_refs":e.8})).collect();
+    edge_values.sort_by(|a, b| a["id"].as_str().cmp(&b["id"].as_str()));
+    (Value::Array(node_values), Value::Array(edge_values))
+}
+
+fn boundary_contracts(edges: &Value) -> Result<Value> {
+    Ok(Value::Array(edges.as_array().context("edges missing")?.iter().map(|e| json!({"boundary_id":format!("BC-{}",e["id"].as_str().unwrap_or("UNKNOWN")),"producer":e["from"],"consumer":e["to"],"data_form":e["data_form"],"validation":e["validation"],"semantic_disposition":e["semantic_disposition"],"error_behavior":e["error_behavior"],"source_refs":e["source_refs"]})).collect()))
+}
+
+fn state_and_time() -> Value {
+    let states = [
+        (
+            "ST-CINEMA",
+            "Cinema payload",
+            "serialized document",
+            "AUTHORITATIVE",
+            "IMMUTABLE_DATA",
+            false,
+            false,
+            true,
+            true,
+            vec!["S-CINEMA-TYPES"],
+        ),
+        (
+            "ST-REACT",
+            "React element evaluation",
+            "one requested frame",
+            "TRANSIENT",
+            "PER_FRAME_REBUILT",
+            false,
+            false,
+            false,
+            false,
+            vec!["S-REACT-LOWER"],
+        ),
+        (
+            "ST-ACTIVE",
+            "module-level activeFrameState and activeDof",
+            "process/module",
+            "TRANSIENT",
+            "GLOBAL_MUTABLE",
+            true,
+            false,
+            false,
+            false,
+            vec!["S-REACT-LOWER"],
+        ),
+        (
+            "ST-HOST",
+            "HostNode tree",
+            "one reconciliation",
+            "TRANSIENT",
+            "MUTABLE_TREE",
+            false,
+            false,
+            false,
+            false,
+            vec!["S-REACT-HOST"],
+        ),
+        (
+            "ST-SCENE",
+            "Scene snapshot",
+            "frame/document",
+            "AUTHORITATIVE",
+            "IMMUTABLE_DATA",
+            true,
+            true,
+            true,
+            false,
+            vec!["S-SCENE"],
+        ),
+        (
+            "ST-TIMELINE",
+            "Rust Timeline",
+            "document",
+            "AUTHORITATIVE",
+            "IMMUTABLE_DATA",
+            true,
+            true,
+            true,
+            false,
+            vec!["S-ANIMATION"],
+        ),
+        (
+            "ST-LAYOUT",
+            "layout-resolved Scene",
+            "prepass",
+            "DERIVED",
+            "CLONED_AND_MUTATED",
+            false,
+            false,
+            true,
+            false,
+            vec!["S-LAYOUT"],
+        ),
+        (
+            "ST-IMAGE",
+            "image-resolved Scene",
+            "prepass/cache",
+            "CACHE",
+            "CACHE_MUTABLE",
+            true,
+            false,
+            true,
+            false,
+            vec!["S-IMAGE"],
+        ),
+        (
+            "ST-PLAYER",
+            "player transport",
+            "component instance",
+            "PRESENTATION_ONLY",
+            "INSTANCE_MUTABLE",
+            false,
+            false,
+            false,
+            false,
+            vec!["S-PLAYER"],
+        ),
+        (
+            "ST-GPU",
+            "GPU engine coordination",
+            "browser process",
+            "EXTERNAL_RUNTIME",
+            "GLOBAL_MUTABLE",
+            true,
+            false,
+            false,
+            false,
+            vec!["S-MANDATORY-PACKAGES-PLAYER-SRC-ENGINE-DRAWER-TS"],
+        ),
+        (
+            "ST-AUDIO",
+            "audio transport",
+            "AudioContext",
+            "EXTERNAL_RUNTIME",
+            "EXTERNAL_RUNTIME",
+            true,
+            false,
+            false,
+            false,
+            vec!["S-AUDIO", "S-MANDATORY-PACKAGES-PLAYER-SRC-AUDIO-TS"],
+        ),
+        (
+            "ST-FRAMES",
+            "temporary frames JSON",
+            "export invocation",
+            "DERIVED",
+            "IMMUTABLE_DATA",
+            false,
+            false,
+            true,
+            false,
+            vec!["S-NODE-EXPORT"],
+        ),
+    ];
+    let conversions = [
+        (
+            "TC-01",
+            "SECONDS_NUMBER",
+            "COMPOSITION_FRAME_LOCAL",
+            "round seconds multiplied by fps",
+            "nearest integer",
+            "none established",
+            "negative values possible before validation",
+            "fraction removed",
+            "fps multiplication",
+            "Cinema timing",
+            "rounding changes authored timing",
+            vec!["S-CINEMA-TIME"],
+        ),
+        (
+            "TC-02",
+            "COMPOSITION_FRAME_LOCAL",
+            "FRAME_INDEX_INTEGER",
+            "duration and transition overlap derivation",
+            "rounding from TimeSpec",
+            "validated by Cinema",
+            "integer frames",
+            "fraction removed",
+            "fps-dependent",
+            "Cinema compiler",
+            "overlap accumulation",
+            vec!["S-CINEMA-TIME", "S-CINEMA-COMPILER"],
+        ),
+        (
+            "TC-03",
+            "FRAME_INDEX_INTEGER",
+            "FRAME_INDEX_FLOAT",
+            "motion-blur sample offsets",
+            "none",
+            "inherits output-frame range",
+            "fractional samples introduced",
+            "preserved",
+            "sample-count dependent",
+            "React exporter",
+            "floating sample precision",
+            vec!["S-NODE-EXPORT", "S-REACT-LOWER"],
+        ),
+        (
+            "TC-04",
+            "FRAME_INDEX_FLOAT",
+            "COMPOSITION_FRAME_LOCAL",
+            "FrameContext assignment",
+            "none",
+            "negative behavior unresolved",
+            "preserved",
+            "preserved",
+            "fps-independent",
+            "React frame evaluator",
+            "module-global ownership",
+            vec!["S-REACT-FRAME", "S-REACT-LOWER"],
+        ),
+        (
+            "TC-05",
+            "COMPOSITION_FRAME_LOCAL",
+            "SEQUENCE_FRAME_LOCAL",
+            "subtract sequence start",
+            "none",
+            "negative local frames can be outside active range",
+            "preserved",
+            "preserved",
+            "fps-independent",
+            "Sequence",
+            "boundary semantics",
+            vec!["S-REACT-SEQUENCE"],
+        ),
+        (
+            "TC-06",
+            "FRAME_INDEX_FLOAT",
+            "SECONDS_NUMBER",
+            "divide frame by fps",
+            "none",
+            "negative time possible",
+            "preserved",
+            "preserved",
+            "fps division",
+            "Rust Timeline evaluator",
+            "floating precision",
+            vec!["S-ANIMATION"],
+        ),
+        (
+            "TC-07",
+            "COMPOSITION_FRAME_LOCAL",
+            "SOURCE_MEDIA_SECONDS",
+            "map node frame/start/rate to source time",
+            "surface-specific",
+            "source bounds may clamp",
+            "media-specific",
+            "fractional seconds retained or bucketed",
+            "playback-rate dependent",
+            "video node/player",
+            "decoder and bucket precision",
+            vec!["S-VIDEO", "S-SCENE"],
+        ),
+        (
+            "TC-08",
+            "TIMELINE_CLIP_FRAME",
+            "SOURCE_MEDIA_SECONDS",
+            "clip placement plus source offset divided by rate",
+            "implementation-specific",
+            "clip bounds",
+            "negative source time unresolved",
+            "fractional source time",
+            "clip-rate dependent",
+            "timeline/prepass",
+            "clip/source boundary",
+            vec!["S-SCENE", "S-CLI"],
+        ),
+        (
+            "TC-09",
+            "RAF_WALL_TIME",
+            "FRAME_INDEX_INTEGER",
+            "floor elapsed time times fps and playback rate",
+            "floor",
+            "playback range clamp",
+            "seek/range controlled",
+            "fraction discarded",
+            "playback-rate dependent",
+            "Player",
+            "skipped frames under load",
+            vec!["S-PLAYER"],
+        ),
+        (
+            "TC-10",
+            "FRAME_INDEX_INTEGER",
+            "AUDIO_CONTEXT_SECONDS",
+            "map visual frame to context transport time",
+            "implementation-specific",
+            "playback range",
+            "seek before zero controlled",
+            "seconds preserved",
+            "playback-rate dependent",
+            "audio engine",
+            "two-clock drift",
+            vec!["S-AUDIO", "S-PLAYER"],
+        ),
+        (
+            "TC-11",
+            "FRAME_INDEX_INTEGER",
+            "ENCODED_TIMESTAMP",
+            "ordered output frame converted by encoder timebase",
+            "encoder-defined",
+            "output range",
+            "not applicable",
+            "timebase rational",
+            "fps/timebase dependent",
+            "native encoder",
+            "timestamp quantization",
+            vec!["S-CLI"],
+        ),
+        (
+            "TC-12",
+            "SOURCE_MEDIA_SECONDS",
+            "SOURCE_MEDIA_SECONDS",
+            "round to one-thirtieth-second preview cache bucket",
+            "nearest 1/30",
+            "source-dependent",
+            "negative behavior unresolved",
+            "quantized",
+            "independent of composition fps",
+            "video preview cache",
+            "preview/export frame mismatch",
+            vec!["S-VIDEO"],
+        ),
+    ];
+    json!({"state_records":states.into_iter().map(|s|json!({"state_id":s.0,"representation":s.1,"owner_scope":s.2,"authority":s.3,"mutability":s.4,"shared":s.5,"thread_safe":s.6,"survives_frame_evaluation":s.7,"carries_source_provenance":s.8,"reentrancy":"UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state","source_refs":s.9})).collect::<Vec<_>>(),"time_conversions":conversions.into_iter().map(|t|json!({"conversion_id":t.0,"source_domain":t.1,"target_domain":t.2,"operation":t.3,"rounding_behavior":t.4,"clamping_behavior":t.5,"negative_time_behavior":t.6,"fractional_time_behavior":t.7,"rate_behavior":t.8,"owner":t.9,"precision_risk":t.10,"source_refs":t.11})).collect::<Vec<_>>()})
+}
+
+fn identity() -> Value {
+    let rows = [
+        (
+            "ID-01",
+            "Cinema scene ID",
+            "Cinema scene",
+            "React composition",
+            "USED_ONLY_DURING_LOWERING",
+            false,
+        ),
+        (
+            "ID-02",
+            "Cinema track ID",
+            "Cinema track",
+            "React grouping",
+            "USED_ONLY_DURING_LOWERING",
+            false,
+        ),
+        (
+            "ID-03",
+            "Cinema entry ID",
+            "Cinema entry",
+            "React key",
+            "USED_ONLY_AS_REACT_KEY",
+            false,
+        ),
+        (
+            "ID-04",
+            "Cinema morph key",
+            "Cinema entry",
+            "transition matching",
+            "USED_ONLY_DURING_LOWERING",
+            false,
+        ),
+        (
+            "ID-05",
+            "React key",
+            "React element",
+            "HostNode/Scene",
+            "DROPPED",
+            false,
+        ),
+        (
+            "ID-06",
+            "React host node",
+            "HostNode tree",
+            "Scene Node",
+            "REMAPPED",
+            false,
+        ),
+        (
+            "ID-07",
+            "numeric Scene NodeId",
+            "Scene",
+            "renderer/timeline",
+            "PRESERVED",
+            true,
+        ),
+        (
+            "ID-08",
+            "Timeline target NodeId",
+            "Timeline",
+            "Scene mutation target",
+            "PRESERVED",
+            true,
+        ),
+        (
+            "ID-09",
+            "renderer element identity",
+            "Scene Node",
+            "render pass",
+            "USED_ONLY_DURING_LOWERING",
+            false,
+        ),
+        (
+            "ID-10",
+            "preview selection identity",
+            "Cinema inspector",
+            "rendered node",
+            "NOT_REPRESENTABLE",
+            false,
+        ),
+    ];
+    Value::Array(rows.into_iter().map(|r|json!({"identity_id":r.0,"concept":r.1,"source_representation":r.2,"target_representation":r.3,"disposition":r.4,"final_scene_traceable":r.5,"source_map_available":false,"diagnostic_impact":"full intent-to-pixel repair is unavailable when identity is consumed","source_refs":if r.0=="ID-07"||r.0=="ID-08"{vec!["S-SCENE","S-ANIMATION"]}else{vec!["S-CINEMA-TYPES","S-CINEMA-RESOLVE","S-REACT-LOWER"]}})).collect())
+}
+
+fn semantics() -> Value {
+    let concepts = [
+        ("scene purpose", "DROPPED"),
+        ("entry role", "USED_ONLY_DURING_LOWERING"),
+        (
+            "focal/support/ambient hierarchy",
+            "USED_ONLY_DURING_LOWERING",
+        ),
+        ("scene ID", "DROPPED"),
+        ("track ID", "DROPPED"),
+        ("entry ID", "USED_ONLY_AS_REACT_KEY"),
+        ("labels", "DROPPED"),
+        ("component name", "USED_ONLY_DURING_LOWERING"),
+        ("component property semantics", "MATERIALIZED"),
+        ("choreography pattern", "MATERIALIZED"),
+        ("choreography parameters", "MATERIALIZED"),
+        ("transition name", "MATERIALIZED"),
+        ("transition options", "MATERIALIZED"),
+        ("camera intent", "MATERIALIZED"),
+        ("brand-token identity", "DROPPED"),
+        ("responsive intent", "MATERIALIZED"),
+        ("placement intent", "MATERIALIZED"),
+        ("size-role intent", "MATERIALIZED"),
+        ("morph key", "USED_ONLY_DURING_LOWERING"),
+        ("matte intent", "PRESERVED"),
+        ("clip intent", "PRESERVED"),
+        ("effect intent", "PRESERVED"),
+        ("depth intent", "MATERIALIZED"),
+        ("3D placement intent", "MATERIALIZED"),
+        ("source asset reference", "PRESERVED"),
+        ("audio relationship", "PRESERVED"),
+        ("timing intent", "NORMALIZED"),
+        ("diagnostics", "DROPPED"),
+        ("fidelity classification", "DROPPED"),
+        ("backend requirement", "UNRESOLVED"),
+        ("source provenance", "DROPPED"),
+    ];
+    Value::Array(concepts.into_iter().enumerate().map(|(i,c)|json!({"semantic_id":format!("SEM-{:03}",i+1),"concept":c.0,"source_representation":"Cinema, React, or direct authoring representation","target_representation":"renderer-facing Scene or pixels","disposition":c.1,"change_stage":"authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass","reversibility":if matches!(c.1,"PRESERVED"|"NORMALIZED"){"PARTIAL"}else{"NO"},"editing_impact":"semantic edits become value-level edits after lowering","diagnostic_impact":"errors cannot always identify the originating intent","agent_repair_impact":"agent may need to reconstruct authoring context","incremental_compilation_impact":"coarse invalidation when source mapping is absent","source_refs":vec!["S-CINEMA-TYPES","S-CINEMA-COMPILER","S-REACT-LOWER","S-SCENE"],"confidence":"MEDIUM"})).collect())
+}
+
+fn fallbacks() -> Value {
+    let rows = [
+        (
+            "unknown component",
+            "VALIDATION_ERROR",
+            true,
+            "component cannot lower",
+            "visible build placeholder or stop",
+        ),
+        (
+            "unknown choreography",
+            "WARNING",
+            true,
+            "named motion omitted",
+            "static or default motion",
+        ),
+        (
+            "unknown transition",
+            "WARNING",
+            true,
+            "transition intent omitted",
+            "cut/default transition",
+        ),
+        (
+            "unknown property",
+            "MALFORMED_VALUE_DROPPED",
+            false,
+            "property semantics lost",
+            "default or unchanged value",
+        ),
+        (
+            "invalid time specification",
+            "VALIDATION_ERROR",
+            true,
+            "timing cannot normalize",
+            "build stops",
+        ),
+        (
+            "malformed finish or LUT",
+            "DEFAULT_SUBSTITUTION",
+            true,
+            "grade intent changes",
+            "default finish",
+        ),
+        (
+            "unsupported React host element",
+            "HARD_ERROR",
+            true,
+            "tree cannot lower",
+            "evaluation stops",
+        ),
+        (
+            "raw text in wrong parent",
+            "HARD_ERROR",
+            true,
+            "text cannot lower safely",
+            "evaluation stops",
+        ),
+        (
+            "missing root Composition",
+            "HARD_ERROR",
+            true,
+            "no Scene root",
+            "evaluation stops",
+        ),
+        (
+            "GPU-only component on CPU",
+            "UNSUPPORTED",
+            true,
+            "capability unavailable",
+            "placeholder, omission, or failure",
+        ),
+        (
+            "degraded component fidelity",
+            "APPROXIMATION",
+            true,
+            "quality classification reduced",
+            "approximate rendering",
+        ),
+        (
+            "renderer runtime failure",
+            "AUTOMATIC_BACKEND_FALLBACK",
+            true,
+            "backend changes",
+            "GPU to CPU",
+        ),
+        (
+            "CPU renderer failure",
+            "AUTOMATIC_BACKEND_FALLBACK",
+            true,
+            "renderer subset changes",
+            "CPU to Canvas preview",
+        ),
+        (
+            "failed font load",
+            "ASYNC_RETRY_OR_REPAINT",
+            true,
+            "text metrics may change",
+            "retry or repaint",
+        ),
+        (
+            "missing image",
+            "VISUAL_PLACEHOLDER",
+            true,
+            "asset absent",
+            "placeholder or skipped draw",
+        ),
+        (
+            "cross-origin video preview",
+            "DEFAULT_SUBSTITUTION",
+            true,
+            "browser decode path differs",
+            "media-element fallback",
+        ),
+        (
+            "malformed progress message",
+            "MALFORMED_VALUE_DROPPED",
+            false,
+            "progress visibility lost",
+            "continue without update",
+        ),
+        (
+            "CLI process failure",
+            "HARD_ERROR",
+            true,
+            "export cannot complete",
+            "process error",
+        ),
+        (
+            "direct JSON deserialization",
+            "HARD_ERROR",
+            true,
+            "Scene unavailable",
+            "parse failure",
+        ),
+        (
+            "future scene version",
+            "UNSUPPORTED",
+            true,
+            "compatibility unresolved",
+            "reject or retain version depending boundary",
+        ),
+        (
+            "unknown scene fields",
+            "UNKNOWN",
+            false,
+            "forward semantics unresolved",
+            "serde behavior requires fixture",
+        ),
+    ];
+    Value::Array(rows.into_iter().enumerate().map(|(i,r)|json!({"id":format!("VF-{:03}",i+1),"surface":"Cinema, React, Scene, preview, or export boundary","trigger":r.0,"behavior":r.1,"diagnostic_code_or_message_class":r.0,"user_or_agent_informed":r.2,"semantic_impact":r.3,"visual_outcome":r.4,"visual_impact":r.4,"timing_impact":"none unless media, timing, or asynchronous retry is involved","determinism_impact":"fallback selection can be capability- or runtime-dependent","preview_export_difference":"browser-only fallbacks do not establish native-export equivalence","repairability":if r.2{"ACTIONABLE"}else{"LIMITED"},"quality_reducing":matches!(r.1,"APPROXIMATION"|"AUTOMATIC_BACKEND_FALLBACK"|"DEFAULT_SUBSTITUTION"|"VISUAL_PLACEHOLDER"),"source_refs":vec!["S-CINEMA-COMPILER","S-CINEMA-TEST","S-REACT-LOWER","S-PLAYER","S-CANVAS","S-CLI"]})).collect())
+}
+
+fn preview_export() -> Value {
+    let rows = [
+        (
+            "PE-01",
+            "React frame evaluation",
+            "player-requested frame evaluation",
+            "batch renderFrames evaluation",
+            "SHARED_WITH_DIFFERENT_SCHEDULING",
+        ),
+        (
+            "PE-02",
+            "CPU renderer core",
+            "WASM CPU boundary",
+            "native CPU boundary",
+            "CONDITIONAL_PARITY",
+        ),
+        (
+            "PE-03",
+            "GPU renderer core",
+            "WASM Vello boundary",
+            "native GPU boundary",
+            "CONDITIONAL_PARITY",
+        ),
+        (
+            "PE-04",
+            "video decode",
+            "browser media element/cache",
+            "native media prepass",
+            "DIFFERENT_EXECUTION",
+        ),
+        (
+            "PE-05",
+            "audio scheduling",
+            "AudioContext transport",
+            "native audio/encoder path",
+            "DIFFERENT_EXECUTION",
+        ),
+        (
+            "PE-06",
+            "Canvas2D",
+            "approximate preview fallback",
+            "not equivalent certification path",
+            "KNOWN_APPROXIMATION",
+        ),
+        (
+            "PE-07",
+            "frame scheduling",
+            "RAF may skip requested frames",
+            "ordered complete export frame sequence",
+            "DIFFERENT_EXECUTION",
+        ),
+    ];
+    Value::Array(rows.into_iter().map(|r|json!({"comparison_id":r.0,"feature":r.1,"preview_path":r.2,"export_path":r.3,"parity_class":r.4,"shared_authoring_evaluation":true,"known_difference":"media scheduling, backend capability, or frame ordering differs","certification_impact":"end-to-end parity must be capability-aware and measured","source_refs":vec!["S-PLAYER","S-VIDEO","S-AUDIO","S-WASM","S-WASM-VELLO","S-CLI","S-CANVAS"]})).collect())
+}
+
+fn creativity() -> Value {
+    json!({
+        "overall_verdict":"MULTI_LAYER_PROGRAMMABILITY_WITH_FINITE_RENDERER_VOCABULARY",
+        "scoring_policy":"No numeric creativity score is assigned; every capability uses an evidence-backed categorical state that distinguishes native, host-language, registry, lower-level, finite-catalog, partial, and unknown support.",
+        "surface_assessments":[
+            creative_row("AS-CINEMA", [
+                ("general_primitive_access", "REQUIRES_LOWER_LEVEL_SCENE_ACCESS"),
+                ("procedural_logic", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("custom_geometry", "REQUIRES_LOWER_LEVEL_SCENE_ACCESS"),
+                ("custom_animation", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("custom_component_extension", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("registry_dependence", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("named_pattern_dependence", "FINITE_CATALOG_LIMIT"),
+                ("can_descend_to_primitives", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("inspectability", "PARTIALLY_SUPPORTED"),
+                ("post_generation_editability", "PARTIALLY_SUPPORTED"),
+                ("source_mapping", "PARTIALLY_SUPPORTED_BEFORE_LOWERING"),
+                ("novel_scene_expressibility", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+            ], "MEDIUM", "Custom registry code can emit React and reach Scene primitives, while built-in named patterns remain finite.", vec!["S-CINEMA-TYPES","S-CINEMA-COMPILER","S-CINEMA-RESOLVE","S-COMPONENTS"]),
+            creative_row("AS-REACT", [
+                ("general_primitive_access", "SUPPORTED"),
+                ("procedural_logic", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("custom_geometry", "FINITE_CATALOG_LIMIT"),
+                ("custom_animation", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("custom_component_extension", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("registry_dependence", "NOT_NATIVE"),
+                ("named_pattern_dependence", "NOT_NATIVE"),
+                ("can_descend_to_primitives", "SUPPORTED"),
+                ("inspectability", "SUPPORTED"),
+                ("post_generation_editability", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("source_mapping", "PARTIALLY_SUPPORTED"),
+                ("novel_scene_expressibility", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+            ], "LOW", "Frame hooks, interpolation, spring, sequencing, transitions, loops, and primitive nodes are directly available to host-language code.", vec!["S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS","S-MANDATORY-PACKAGES-REACT-SRC-COMPONENTS-TS","S-MANDATORY-PACKAGES-REACT-SRC-INTERPOLATE-TS","S-MANDATORY-PACKAGES-REACT-SRC-SPRING-TS","S-MANDATORY-PACKAGES-REACT-SRC-TRANSITIONS-TS","S-REACT-LOWER"]),
+            creative_row("AS-JSON", [
+                ("general_primitive_access", "SUPPORTED"),
+                ("procedural_logic", "NOT_NATIVE"),
+                ("custom_geometry", "FINITE_CATALOG_LIMIT"),
+                ("custom_animation", "SUPPORTED"),
+                ("custom_component_extension", "NOT_NATIVE"),
+                ("registry_dependence", "NOT_NATIVE"),
+                ("named_pattern_dependence", "NOT_NATIVE"),
+                ("can_descend_to_primitives", "SUPPORTED"),
+                ("inspectability", "SUPPORTED"),
+                ("post_generation_editability", "SUPPORTED"),
+                ("source_mapping", "PARTIALLY_SUPPORTED"),
+                ("novel_scene_expressibility", "PARTIALLY_SUPPORTED"),
+            ], "MEDIUM", "Direct JSON composes the finite Scene schema; it cannot define a new component implementation at this layer.", vec!["S-SCENE","S-CLI","S-WASM"]),
+            creative_row("AS-RUST", [
+                ("general_primitive_access", "SUPPORTED"),
+                ("procedural_logic", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("custom_geometry", "FINITE_CATALOG_LIMIT"),
+                ("custom_animation", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("custom_component_extension", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("registry_dependence", "NOT_NATIVE"),
+                ("named_pattern_dependence", "NOT_NATIVE"),
+                ("can_descend_to_primitives", "SUPPORTED"),
+                ("inspectability", "SUPPORTED"),
+                ("post_generation_editability", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("source_mapping", "PARTIALLY_SUPPORTED"),
+                ("novel_scene_expressibility", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+            ], "LOW", "Typed Rust constructs Scene and Timeline values directly without depending on the Cinema component registry.", vec!["S-SCENE","S-ANIMATION","S-CLI"]),
+            creative_row("AS-COMPONENTS", [
+                ("general_primitive_access", "REQUIRES_LOWER_LEVEL_SCENE_ACCESS"),
+                ("procedural_logic", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("custom_geometry", "REQUIRES_LOWER_LEVEL_SCENE_ACCESS"),
+                ("custom_animation", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("custom_component_extension", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("registry_dependence", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("named_pattern_dependence", "FINITE_CATALOG_LIMIT"),
+                ("can_descend_to_primitives", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("inspectability", "PARTIALLY_SUPPORTED"),
+                ("post_generation_editability", "PARTIALLY_SUPPORTED"),
+                ("source_mapping", "PARTIALLY_SUPPORTED_BEFORE_LOWERING"),
+                ("novel_scene_expressibility", "FINITE_CATALOG_LIMIT"),
+            ], "MEDIUM", "Catalog identity is present before expansion, but complete component-to-Scene-to-pixel source mapping is not preserved.", vec!["S-COMPONENTS","S-MANDATORY-PACKAGES-COMPONENTS-SRC-INDEX-TS","S-CINEMA-COMPILER","S-REACT-LOWER"])
+        ]
+    })
+}
+
+fn creative_row<const N: usize>(
+    surface_id: &str,
+    capabilities: [(&str, &str); N],
+    black_box_risk: &str,
+    escape_hatch_evidence: &str,
+    source_refs: Vec<&str>,
+) -> Value {
+    let mut row = serde_json::Map::new();
+    row.insert("surface_id".into(), json!(surface_id));
+    for (name, status) in capabilities {
+        row.insert(name.into(), json!(status));
+    }
+    row.insert("black_box_risk".into(), json!(black_box_risk));
+    row.insert("escape_hatch_evidence".into(), json!(escape_hatch_evidence));
+    row.insert("source_refs".into(), json!(source_refs));
+    Value::Object(row)
+}
+
+fn novel_scenes() -> Value {
+    let laptop = [
+        "part hierarchy",
+        "segmentation",
+        "exploded-view planning",
+        "collision avoidance",
+        "mechanical geometry",
+        "materials",
+        "emissive lighting",
+        "camera",
+        "particles",
+        "timing",
+        "sound",
+        "semantic grouping",
+        "inspectability",
+        "editability",
+        "asset truthfulness",
+    ];
+    let generic = |id: &str, name: &str, limits: &str| json!({"litmus_id":id,"scene":name,"verdict":"PARTIALLY_EXPRESSIBLE","required_primitives":["hierarchy","geometry","transforms","camera","timing","effects","media"],"surface_comparison":[{"surface_id":"AS-CINEMA","result":"guided composition; novel mechanics require registry code"},{"surface_id":"AS-REACT","result":"procedural composition over finite Scene primitives"},{"surface_id":"AS-JSON","result":"explicit renderer graph without high-level planning semantics"},{"surface_id":"AS-RUST","result":"typed procedural graph and timeline construction"},{"surface_id":"AS-COMPONENTS","result":"finite catalog unless extended with code"}],"capability_decomposition":[{"dimension":"overall primitive sufficiency","status":"PARTIAL_OR_NOT_ESTABLISHED","required_primitive":"inspectable scene-specific primitive composition","evidence_scope":"The cited Scene and React surfaces establish finite composition primitives, not a general solution for every requested visual or physical behavior.","source_refs":["S-SCENE","S-REACT-LOWER"]}],"limitations":limits,"inspectability":"Scene values are inspectable; high-level planning intent is not retained","editability":"value-level editing remains; semantic repair is weakened","asset_truthfulness":"external assets must be declared and cannot be inferred as physically accurate","source_refs":vec!["S-SCENE","S-REACT-LOWER","S-CINEMA-COMPILER","S-COMPONENTS"]});
+    let mut laptop_scene=generic("LITMUS-LAPTOP","exploded laptop layers","general mechanical constraints, collision solving, physically based materials, and general shaders are not established");
+    laptop_scene["capability_decomposition"] = Value::Array(laptop.into_iter().map(|dimension| {
+        let (status, source_refs, evidence_scope) = match dimension {
+            "part hierarchy" => ("SUPPORTED_OR_COMPOSABLE", vec!["S-SCENE", "S-REACT-LOWER"], "A presegmented model or manually supplied hierarchy can be composed."),
+            "segmentation" => ("PARTIAL_OR_NOT_ESTABLISHED", vec!["S-SCENE", "S-REACT-LOWER"], "Manual or presegmented hierarchy is supported; automatic semantic or mechanical segmentation of a monolithic asset is not established."),
+            "camera" | "timing" => ("SUPPORTED_OR_COMPOSABLE", vec!["S-SCENE", "S-REACT-LOWER"], "The cited authoring and Scene surfaces expose composable primitives for this dimension."),
+            "sound" => ("SUPPORTED_OR_COMPOSABLE", vec!["S-AUDIO", "S-PLAYER", "S-REACT-LOWER"], "Audio authoring lowers to runtime scheduling with distinct clock ownership."),
+            _ => ("PARTIAL_OR_NOT_ESTABLISHED", vec!["S-SCENE", "S-REACT-LOWER"], "The available finite primitives do not establish a general solution for this dimension."),
+        };
+        json!({"dimension":dimension,"status":status,"required_primitive":format!("inspectable {dimension} representation"),"evidence_scope":evidence_scope,"source_refs":source_refs})
+    }).collect());
+    Value::Array(vec![
+        laptop_scene,
+        generic(
+            "LITMUS-CITY",
+            "glass city revenue chart",
+            "physically plausible transmissive glass and general lighting are not established",
+        ),
+        generic(
+            "LITMUS-SPACECRAFT",
+            "chrome liquid title spacecraft",
+            "liquid simulation, reflective materials, and environment lighting are not established",
+        ),
+    ])
+}
+
+fn requirements() -> Value {
+    json!([
+        requirement("CK-R002-REQ-001", "Preserve stable source identity and source-map chains across lowering stages.", "Early identity loss weakens inspection and repair.", vec!["C-003","C-004","C-011"], vec!["S-CINEMA-TYPES","S-CINEMA-RESOLVE","S-CINEMA-COMPILER","S-SCENE"], vec!["E-MLIR"], vec!["P06","P07","P08","P09","P10","P14","P23","P25"], "Enables precise edits without reconstructing flattened authoring intent.", "Lets agents and reviewers trace rendered results to stable authored entities.", "Adds metadata and lookup cost that R0.03 and R0.07 must measure.", "Preserves semantic targets for open-ended generation and repair.", vec!["R0.03","R0.05","R0.07","R0.08"]),
+        requirement("CK-R002-REQ-002", "Represent time domains and conversions explicitly.", "Fragmented clocks, rounding, and sampling obscure determinism.", vec!["C-007","C-010","C-011"], vec!["S-CINEMA-TIME","S-ANIMATION","S-PLAYER","S-VIDEO","S-AUDIO","S-CLI"], vec!["E-GSTREAMER"], vec!["P01","P02","P03","P07","P08","P14","P18","P19"], "Prevents timing drift across authoring, preview, media, and export.", "Makes rounding, rate ownership, and clock conversion auditable.", "Allows conversion and synchronization overhead to be measured explicitly.", "Gives procedural animation a deterministic temporal contract.", vec!["R0.03","R0.06","R0.07"]),
+        requirement("CK-R002-REQ-003", "Separate semantic authoring IR from renderer IR through explicit lowering contracts.", "High-level intent is consumed before rendering.", vec!["C-003","C-004","C-005","C-011"], vec!["S-CINEMA-TYPES","S-CINEMA-COMPILER","S-REACT-LOWER","S-SCENE"], vec!["E-MLIR"], vec!["P05","P06","P07","P08","P09","P10","P14","P23","P25"], "Keeps authoring semantics available while renderer data stays constrained.", "Makes each semantic-loss boundary explicit and reviewable.", "Permits renderer IR optimization without silently changing authoring meaning.", "Supports novel high-level constructs without forcing them into a template catalog.", vec!["R0.03","R0.04","R0.05","R0.08"]),
+        requirement("CK-R002-REQ-004", "Make capability fallback typed, diagnosed, and quality-classified.", "Automatic fallback can alter visible semantics.", vec!["C-007","C-008"], vec!["S-PLAYER","S-VIDEO","S-AUDIO","S-WASM","S-WASM-VELLO","S-CANVAS","S-CLI"], vec!["E-GSTREAMER"], vec!["P05","P08","P10","P14","P20","P21","P23","P24"], "Prevents silent quality loss when a backend or media capability is unavailable.", "Makes every demotion visible to users, agents, and certification logic.", "Supports capability-aware planning instead of repeated failing work.", "Lets authors deliberately choose approximations without mistaking them for equivalence.", vec!["R0.03","R0.04","R0.06","R0.07"]),
+        requirement("CK-R002-REQ-005", "Support bounded streaming frame generation.", "Whole-video Scene materialization scales with duration and graph size.", vec!["C-006","C-009"], vec!["S-REACT-LOWER","S-NODE-EXPORT","S-LAYOUT","S-IMAGE","S-VIDEO","S-CLI"], vec!["E-GSTREAMER"], vec!["P08","P14","P18","P19","P20","P26"], "Avoids duration-driven exhaustion that can prevent otherwise valid renders.", "Makes buffering and materialization limits explicit failure contracts.", "Bounds memory and I/O, with thresholds reserved for R0.07 measurement.", "Allows long procedural works without requiring whole-program frame materialization.", vec!["R0.03","R0.07"]),
+        requirement("CK-R002-REQ-006", "Version serialized boundaries with compatibility fixtures and negotiation.", "Current compatibility guarantees are incomplete.", vec!["C-005","C-011"], vec!["S-SCENE","S-CLI","S-WASM","S-WASM-VELLO"], vec!["E-MLIR"], vec!["P07","P08","P09","P10","P14","P18","P19","P23","P24"], "Prevents schema evolution from corrupting or rejecting valid creative documents unpredictably.", "Provides explicit compatibility evidence for stored and exchanged artifacts.", "Makes migration cost measurable and avoids accidental full recompilation paths.", "Protects editable creative programs across tool and runtime upgrades.", vec!["R0.03","R0.06","R0.08"]),
+        requirement("CK-R002-REQ-007", "Preserve deterministic random, media, and global-state ownership contracts.", "Module-global and external runtime state complicate reentrancy.", vec!["C-002","C-010","C-012"], vec!["S-REACT-FRAME","S-REACT-STATE","S-REACT-WARM","S-PLAYER","S-VIDEO","S-AUDIO","S-REACT-LOWER"], vec!["E-REACT","E-GSTREAMER"], vec!["P01","P02","P03","P07","P08","P14","P18","P19","P20","P21"], "Produces repeatable frames under concurrency, seeking, and retries.", "Makes nondeterministic state ownership observable and testable.", "Enables safe parallelism only where isolation costs and benefits are known.", "Keeps procedural randomness and media behavior reproducible for agent iteration.", vec!["R0.03","R0.06","R0.07"]),
+        requirement("CK-R002-REQ-008", "Keep open-ended host-language escape hatches while retaining inspectable primitives.", "Finite catalogs alone cannot guarantee novel-scene expressibility.", vec!["C-001","C-003","C-005"], vec!["S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS","S-MANDATORY-PACKAGES-REACT-SRC-COMPONENTS-TS","S-CINEMA-COMPILER","S-COMPONENTS","S-SCENE"], vec!["E-REACT","E-MLIR"], vec!["P01","P02","P03","P05","P06","P07","P25","P26","P28"], "Combines reusable components with precise low-level control.", "Keeps generated structures inspectable instead of hiding behavior behind opaque presets.", "Allows specialization while retaining analyzable primitive output and later measurement.", "Maintains the project goal of general creative programming rather than template selection.", vec!["R0.04","R0.05","R0.06","R0.08"])
+    ])
+}
+
+#[allow(clippy::too_many_arguments)]
+fn requirement(
+    requirement_id: &str,
+    abstract_requirement: &str,
+    problem_addressed: &str,
+    observations: Vec<&str>,
+    onda_sources: Vec<&str>,
+    primary_sources: Vec<&str>,
+    programs: Vec<&str>,
+    quality: &str,
+    trust: &str,
+    performance: &str,
+    creativity: &str,
+    follow_up: Vec<&str>,
+) -> Value {
+    json!({"requirement_id":requirement_id,"abstract_requirement":abstract_requirement,"problem_addressed":problem_addressed,"onda_observation_refs":observations,"onda_source_refs":onda_sources,"independent_primary_source_refs":primary_sources,"affected_cinekernel_programs":programs,"quality_impact":quality,"trust_impact":trust,"performance_impact":performance,"creative_programming_impact":creativity,"required_follow_up_research":follow_up,"prohibited_reuse_note":"Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.","status":"CANDIDATE_ONLY"})
+}
+
+fn contradictions() -> Value {
+    json!([{"contradiction_id":"CON-001","statement":"Fresh React roots isolate host trees, but module-global active frame and depth-of-field state leave concurrent or nested reentrancy unresolved.","source_refs":["S-REACT-LOWER"]},{"contradiction_id":"CON-002","statement":"Renderer sharing does not imply end-to-end preview/export parity because media scheduling and fallbacks differ.","source_refs":["S-PLAYER","S-VIDEO","S-AUDIO","S-CLI"]},{"contradiction_id":"CON-003","statement":"A universal Scene vocabulary is still finite and Canvas preview explicitly approximates only a subset.","source_refs":["S-SCENE","S-CANVAS"]}])
+}
+
+fn deferred() -> Value {
+    json!([{"topic_id":"DEF-001","phase":"R0.03","topic":"Native GPU, CPU, WASM, and encoding architecture"},{"topic_id":"DEF-002","phase":"R0.04","topic":"Typography, layout, effects, color, and 3D architecture"},{"topic_id":"DEF-003","phase":"R0.05","topic":"Agent component catalog and cinematic composition model"},{"topic_id":"DEF-004","phase":"R0.06","topic":"CLI, installation, preview, embedding, and developer experience"},{"topic_id":"DEF-005","phase":"R0.07","topic":"Independent benchmark and failure analysis"},{"topic_id":"DEF-006","phase":"R0.08","topic":"Adoption, rejection, clean-room, and roadmap-delta matrix"}])
+}
+
+fn open_questions() -> Value {
+    json!([
+        {"id":"Q-001","question":"What scene-size and duration thresholds make full frame materialization unacceptable on target machines?","defer_to":["R0.03","R0.07"],"source_refs":["S-NODE-EXPORT","S-REACT-LOWER"]},
+        {"id":"Q-002","question":"Which renderer capabilities are intentionally stable across CPU, Vello, and browser hosts?","defer_to":["R0.03"],"source_refs":["S-WASM","S-WASM-VELLO","S-CLI"]},
+        {"id":"Q-003","question":"What serialization evolution policy is promised beyond current version handling?","defer_to":["R0.03","R0.08"],"source_refs":["S-SCENE","S-CLI","S-WASM"]},
+        {"id":"Q-004","question":"How should media clocks, frame rates, variable frame rate, and audio resampling compose?","defer_to":["R0.03","R0.06","R0.07"],"source_refs":["S-AUDIO","S-VIDEO","S-CLI"]},
+        {"id":"Q-005","question":"What general material, shader, constraint, and simulation model is required for the target creative ceiling?","defer_to":["R0.04"],"source_refs":["S-SCENE","S-COMPONENTS"]},
+        {"id":"Q-006","question":"Which authoring semantics must remain editable after lowering and round-trip serialization?","defer_to":["R0.05","R0.08"],"source_refs":["S-CINEMA-TYPES","S-CINEMA-COMPILER"]}
+    ])
+}

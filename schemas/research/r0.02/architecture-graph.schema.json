@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "architecture_edges": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "data_form": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "error_behavior": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "from": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "id": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "kind": {
+                "enum": [
+                  "EMITS",
+                  "VALIDATES",
+                  "NORMALIZES",
+                  "LOWERS_TO",
+                  "EXPANDS_TO",
+                  "MATERIALIZES",
+                  "SERIALIZES",
+                  "DESERIALIZES",
+                  "CLONES",
+                  "MUTATES",
+                  "OWNS_STATE",
+                  "OWNS_TIME",
+                  "TARGETS",
+                  "INVOKES",
+                  "FALLS_BACK_TO",
+                  "APPROXIMATES_AS",
+                  "DROPS_OR_FLATTENS",
+                  "INSPECTS"
+                ],
+                "type": "string"
+              },
+              "semantic_disposition": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "to": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "validation": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "data_form",
+              "error_behavior",
+              "from",
+              "id",
+              "kind",
+              "semantic_disposition",
+              "source_refs",
+              "to",
+              "validation"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "architecture_nodes": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "authority": {
+                "enum": [
+                  "AUTHORITATIVE",
+                  "DERIVED",
+                  "TRANSIENT",
+                  "CACHE",
+                  "PRESENTATION_ONLY",
+                  "EXTERNAL_RUNTIME",
+                  "UNKNOWN"
+                ],
+                "type": "string"
+              },
+              "id": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "identity_behavior": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "input_types": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "kind": {
+                "enum": [
+                  "AUTHORING_SURFACE",
+                  "VALIDATOR",
+                  "NORMALIZER",
+                  "REGISTRY",
+                  "RECONCILER",
+                  "CONTEXT",
+                  "TRANSIENT_TREE",
+                  "SEMANTIC_MODEL",
+                  "SCENE_MODEL",
+                  "ANIMATION_MODEL",
+                  "SERIALIZATION_BOUNDARY",
+                  "PREPASS",
+                  "PREVIEW_RUNTIME",
+                  "EXPORT_RUNTIME",
+                  "RENDERER_BOUNDARY",
+                  "ENCODER_BOUNDARY",
+                  "FALLBACK",
+                  "DIAGNOSTIC_SURFACE",
+                  "EXTERNAL_RUNTIME"
+                ],
+                "type": "string"
+              },
+              "mutability": {
+                "enum": [
+                  "IMMUTABLE_DATA",
+                  "MUTABLE_TREE",
+                  "PER_FRAME_REBUILT",
+                  "CLONED_AND_MUTATED",
+                  "GLOBAL_MUTABLE",
+                  "INSTANCE_MUTABLE",
+                  "CACHE_MUTABLE",
+                  "EXTERNAL_RUNTIME",
+                  "UNKNOWN"
+                ],
+                "type": "string"
+              },
+              "name": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "output_types": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "time_domains": {
+                "items": {
+                  "enum": [
+                    "FRAME_INDEX_INTEGER",
+                    "FRAME_INDEX_FLOAT",
+                    "COMPOSITION_FRAME_LOCAL",
+                    "SEQUENCE_FRAME_LOCAL",
+                    "SECONDS_NUMBER",
+                    "FPS_FLOAT",
+                    "SOURCE_MEDIA_SECONDS",
+                    "AUDIO_CONTEXT_SECONDS",
+                    "RAF_WALL_TIME",
+                    "ENCODED_TIMESTAMP",
+                    "TIMELINE_CLIP_FRAME",
+                    "NONE",
+                    "UNKNOWN"
+                  ],
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              }
+            },
+            "required": [
+              "authority",
+              "id",
+              "identity_behavior",
+              "input_types",
+              "kind",
+              "mutability",
+              "name",
+              "output_types",
+              "source_refs",
+              "time_domains"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "architecture_edges",
+        "architecture_nodes"
+      ],
+      "type": "object"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "model_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema",
+    "data",
+    "generated_at",
+    "model_ref",
+    "schema_version"
+  ],
+  "type": "object"
+}

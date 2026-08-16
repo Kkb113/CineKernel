@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "semantic_preservation": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "agent_repair_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "change_stage": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "concept": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "confidence": {
+                "enum": [
+                  "HIGH",
+                  "MEDIUM",
+                  "LOW"
+                ],
+                "type": "string"
+              },
+              "diagnostic_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "disposition": {
+                "enum": [
+                  "PRESERVED",
+                  "REMAPPED",
+                  "USED_ONLY_DURING_LOWERING",
+                  "USED_ONLY_AS_REACT_KEY",
+                  "CONVERTED_TO_NUMERIC_ID",
+                  "DROPPED",
+                  "NOT_REPRESENTABLE",
+                  "UNKNOWN",
+                  "NORMALIZED",
+                  "EXPANDED",
+                  "MATERIALIZED",
+                  "APPROXIMATED",
+                  "FALLBACK_SUBSTITUTED",
+                  "UNRESOLVED"
+                ],
+                "type": "string"
+              },
+              "editing_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "incremental_compilation_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "reversibility": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "semantic_id": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "source_representation": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "target_representation": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "agent_repair_impact",
+              "change_stage",
+              "concept",
+              "confidence",
+              "diagnostic_impact",
+              "disposition",
+              "editing_impact",
+              "incremental_compilation_impact",
+              "reversibility",
+              "semantic_id",
+              "source_refs",
+              "source_representation",
+              "target_representation"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "semantic_preservation"
+      ],
+      "type": "object"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "model_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema",
+    "data",
+    "generated_at",
+    "model_ref",
+    "schema_version"
+  ],
+  "type": "object"
+}

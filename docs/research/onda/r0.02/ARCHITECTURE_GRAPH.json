@@ -1,0 +1,580 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/architecture-graph.schema.json",
+  "data": {
+    "architecture_edges": [
+      {
+        "data_form": "Cinema payload",
+        "error_behavior": "structured diagnostics",
+        "from": "N-CINEMA",
+        "id": "AE-01",
+        "kind": "VALIDATES",
+        "semantic_disposition": "intent retained",
+        "source_refs": [
+          "S-CINEMA-TEST",
+          "S-CINEMA-COMPILER"
+        ],
+        "to": "N-CINEMA-VALIDATE",
+        "validation": "schema and semantic checks"
+      },
+      {
+        "data_form": "Cinema payload",
+        "error_behavior": "inspection findings",
+        "from": "N-CINEMA",
+        "id": "AE-02",
+        "kind": "INSPECTS",
+        "semantic_disposition": "roles and paths retained",
+        "source_refs": [
+          "S-CINEMA-INSPECT",
+          "S-CINEMA-RESOLVE"
+        ],
+        "to": "N-INSPECT",
+        "validation": "payload accepted for analysis"
+      },
+      {
+        "data_form": "React element program",
+        "error_behavior": "warnings, placeholders, or throw",
+        "from": "N-CINEMA",
+        "id": "AE-03",
+        "kind": "LOWERS_TO",
+        "semantic_disposition": "named intent partly consumed",
+        "source_refs": [
+          "S-CINEMA-COMPILER"
+        ],
+        "to": "N-REACT",
+        "validation": "post-validation construction"
+      },
+      {
+        "data_form": "React elements and frame context",
+        "error_behavior": "unsupported host error",
+        "from": "N-REACT",
+        "id": "AE-04",
+        "kind": "INVOKES",
+        "semantic_disposition": "component structure evaluated",
+        "source_refs": [
+          "S-REACT-LOWER",
+          "S-REACT-HOST"
+        ],
+        "to": "N-RECONCILER",
+        "validation": "host element contract"
+      },
+      {
+        "data_form": "host commits",
+        "error_behavior": "commit failure",
+        "from": "N-RECONCILER",
+        "id": "AE-05",
+        "kind": "MUTATES",
+        "semantic_disposition": "React tree materialized",
+        "source_refs": [
+          "S-REACT-HOST"
+        ],
+        "to": "N-HOST",
+        "validation": "host-config validation"
+      },
+      {
+        "data_form": "finite host primitives",
+        "error_behavior": "conversion error",
+        "from": "N-HOST",
+        "id": "AE-06",
+        "kind": "LOWERS_TO",
+        "semantic_disposition": "React key and component provenance dropped unless explicit",
+        "source_refs": [
+          "S-REACT-LOWER"
+        ],
+        "to": "N-SCENE",
+        "validation": "toNode conversion"
+      },
+      {
+        "data_form": "Scene plus tracks",
+        "error_behavior": "missing target or property behavior",
+        "from": "N-TIMELINE",
+        "id": "AE-07",
+        "kind": "CLONES",
+        "semantic_disposition": "keyframes materialized into values",
+        "source_refs": [
+          "S-ANIMATION"
+        ],
+        "to": "N-SCENE",
+        "validation": "target lookup"
+      },
+      {
+        "data_form": "Scene or Scene array",
+        "error_behavior": "serialization error",
+        "from": "N-SCENE",
+        "id": "AE-08",
+        "kind": "SERIALIZES",
+        "semantic_disposition": "renderer data preserved",
+        "source_refs": [
+          "S-SCENE",
+          "S-NODE-EXPORT"
+        ],
+        "to": "N-SERIAL",
+        "validation": "serde serialization"
+      },
+      {
+        "data_form": "Scene JSON",
+        "error_behavior": "parse or version error",
+        "from": "N-SERIAL",
+        "id": "AE-09",
+        "kind": "DESERIALIZES",
+        "semantic_disposition": "authoring semantics unavailable",
+        "source_refs": [
+          "S-CLI",
+          "S-WASM"
+        ],
+        "to": "N-PREPASSES",
+        "validation": "serde and version handling"
+      },
+      {
+        "data_form": "Scene",
+        "error_behavior": "prepass error",
+        "from": "N-SCENE",
+        "id": "AE-10",
+        "kind": "NORMALIZES",
+        "semantic_disposition": "layout and document structure materialized",
+        "source_refs": [
+          "S-LAYOUT",
+          "S-IMAGE",
+          "S-SVG"
+        ],
+        "to": "N-PREPASSES",
+        "validation": "media/layout/SVG resolution"
+      },
+      {
+        "data_form": "resolved Scene",
+        "error_behavior": "renderer failure",
+        "from": "N-PREPASSES",
+        "id": "AE-11",
+        "kind": "EMITS",
+        "semantic_disposition": "supported visual semantics rasterized",
+        "source_refs": [
+          "S-WASM",
+          "S-CLI"
+        ],
+        "to": "N-CPU",
+        "validation": "CPU capability checks"
+      },
+      {
+        "data_form": "resolved Scene",
+        "error_behavior": "GPU failure",
+        "from": "N-PREPASSES",
+        "id": "AE-12",
+        "kind": "EMITS",
+        "semantic_disposition": "supported visual semantics rasterized",
+        "source_refs": [
+          "S-WASM-VELLO",
+          "S-CLI"
+        ],
+        "to": "N-GPU",
+        "validation": "GPU capability checks"
+      },
+      {
+        "data_form": "resolved Scene",
+        "error_behavior": "diagnosed or runtime fallback",
+        "from": "N-GPU",
+        "id": "AE-13",
+        "kind": "FALLS_BACK_TO",
+        "semantic_disposition": "GPU-only fidelity may reduce",
+        "source_refs": [
+          "S-PLAYER",
+          "S-MANDATORY-PACKAGES-PLAYER-SRC-ENGINE-DRAWER-TS"
+        ],
+        "to": "N-CPU",
+        "validation": "runtime capability/failure"
+      },
+      {
+        "data_form": "Scene subset",
+        "error_behavior": "preview fallback",
+        "from": "N-CPU",
+        "id": "AE-14",
+        "kind": "FALLS_BACK_TO",
+        "semantic_disposition": "unsupported features approximated or omitted",
+        "source_refs": [
+          "S-CANVAS",
+          "S-PLAYER"
+        ],
+        "to": "N-CANVAS",
+        "validation": "Canvas support checks"
+      },
+      {
+        "data_form": "Scene subset",
+        "error_behavior": "unsupported node handling",
+        "from": "N-SCENE",
+        "id": "AE-15",
+        "kind": "APPROXIMATES_AS",
+        "semantic_disposition": "finite subset rendered approximately",
+        "source_refs": [
+          "S-CANVAS"
+        ],
+        "to": "N-CANVAS",
+        "validation": "Canvas dispatch"
+      },
+      {
+        "data_form": "requested output frame",
+        "error_behavior": "playback diagnostic",
+        "from": "N-PLAYER",
+        "id": "AE-16",
+        "kind": "OWNS_TIME",
+        "semantic_disposition": "frame choice only",
+        "source_refs": [
+          "S-PLAYER"
+        ],
+        "to": "N-REACT",
+        "validation": "playback range and rate"
+      },
+      {
+        "data_form": "ordered pixel frames",
+        "error_behavior": "CLI/encoder failure",
+        "from": "N-CPU",
+        "id": "AE-17",
+        "kind": "EMITS",
+        "semantic_disposition": "scene semantics become timestamps and pixels",
+        "source_refs": [
+          "S-CLI"
+        ],
+        "to": "N-ENCODER",
+        "validation": "encoder contract"
+      },
+      {
+        "data_form": "ordered pixel frames",
+        "error_behavior": "CLI/encoder failure",
+        "from": "N-GPU",
+        "id": "AE-18",
+        "kind": "EMITS",
+        "semantic_disposition": "scene semantics become timestamps and pixels",
+        "source_refs": [
+          "S-CLI"
+        ],
+        "to": "N-ENCODER",
+        "validation": "encoder contract"
+      }
+    ],
+    "architecture_nodes": [
+      {
+        "authority": "PRESENTATION_ONLY",
+        "id": "N-CANVAS",
+        "identity_behavior": "DOM/canvas identity is preview-only",
+        "input_types": [
+          "Scene subset"
+        ],
+        "kind": "FALLBACK",
+        "mutability": "INSTANCE_MUTABLE",
+        "name": "Canvas2D approximation",
+        "output_types": [
+          "approximate pixels"
+        ],
+        "source_refs": [
+          "S-CANVAS"
+        ],
+        "time_domains": [
+          "FRAME_INDEX_INTEGER"
+        ]
+      },
+      {
+        "authority": "AUTHORITATIVE",
+        "id": "N-CINEMA",
+        "identity_behavior": "string IDs retained during Cinema lowering",
+        "input_types": [
+          "Cinema payload"
+        ],
+        "kind": "AUTHORING_SURFACE",
+        "mutability": "IMMUTABLE_DATA",
+        "name": "Cinema payload",
+        "output_types": [
+          "React elements"
+        ],
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER"
+        ],
+        "time_domains": [
+          "SECONDS_NUMBER",
+          "COMPOSITION_FRAME_LOCAL"
+        ]
+      },
+      {
+        "authority": "DERIVED",
+        "id": "N-CINEMA-VALIDATE",
+        "identity_behavior": "reports payload paths",
+        "input_types": [
+          "Cinema payload"
+        ],
+        "kind": "VALIDATOR",
+        "mutability": "IMMUTABLE_DATA",
+        "name": "Cinema validator",
+        "output_types": [
+          "diagnostics"
+        ],
+        "source_refs": [
+          "S-CINEMA-TEST",
+          "S-CINEMA-COMPILER"
+        ],
+        "time_domains": [
+          "NONE"
+        ]
+      },
+      {
+        "authority": "DERIVED",
+        "id": "N-CPU",
+        "identity_behavior": "renderer-bound identity only",
+        "input_types": [
+          "resolved Scene"
+        ],
+        "kind": "RENDERER_BOUNDARY",
+        "mutability": "INSTANCE_MUTABLE",
+        "name": "CPU renderer",
+        "output_types": [
+          "pixels"
+        ],
+        "source_refs": [
+          "S-WASM",
+          "S-CLI"
+        ],
+        "time_domains": [
+          "FRAME_INDEX_FLOAT"
+        ]
+      },
+      {
+        "authority": "EXTERNAL_RUNTIME",
+        "id": "N-ENCODER",
+        "identity_behavior": "frame ordering replaces scene identity",
+        "input_types": [
+          "ordered pixels and audio"
+        ],
+        "kind": "ENCODER_BOUNDARY",
+        "mutability": "EXTERNAL_RUNTIME",
+        "name": "native encoder",
+        "output_types": [
+          "encoded media"
+        ],
+        "source_refs": [
+          "S-CLI"
+        ],
+        "time_domains": [
+          "ENCODED_TIMESTAMP"
+        ]
+      },
+      {
+        "authority": "DERIVED",
+        "id": "N-GPU",
+        "identity_behavior": "renderer-bound identity only",
+        "input_types": [
+          "resolved Scene"
+        ],
+        "kind": "RENDERER_BOUNDARY",
+        "mutability": "GLOBAL_MUTABLE",
+        "name": "Vello GPU renderer",
+        "output_types": [
+          "pixels"
+        ],
+        "source_refs": [
+          "S-WASM-VELLO",
+          "S-CLI"
+        ],
+        "time_domains": [
+          "FRAME_INDEX_FLOAT"
+        ]
+      },
+      {
+        "authority": "TRANSIENT",
+        "id": "N-HOST",
+        "identity_behavior": "React keys are not retained as source maps",
+        "input_types": [
+          "host commits"
+        ],
+        "kind": "TRANSIENT_TREE",
+        "mutability": "MUTABLE_TREE",
+        "name": "mutable HostNode tree",
+        "output_types": [
+          "Scene nodes"
+        ],
+        "source_refs": [
+          "S-REACT-HOST",
+          "S-REACT-LOWER"
+        ],
+        "time_domains": [
+          "FRAME_INDEX_FLOAT"
+        ]
+      },
+      {
+        "authority": "DERIVED",
+        "id": "N-INSPECT",
+        "identity_behavior": "retains payload paths for inspection",
+        "input_types": [
+          "Cinema payload"
+        ],
+        "kind": "SEMANTIC_MODEL",
+        "mutability": "IMMUTABLE_DATA",
+        "name": "Cinema inspector analysis",
+        "output_types": [
+          "inspection model"
+        ],
+        "source_refs": [
+          "S-CINEMA-INSPECT",
+          "S-CINEMA-RESOLVE"
+        ],
+        "time_domains": [
+          "COMPOSITION_FRAME_LOCAL"
+        ]
+      },
+      {
+        "authority": "PRESENTATION_ONLY",
+        "id": "N-PLAYER",
+        "identity_behavior": "selection and playback state are instance-owned",
+        "input_types": [
+          "composition and controls"
+        ],
+        "kind": "PREVIEW_RUNTIME",
+        "mutability": "INSTANCE_MUTABLE",
+        "name": "browser player",
+        "output_types": [
+          "requested frame and audio schedule"
+        ],
+        "source_refs": [
+          "S-PLAYER",
+          "S-AUDIO"
+        ],
+        "time_domains": [
+          "RAF_WALL_TIME",
+          "FRAME_INDEX_INTEGER",
+          "AUDIO_CONTEXT_SECONDS"
+        ]
+      },
+      {
+        "authority": "DERIVED",
+        "id": "N-PREPASSES",
+        "identity_behavior": "numeric IDs may remain while intent is materialized",
+        "input_types": [
+          "Scene"
+        ],
+        "kind": "PREPASS",
+        "mutability": "CLONED_AND_MUTATED",
+        "name": "layout and media prepasses",
+        "output_types": [
+          "resolved Scene"
+        ],
+        "source_refs": [
+          "S-LAYOUT",
+          "S-IMAGE",
+          "S-SVG",
+          "S-WASM",
+          "S-CLI"
+        ],
+        "time_domains": [
+          "COMPOSITION_FRAME_LOCAL",
+          "SOURCE_MEDIA_SECONDS"
+        ]
+      },
+      {
+        "authority": "AUTHORITATIVE",
+        "id": "N-REACT",
+        "identity_behavior": "React keys are transient",
+        "input_types": [
+          "React elements",
+          "FrameContext"
+        ],
+        "kind": "AUTHORING_SURFACE",
+        "mutability": "PER_FRAME_REBUILT",
+        "name": "React program",
+        "output_types": [
+          "HostNode tree"
+        ],
+        "source_refs": [
+          "S-REACT-LOWER",
+          "S-REACT-HOST"
+        ],
+        "time_domains": [
+          "FRAME_INDEX_INTEGER",
+          "FRAME_INDEX_FLOAT"
+        ]
+      },
+      {
+        "authority": "TRANSIENT",
+        "id": "N-RECONCILER",
+        "identity_behavior": "reconciliation identity lasts one evaluation",
+        "input_types": [
+          "React elements"
+        ],
+        "kind": "RECONCILER",
+        "mutability": "GLOBAL_MUTABLE",
+        "name": "custom React reconciler",
+        "output_types": [
+          "HostNode mutations"
+        ],
+        "source_refs": [
+          "S-REACT-LOWER",
+          "S-REACT-HOST"
+        ],
+        "time_domains": [
+          "FRAME_INDEX_FLOAT"
+        ]
+      },
+      {
+        "authority": "AUTHORITATIVE",
+        "id": "N-SCENE",
+        "identity_behavior": "optional numeric NodeId",
+        "input_types": [
+          "finite NodeKind tree"
+        ],
+        "kind": "SCENE_MODEL",
+        "mutability": "IMMUTABLE_DATA",
+        "name": "per-frame Scene",
+        "output_types": [
+          "serialized or prepass Scene"
+        ],
+        "source_refs": [
+          "S-SCENE"
+        ],
+        "time_domains": [
+          "COMPOSITION_FRAME_LOCAL",
+          "SOURCE_MEDIA_SECONDS"
+        ]
+      },
+      {
+        "authority": "DERIVED",
+        "id": "N-SERIAL",
+        "identity_behavior": "serializes numeric IDs only",
+        "input_types": [
+          "Scene or Scene array"
+        ],
+        "kind": "SERIALIZATION_BOUNDARY",
+        "mutability": "IMMUTABLE_DATA",
+        "name": "Scene JSON",
+        "output_types": [
+          "JSON bytes"
+        ],
+        "source_refs": [
+          "S-SCENE",
+          "S-NODE-EXPORT",
+          "S-CLI"
+        ],
+        "time_domains": [
+          "COMPOSITION_FRAME_LOCAL",
+          "SOURCE_MEDIA_SECONDS"
+        ]
+      },
+      {
+        "authority": "AUTHORITATIVE",
+        "id": "N-TIMELINE",
+        "identity_behavior": "targets numeric NodeId",
+        "input_types": [
+          "tracks and keyframes"
+        ],
+        "kind": "ANIMATION_MODEL",
+        "mutability": "IMMUTABLE_DATA",
+        "name": "Rust Timeline",
+        "output_types": [
+          "cloned and mutated Scene"
+        ],
+        "source_refs": [
+          "S-ANIMATION"
+        ],
+        "time_domains": [
+          "SECONDS_NUMBER"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-08-16T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.3"
+}

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "boundary_contracts": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "boundary_id": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "consumer": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "data_form": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "error_behavior": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "producer": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "semantic_disposition": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "validation": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "boundary_id",
+              "consumer",
+              "data_form",
+              "error_behavior",
+              "producer",
+              "semantic_disposition",
+              "source_refs",
+              "validation"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "boundary_contracts"
+      ],
+      "type": "object"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "model_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema",
+    "data",
+    "generated_at",
+    "model_ref",
+    "schema_version"
+  ],
+  "type": "object"
+}

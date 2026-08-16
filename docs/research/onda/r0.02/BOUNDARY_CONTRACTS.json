@@ -1,0 +1,237 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/boundary-contracts.schema.json",
+  "data": {
+    "boundary_contracts": [
+      {
+        "boundary_id": "BC-AE-01",
+        "consumer": "N-CINEMA-VALIDATE",
+        "data_form": "Cinema payload",
+        "error_behavior": "structured diagnostics",
+        "producer": "N-CINEMA",
+        "semantic_disposition": "intent retained",
+        "source_refs": [
+          "S-CINEMA-TEST",
+          "S-CINEMA-COMPILER"
+        ],
+        "validation": "schema and semantic checks"
+      },
+      {
+        "boundary_id": "BC-AE-02",
+        "consumer": "N-INSPECT",
+        "data_form": "Cinema payload",
+        "error_behavior": "inspection findings",
+        "producer": "N-CINEMA",
+        "semantic_disposition": "roles and paths retained",
+        "source_refs": [
+          "S-CINEMA-INSPECT",
+          "S-CINEMA-RESOLVE"
+        ],
+        "validation": "payload accepted for analysis"
+      },
+      {
+        "boundary_id": "BC-AE-03",
+        "consumer": "N-REACT",
+        "data_form": "React element program",
+        "error_behavior": "warnings, placeholders, or throw",
+        "producer": "N-CINEMA",
+        "semantic_disposition": "named intent partly consumed",
+        "source_refs": [
+          "S-CINEMA-COMPILER"
+        ],
+        "validation": "post-validation construction"
+      },
+      {
+        "boundary_id": "BC-AE-04",
+        "consumer": "N-RECONCILER",
+        "data_form": "React elements and frame context",
+        "error_behavior": "unsupported host error",
+        "producer": "N-REACT",
+        "semantic_disposition": "component structure evaluated",
+        "source_refs": [
+          "S-REACT-LOWER",
+          "S-REACT-HOST"
+        ],
+        "validation": "host element contract"
+      },
+      {
+        "boundary_id": "BC-AE-05",
+        "consumer": "N-HOST",
+        "data_form": "host commits",
+        "error_behavior": "commit failure",
+        "producer": "N-RECONCILER",
+        "semantic_disposition": "React tree materialized",
+        "source_refs": [
+          "S-REACT-HOST"
+        ],
+        "validation": "host-config validation"
+      },
+      {
+        "boundary_id": "BC-AE-06",
+        "consumer": "N-SCENE",
+        "data_form": "finite host primitives",
+        "error_behavior": "conversion error",
+        "producer": "N-HOST",
+        "semantic_disposition": "React key and component provenance dropped unless explicit",
+        "source_refs": [
+          "S-REACT-LOWER"
+        ],
+        "validation": "toNode conversion"
+      },
+      {
+        "boundary_id": "BC-AE-07",
+        "consumer": "N-SCENE",
+        "data_form": "Scene plus tracks",
+        "error_behavior": "missing target or property behavior",
+        "producer": "N-TIMELINE",
+        "semantic_disposition": "keyframes materialized into values",
+        "source_refs": [
+          "S-ANIMATION"
+        ],
+        "validation": "target lookup"
+      },
+      {
+        "boundary_id": "BC-AE-08",
+        "consumer": "N-SERIAL",
+        "data_form": "Scene or Scene array",
+        "error_behavior": "serialization error",
+        "producer": "N-SCENE",
+        "semantic_disposition": "renderer data preserved",
+        "source_refs": [
+          "S-SCENE",
+          "S-NODE-EXPORT"
+        ],
+        "validation": "serde serialization"
+      },
+      {
+        "boundary_id": "BC-AE-09",
+        "consumer": "N-PREPASSES",
+        "data_form": "Scene JSON",
+        "error_behavior": "parse or version error",
+        "producer": "N-SERIAL",
+        "semantic_disposition": "authoring semantics unavailable",
+        "source_refs": [
+          "S-CLI",
+          "S-WASM"
+        ],
+        "validation": "serde and version handling"
+      },
+      {
+        "boundary_id": "BC-AE-10",
+        "consumer": "N-PREPASSES",
+        "data_form": "Scene",
+        "error_behavior": "prepass error",
+        "producer": "N-SCENE",
+        "semantic_disposition": "layout and document structure materialized",
+        "source_refs": [
+          "S-LAYOUT",
+          "S-IMAGE",
+          "S-SVG"
+        ],
+        "validation": "media/layout/SVG resolution"
+      },
+      {
+        "boundary_id": "BC-AE-11",
+        "consumer": "N-CPU",
+        "data_form": "resolved Scene",
+        "error_behavior": "renderer failure",
+        "producer": "N-PREPASSES",
+        "semantic_disposition": "supported visual semantics rasterized",
+        "source_refs": [
+          "S-WASM",
+          "S-CLI"
+        ],
+        "validation": "CPU capability checks"
+      },
+      {
+        "boundary_id": "BC-AE-12",
+        "consumer": "N-GPU",
+        "data_form": "resolved Scene",
+        "error_behavior": "GPU failure",
+        "producer": "N-PREPASSES",
+        "semantic_disposition": "supported visual semantics rasterized",
+        "source_refs": [
+          "S-WASM-VELLO",
+          "S-CLI"
+        ],
+        "validation": "GPU capability checks"
+      },
+      {
+        "boundary_id": "BC-AE-13",
+        "consumer": "N-CPU",
+        "data_form": "resolved Scene",
+        "error_behavior": "diagnosed or runtime fallback",
+        "producer": "N-GPU",
+        "semantic_disposition": "GPU-only fidelity may reduce",
+        "source_refs": [
+          "S-PLAYER",
+          "S-MANDATORY-PACKAGES-PLAYER-SRC-ENGINE-DRAWER-TS"
+        ],
+        "validation": "runtime capability/failure"
+      },
+      {
+        "boundary_id": "BC-AE-14",
+        "consumer": "N-CANVAS",
+        "data_form": "Scene subset",
+        "error_behavior": "preview fallback",
+        "producer": "N-CPU",
+        "semantic_disposition": "unsupported features approximated or omitted",
+        "source_refs": [
+          "S-CANVAS",
+          "S-PLAYER"
+        ],
+        "validation": "Canvas support checks"
+      },
+      {
+        "boundary_id": "BC-AE-15",
+        "consumer": "N-CANVAS",
+        "data_form": "Scene subset",
+        "error_behavior": "unsupported node handling",
+        "producer": "N-SCENE",
+        "semantic_disposition": "finite subset rendered approximately",
+        "source_refs": [
+          "S-CANVAS"
+        ],
+        "validation": "Canvas dispatch"
+      },
+      {
+        "boundary_id": "BC-AE-16",
+        "consumer": "N-REACT",
+        "data_form": "requested output frame",
+        "error_behavior": "playback diagnostic",
+        "producer": "N-PLAYER",
+        "semantic_disposition": "frame choice only",
+        "source_refs": [
+          "S-PLAYER"
+        ],
+        "validation": "playback range and rate"
+      },
+      {
+        "boundary_id": "BC-AE-17",
+        "consumer": "N-ENCODER",
+        "data_form": "ordered pixel frames",
+        "error_behavior": "CLI/encoder failure",
+        "producer": "N-CPU",
+        "semantic_disposition": "scene semantics become timestamps and pixels",
+        "source_refs": [
+          "S-CLI"
+        ],
+        "validation": "encoder contract"
+      },
+      {
+        "boundary_id": "BC-AE-18",
+        "consumer": "N-ENCODER",
+        "data_form": "ordered pixel frames",
+        "error_behavior": "CLI/encoder failure",
+        "producer": "N-GPU",
+        "semantic_disposition": "scene semantics become timestamps and pixels",
+        "source_refs": [
+          "S-CLI"
+        ],
+        "validation": "encoder contract"
+      }
+    ]
+  },
+  "generated_at": "2026-08-16T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.3"
+}

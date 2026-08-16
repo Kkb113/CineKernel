@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "serialization": {
+          "additionalProperties": false,
+          "properties": {
+            "current_version_omitted": {
+              "type": "boolean"
+            },
+            "format": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "future_version_roundtrip": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "runtime_pixels_serialized": {
+              "type": "boolean"
+            },
+            "scene_version": {
+              "type": "integer"
+            },
+            "source_refs": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "unknown_fields": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "current_version_omitted",
+            "format",
+            "future_version_roundtrip",
+            "runtime_pixels_serialized",
+            "scene_version",
+            "source_refs",
+            "unknown_fields"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "serialization"
+      ],
+      "type": "object"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "model_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema",
+    "data",
+    "generated_at",
+    "model_ref",
+    "schema_version"
+  ],
+  "type": "object"
+}

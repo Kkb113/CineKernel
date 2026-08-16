@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "preview_export_parity": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "certification_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "comparison_id": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "export_path": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "feature": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "known_difference": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "parity_class": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "preview_path": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "shared_authoring_evaluation": {
+                "type": "boolean"
+              },
+              "source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              }
+            },
+            "required": [
+              "certification_impact",
+              "comparison_id",
+              "export_path",
+              "feature",
+              "known_difference",
+              "parity_class",
+              "preview_path",
+              "shared_authoring_evaluation",
+              "source_refs"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "preview_export_parity"
+      ],
+      "type": "object"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "model_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema",
+    "data",
+    "generated_at",
+    "model_ref",
+    "schema_version"
+  ],
+  "type": "object"
+}

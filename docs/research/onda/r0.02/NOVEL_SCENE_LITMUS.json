@@ -1,0 +1,325 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/novel-scene-litmus.schema.json",
+  "data": {
+    "novel_scene_litmus": [
+      {
+        "asset_truthfulness": "external assets must be declared and cannot be inferred as physically accurate",
+        "capability_decomposition": [
+          {
+            "dimension": "part hierarchy",
+            "evidence_scope": "A presegmented model or manually supplied hierarchy can be composed.",
+            "required_primitive": "inspectable part hierarchy representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "SUPPORTED_OR_COMPOSABLE"
+          },
+          {
+            "dimension": "segmentation",
+            "evidence_scope": "Manual or presegmented hierarchy is supported; automatic semantic or mechanical segmentation of a monolithic asset is not established.",
+            "required_primitive": "inspectable segmentation representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "exploded-view planning",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+            "required_primitive": "inspectable exploded-view planning representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "collision avoidance",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+            "required_primitive": "inspectable collision avoidance representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "mechanical geometry",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+            "required_primitive": "inspectable mechanical geometry representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "materials",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+            "required_primitive": "inspectable materials representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "emissive lighting",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+            "required_primitive": "inspectable emissive lighting representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "camera",
+            "evidence_scope": "The cited authoring and Scene surfaces expose composable primitives for this dimension.",
+            "required_primitive": "inspectable camera representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "SUPPORTED_OR_COMPOSABLE"
+          },
+          {
+            "dimension": "particles",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+            "required_primitive": "inspectable particles representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "timing",
+            "evidence_scope": "The cited authoring and Scene surfaces expose composable primitives for this dimension.",
+            "required_primitive": "inspectable timing representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "SUPPORTED_OR_COMPOSABLE"
+          },
+          {
+            "dimension": "sound",
+            "evidence_scope": "Audio authoring lowers to runtime scheduling with distinct clock ownership.",
+            "required_primitive": "inspectable sound representation",
+            "source_refs": [
+              "S-AUDIO",
+              "S-PLAYER",
+              "S-REACT-LOWER"
+            ],
+            "status": "SUPPORTED_OR_COMPOSABLE"
+          },
+          {
+            "dimension": "semantic grouping",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+            "required_primitive": "inspectable semantic grouping representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "inspectability",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+            "required_primitive": "inspectable inspectability representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "editability",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+            "required_primitive": "inspectable editability representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "asset truthfulness",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+            "required_primitive": "inspectable asset truthfulness representation",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          }
+        ],
+        "editability": "value-level editing remains; semantic repair is weakened",
+        "inspectability": "Scene values are inspectable; high-level planning intent is not retained",
+        "limitations": "general mechanical constraints, collision solving, physically based materials, and general shaders are not established",
+        "litmus_id": "LITMUS-LAPTOP",
+        "required_primitives": [
+          "hierarchy",
+          "geometry",
+          "transforms",
+          "camera",
+          "timing",
+          "effects",
+          "media"
+        ],
+        "scene": "exploded laptop layers",
+        "source_refs": [
+          "S-SCENE",
+          "S-REACT-LOWER",
+          "S-CINEMA-COMPILER",
+          "S-COMPONENTS"
+        ],
+        "surface_comparison": [
+          {
+            "result": "guided composition; novel mechanics require registry code",
+            "surface_id": "AS-CINEMA"
+          },
+          {
+            "result": "procedural composition over finite Scene primitives",
+            "surface_id": "AS-REACT"
+          },
+          {
+            "result": "explicit renderer graph without high-level planning semantics",
+            "surface_id": "AS-JSON"
+          },
+          {
+            "result": "typed procedural graph and timeline construction",
+            "surface_id": "AS-RUST"
+          },
+          {
+            "result": "finite catalog unless extended with code",
+            "surface_id": "AS-COMPONENTS"
+          }
+        ],
+        "verdict": "PARTIALLY_EXPRESSIBLE"
+      },
+      {
+        "asset_truthfulness": "external assets must be declared and cannot be inferred as physically accurate",
+        "capability_decomposition": [
+          {
+            "dimension": "overall primitive sufficiency",
+            "evidence_scope": "The cited Scene and React surfaces establish finite composition primitives, not a general solution for every requested visual or physical behavior.",
+            "required_primitive": "inspectable scene-specific primitive composition",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          }
+        ],
+        "editability": "value-level editing remains; semantic repair is weakened",
+        "inspectability": "Scene values are inspectable; high-level planning intent is not retained",
+        "limitations": "physically plausible transmissive glass and general lighting are not established",
+        "litmus_id": "LITMUS-CITY",
+        "required_primitives": [
+          "hierarchy",
+          "geometry",
+          "transforms",
+          "camera",
+          "timing",
+          "effects",
+          "media"
+        ],
+        "scene": "glass city revenue chart",
+        "source_refs": [
+          "S-SCENE",
+          "S-REACT-LOWER",
+          "S-CINEMA-COMPILER",
+          "S-COMPONENTS"
+        ],
+        "surface_comparison": [
+          {
+            "result": "guided composition; novel mechanics require registry code",
+            "surface_id": "AS-CINEMA"
+          },
+          {
+            "result": "procedural composition over finite Scene primitives",
+            "surface_id": "AS-REACT"
+          },
+          {
+            "result": "explicit renderer graph without high-level planning semantics",
+            "surface_id": "AS-JSON"
+          },
+          {
+            "result": "typed procedural graph and timeline construction",
+            "surface_id": "AS-RUST"
+          },
+          {
+            "result": "finite catalog unless extended with code",
+            "surface_id": "AS-COMPONENTS"
+          }
+        ],
+        "verdict": "PARTIALLY_EXPRESSIBLE"
+      },
+      {
+        "asset_truthfulness": "external assets must be declared and cannot be inferred as physically accurate",
+        "capability_decomposition": [
+          {
+            "dimension": "overall primitive sufficiency",
+            "evidence_scope": "The cited Scene and React surfaces establish finite composition primitives, not a general solution for every requested visual or physical behavior.",
+            "required_primitive": "inspectable scene-specific primitive composition",
+            "source_refs": [
+              "S-SCENE",
+              "S-REACT-LOWER"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          }
+        ],
+        "editability": "value-level editing remains; semantic repair is weakened",
+        "inspectability": "Scene values are inspectable; high-level planning intent is not retained",
+        "limitations": "liquid simulation, reflective materials, and environment lighting are not established",
+        "litmus_id": "LITMUS-SPACECRAFT",
+        "required_primitives": [
+          "hierarchy",
+          "geometry",
+          "transforms",
+          "camera",
+          "timing",
+          "effects",
+          "media"
+        ],
+        "scene": "chrome liquid title spacecraft",
+        "source_refs": [
+          "S-SCENE",
+          "S-REACT-LOWER",
+          "S-CINEMA-COMPILER",
+          "S-COMPONENTS"
+        ],
+        "surface_comparison": [
+          {
+            "result": "guided composition; novel mechanics require registry code",
+            "surface_id": "AS-CINEMA"
+          },
+          {
+            "result": "procedural composition over finite Scene primitives",
+            "surface_id": "AS-REACT"
+          },
+          {
+            "result": "explicit renderer graph without high-level planning semantics",
+            "surface_id": "AS-JSON"
+          },
+          {
+            "result": "typed procedural graph and timeline construction",
+            "surface_id": "AS-RUST"
+          },
+          {
+            "result": "finite catalog unless extended with code",
+            "surface_id": "AS-COMPONENTS"
+          }
+        ],
+        "verdict": "PARTIALLY_EXPRESSIBLE"
+      }
+    ]
+  },
+  "generated_at": "2026-08-16T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.3"
+}

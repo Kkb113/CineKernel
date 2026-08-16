@@ -1,0 +1,143 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/preview-export-parity.schema.json",
+  "data": {
+    "preview_export_parity": [
+      {
+        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "comparison_id": "PE-01",
+        "export_path": "batch renderFrames evaluation",
+        "feature": "React frame evaluation",
+        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "parity_class": "SHARED_WITH_DIFFERENT_SCHEDULING",
+        "preview_path": "player-requested frame evaluation",
+        "shared_authoring_evaluation": true,
+        "source_refs": [
+          "S-PLAYER",
+          "S-VIDEO",
+          "S-AUDIO",
+          "S-WASM",
+          "S-WASM-VELLO",
+          "S-CLI",
+          "S-CANVAS"
+        ]
+      },
+      {
+        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "comparison_id": "PE-02",
+        "export_path": "native CPU boundary",
+        "feature": "CPU renderer core",
+        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "parity_class": "CONDITIONAL_PARITY",
+        "preview_path": "WASM CPU boundary",
+        "shared_authoring_evaluation": true,
+        "source_refs": [
+          "S-PLAYER",
+          "S-VIDEO",
+          "S-AUDIO",
+          "S-WASM",
+          "S-WASM-VELLO",
+          "S-CLI",
+          "S-CANVAS"
+        ]
+      },
+      {
+        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "comparison_id": "PE-03",
+        "export_path": "native GPU boundary",
+        "feature": "GPU renderer core",
+        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "parity_class": "CONDITIONAL_PARITY",
+        "preview_path": "WASM Vello boundary",
+        "shared_authoring_evaluation": true,
+        "source_refs": [
+          "S-PLAYER",
+          "S-VIDEO",
+          "S-AUDIO",
+          "S-WASM",
+          "S-WASM-VELLO",
+          "S-CLI",
+          "S-CANVAS"
+        ]
+      },
+      {
+        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "comparison_id": "PE-04",
+        "export_path": "native media prepass",
+        "feature": "video decode",
+        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "parity_class": "DIFFERENT_EXECUTION",
+        "preview_path": "browser media element/cache",
+        "shared_authoring_evaluation": true,
+        "source_refs": [
+          "S-PLAYER",
+          "S-VIDEO",
+          "S-AUDIO",
+          "S-WASM",
+          "S-WASM-VELLO",
+          "S-CLI",
+          "S-CANVAS"
+        ]
+      },
+      {
+        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "comparison_id": "PE-05",
+        "export_path": "native audio/encoder path",
+        "feature": "audio scheduling",
+        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "parity_class": "DIFFERENT_EXECUTION",
+        "preview_path": "AudioContext transport",
+        "shared_authoring_evaluation": true,
+        "source_refs": [
+          "S-PLAYER",
+          "S-VIDEO",
+          "S-AUDIO",
+          "S-WASM",
+          "S-WASM-VELLO",
+          "S-CLI",
+          "S-CANVAS"
+        ]
+      },
+      {
+        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "comparison_id": "PE-06",
+        "export_path": "not equivalent certification path",
+        "feature": "Canvas2D",
+        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "parity_class": "KNOWN_APPROXIMATION",
+        "preview_path": "approximate preview fallback",
+        "shared_authoring_evaluation": true,
+        "source_refs": [
+          "S-PLAYER",
+          "S-VIDEO",
+          "S-AUDIO",
+          "S-WASM",
+          "S-WASM-VELLO",
+          "S-CLI",
+          "S-CANVAS"
+        ]
+      },
+      {
+        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "comparison_id": "PE-07",
+        "export_path": "ordered complete export frame sequence",
+        "feature": "frame scheduling",
+        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "parity_class": "DIFFERENT_EXECUTION",
+        "preview_path": "RAF may skip requested frames",
+        "shared_authoring_evaluation": true,
+        "source_refs": [
+          "S-PLAYER",
+          "S-VIDEO",
+          "S-AUDIO",
+          "S-WASM",
+          "S-WASM-VELLO",
+          "S-CLI",
+          "S-CANVAS"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-08-16T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.3"
+}

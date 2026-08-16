@@ -1,0 +1,59 @@
+# Research source index
+
+**50 pinned ONDA files were hashed, plus 3 official external references were indexed.**
+
+| Source ID | Classification | Identity | Evidence scope |
+|---|---|---|---|
+| E-GSTREAMER | PRIMARY_STANDARD | https://gstreamer.freedesktop.org/documentation/additional/design/overview.html | A media pipeline makes graph direction, element boundaries, messages, and a shared running-time clock explicit. |
+| E-MLIR | PRIMARY_STANDARD | https://mlir.llvm.org/docs/Rationale/MLIRForGraphAlgorithms/ | Multi-level representations can preserve useful abstraction until progressive lowering is justified. |
+| E-REACT | PRIMARY_IMPLEMENTATION_DOC | https://react.dev/learn/render-and-commit | React separates recursive render calculation from commit mutations and recommends pure rendering. |
+| S-ANIMATION | UPSTREAM_SOURCE | packages/animation-rs/src/lib.rs @ ee87aa2a9ec9d1f7dc1cdf5d14fce9e3748ed852 | Rust animation stores keyframe time in seconds and evaluates a cloned scene by NodeId., Missing targets are unchanged. |
+| S-AUDIO | UPSTREAM_SOURCE | packages/player/src/audio-engine.ts @ a89e4b7c278fb66a0a7a8432c41effa249167fd3 | Preview audio has an instance clock mapping and is muted off-speed., Decode failures warn and skip. |
+| S-CANVAS | UPSTREAM_SOURCE | packages/player/src/canvas-renderer.ts @ ceab5a9cbc86e6391db1c6b5a786c4dbfe883fe1 | Canvas fallback omits image and SVG nodes and approximates text and procedural gradients. |
+| S-CINEMA-COMPILER | UPSTREAM_SOURCE | packages/cinema/src/index.tsx @ 91f331f1620482fe8668ddbbc76a489124920682 | Cinema resolves a finite choreography and transition vocabulary to React elements., A caller may supply a custom component registry., Unknown components produce a visible placeholder. |
+| S-CINEMA-INSPECT | UPSTREAM_SOURCE | packages/cinema/src/inspect/index.ts @ c9aa10fbd004f1859b1972cef376ab217b97a9ea | Inspection runs over the high-level Cinema payload rather than the lowered Scene. |
+| S-CINEMA-RESOLVE | UPSTREAM_SOURCE | packages/cinema/src/inspect/resolve.ts @ 06aee728e309ce767a0a725b5b3e5a65a858fa8e | Inspector identities derive from entry id or payload path and retain role labels. |
+| S-CINEMA-TEST | UPSTREAM_TEST | packages/cinema/src/validate.test.tsx @ 23633715c3b4e2b04f63f381091a1d967fd46f82 | Tests distinguish unknown component errors from unknown choreography warnings. |
+| S-CINEMA-TIME | UPSTREAM_SOURCE | packages/cinema/src/timing.ts @ f3393683ce56d62d2cc50c7a9c2aaa326c7e83a4 | Time specifications become rounded frames., Scene overlaps shorten accumulated placement. |
+| S-CINEMA-TYPES | UPSTREAM_SOURCE | packages/cinema/src/types.ts @ 1fb71040324f5247eb56f591cd9c3f9f13f62c31 | Cinema preserves scene, track, entry, role, component, choreography, transition, brand, and finish semantics before lowering. |
+| S-CLI | UPSTREAM_SOURCE | packages/cli-rs/src/main.rs @ fabf0315afff1308ed1114338d0c4449f2be15be | Native commands parse scene JSON and run ordered source, timeline, SVG, image, layout, and render stages., Auto backend may choose GPU or CPU. |
+| S-COMPONENTS | UPSTREAM_SOURCE | packages/components/src/manifest.ts @ 4a26286613b57e8248a7bc7f5823c1fbdb5f2ab5 | The packaged component catalog is finite and schema-described. |
+| S-IMAGE | UPSTREAM_SOURCE | packages/image-rs/src/lib.rs @ 3bc10936de5e457f7cfeed0ed67046dcf123f85a | Image decoding attaches skipped pixel data and may downscale., Remote URLs remain unresolved and are skipped by renderers. |
+| S-LAYOUT | UPSTREAM_SOURCE | packages/layout-rs/src/lib.rs @ 95ffb7f27881530833a86ad89fa842e7d1744d60 | Layout is a clone-and-rewrite prepass that materializes absolute child translations. |
+| S-MANDATORY-PACKAGES-CINEMA-SRC-PROPS-TS | UPSTREAM_SOURCE | packages/cinema/src/props.ts @ 7a76c8b0a2439b4cfe5f59b9089dbd09fc0dc92f | Required evidence for Cinema validation, property adaptation, inspection, or lowering behavior. |
+| S-MANDATORY-PACKAGES-CINEMA-SRC-STUDIO-PAYLOAD-TEST-TSX | UPSTREAM_TEST | packages/cinema/src/studio-payload.test.tsx @ 5de67fa214f9075e282c011d9bbee9e798e4a97f | Required evidence for Cinema validation, property adaptation, inspection, or lowering behavior. |
+| S-MANDATORY-PACKAGES-COMPONENTS-PACKAGE-JSON | UPSTREAM_MANIFEST | packages/components/package.json @ 26978de66be3fb9708cc91f54c35661b07952611 | Required evidence for public component discovery and registry boundaries. |
+| S-MANDATORY-PACKAGES-COMPONENTS-SRC-INDEX-TS | UPSTREAM_SOURCE | packages/components/src/index.ts @ eb22408812d89f493501e23660ad73343e750309 | Required evidence for public component discovery and registry boundaries. |
+| S-MANDATORY-PACKAGES-PLAYER-SRC-AUDIO-TS | UPSTREAM_SOURCE | packages/player/src/audio.ts @ 0e2d514bdbf8e03060423d6f6025a0cf8aaed922 | Required evidence for preview scheduling, media, fallback, or engine-boundary behavior. |
+| S-MANDATORY-PACKAGES-PLAYER-SRC-ENGINE-DRAWER-TS | UPSTREAM_SOURCE | packages/player/src/engine-drawer.ts @ 827d54eb4ba604e59701ed3b0dcb7d5347c17a34 | Required evidence for preview scheduling, media, fallback, or engine-boundary behavior. |
+| S-MANDATORY-PACKAGES-PLAYER-SRC-IMAGES-TS | UPSTREAM_SOURCE | packages/player/src/images.ts @ 4209fd4a0718c585a6064bf3515f14a43dd87f3d | Required evidence for preview scheduling, media, fallback, or engine-boundary behavior. |
+| S-MANDATORY-PACKAGES-REACT-SRC-ANIMATION-TEST-TSX | UPSTREAM_TEST | packages/react/src/animation.test.tsx @ cb271729875eb189e3b96ee1604fb4501c5117c8 | Required evidence for React authoring, timing, primitive, transition, or lowering behavior. |
+| S-MANDATORY-PACKAGES-REACT-SRC-COMPONENTS-TS | UPSTREAM_SOURCE | packages/react/src/components.ts @ 3a0d08b68fd339649eddb5f01ed362e53027b4b6 | Required evidence for React authoring, timing, primitive, transition, or lowering behavior. |
+| S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS | UPSTREAM_SOURCE | packages/react/src/index.ts @ dd1e3902b7ca0993128a70cc6860bd87cd469e37 | Required evidence for React authoring, timing, primitive, transition, or lowering behavior. |
+| S-MANDATORY-PACKAGES-REACT-SRC-INTERPOLATE-TS | UPSTREAM_SOURCE | packages/react/src/interpolate.ts @ a2a5fcf0281ba774b6151f5fd6c990b18d98f490 | Required evidence for React authoring, timing, primitive, transition, or lowering behavior. |
+| S-MANDATORY-PACKAGES-REACT-SRC-RANDOM-TEST-TS | UPSTREAM_TEST | packages/react/src/random.test.ts @ 53a7322c44abfa3d1fe71518b8d9b2c64d4b17d9 | Required evidence for React authoring, timing, primitive, transition, or lowering behavior. |
+| S-MANDATORY-PACKAGES-REACT-SRC-RANDOM-TS | UPSTREAM_SOURCE | packages/react/src/random.ts @ b07f06b7a0f8a88b0f1a12be050999df6d8cd2d9 | Required evidence for React authoring, timing, primitive, transition, or lowering behavior. |
+| S-MANDATORY-PACKAGES-REACT-SRC-SCENE-TS | UPSTREAM_SOURCE | packages/react/src/scene.ts @ 68c4c109619f5bf1dd942dabe3cce46c35666826 | Required evidence for React authoring, timing, primitive, transition, or lowering behavior. |
+| S-MANDATORY-PACKAGES-REACT-SRC-SEQUENCE-TEST-TSX | UPSTREAM_TEST | packages/react/src/sequence.test.tsx @ 024785a7b291d69b00726b77e95c778e69ed5aaf | Required evidence for React authoring, timing, primitive, transition, or lowering behavior. |
+| S-MANDATORY-PACKAGES-REACT-SRC-SPRING-TS | UPSTREAM_SOURCE | packages/react/src/spring.ts @ 54dd83372e66c14a2a97fe09b2593e22b076a057 | Required evidence for React authoring, timing, primitive, transition, or lowering behavior. |
+| S-MANDATORY-PACKAGES-REACT-SRC-TRANSITIONS-TEST-TSX | UPSTREAM_TEST | packages/react/src/transitions.test.tsx @ 2c603faca622c4d90bbb36aac94fc8876ae4ae14 | Required evidence for React authoring, timing, primitive, transition, or lowering behavior. |
+| S-MANDATORY-PACKAGES-REACT-SRC-TRANSITIONS-TS | UPSTREAM_SOURCE | packages/react/src/transitions.ts @ a3e9dbc6c6120ea5bc5b2458bb56da0546655763 | Required evidence for React authoring, timing, primitive, transition, or lowering behavior. |
+| S-MANDATORY-PACKAGES-REACT-SRC-VIDEO-TEST-TSX | UPSTREAM_TEST | packages/react/src/video.test.tsx @ 17be6f3aba653eb17d6dc15047e0be70b280245b | Required evidence for React authoring, timing, primitive, transition, or lowering behavior. |
+| S-MANDATORY-PNPM-WORKSPACE-YAML | UPSTREAM_MANIFEST | pnpm-workspace.yaml @ b440d7f2d27b865a585bec507ce3b2f1f86dbac7 | Required R0.02 repository or compiler-boundary evidence. |
+| S-NODE-EXPORT | UPSTREAM_SOURCE | packages/render/src/index.ts @ 971e155db975f06f28a80b7ea924e0bb5cdaac9f | Node export materializes all React scenes into a temporary JSON array and invokes the native CLI. |
+| S-PLAYER | UPSTREAM_SOURCE | packages/player/src/player.tsx @ 1f621b6b3f9c244f975f9ed5e5789d83f9e8a2c3 | Preview renders requested frames on demand., GPU work is serialized per engine and intermediate frames may be dropped., Runtime renderer failure demotes to a fallback. |
+| S-REACT-FRAME | UPSTREAM_SOURCE | packages/react/src/frame.ts @ 18283e80c56bd6d40a862ab08258f28b1114e544 | Frame and video configuration are context values. |
+| S-REACT-HOST | UPSTREAM_SOURCE | packages/react/src/host-config.ts @ 93a654a83fc641bbda1d8d04a109e514fd038594 | Custom reconciler uses mutable HostNode children., Persistence and hydration are disabled. |
+| S-REACT-LOWER | UPSTREAM_SOURCE | packages/react/src/reconciler.ts @ 484be37c2c79f5b4c530d5897fa2228800fd38d5 | Each requested frame creates, commits, lowers, unmounts, and discards a fresh React root., Motion blur evaluates fractional subframes., Full export materializes a Scene array. |
+| S-REACT-SEQUENCE | UPSTREAM_SOURCE | packages/react/src/sequence.ts @ 7b9dcb0fef79d2b0debde0ca452e5e349beb4897 | Sequences translate global frame to local frame., Series calculates cumulative offsets. |
+| S-REACT-STATE | UPSTREAM_SOURCE | packages/react/src/fonts.ts @ 7dc5ee86479ef54bfa3378d43e9f20de718db192 | Registered font bytes are process-global mutable state. |
+| S-REACT-TEST | UPSTREAM_TEST | packages/react/src/reconciler.test.tsx @ 2377070448bedad3d90d7669d3cf2bddfc777cf6 | Tests establish frame evaluation and lowering behavior. |
+| S-REACT-WARM | UPSTREAM_SOURCE | packages/react/src/warmers.ts @ e37b9f5e8295ac83cfefe8ade7c7c61df56bd812 | Warmers are process-global and failures are best-effort. |
+| S-README | UPSTREAM_DOCUMENTATION | README.md @ c1c0524d1371d114d5c0a1130dd19fef1cc8f07a | Publicly described authoring and rendering surfaces. |
+| S-ROOT-CARGO | UPSTREAM_MANIFEST | Cargo.toml @ 91456b9c52568dcd41dd2588c39643d12bdf263e | Rust package and renderer boundaries. |
+| S-ROOT-PKG | UPSTREAM_MANIFEST | package.json @ ecc02f78f9cf336564f5328a0ee9e338674ee7b0 | JavaScript package and test boundaries. |
+| S-SCENE | UPSTREAM_SOURCE | packages/scene-rs/src/lib.rs @ 6e650e50ef2b0cc7adc83ceb2a807bfa4df2917c | Scene is a composition plus a finite node tree., Optional numeric NodeId supports addressing., Timeline nodes resolve an active clip for a requested frame., Current scene version is one. |
+| S-SVG | UPSTREAM_SOURCE | packages/svg-rs/src/lib.rs @ d8fbafaf7365fafcbd307eeb7de954bf02bd05c9 | SVG is parsed and lowered to supported scene shapes., Unsupported SVG features are not preserved as authoring semantics. |
+| S-VIDEO | UPSTREAM_SOURCE | packages/player/src/video.ts @ c18b2360a46b7acf79f0e83a1f666375ed4b1292 | Preview video is bucketed at thirty source frames per second and may hold the last good decoded frame., A DOM overlay fallback is preview-only. |
+| S-WASM | UPSTREAM_SOURCE | packages/wasm/src/lib.rs @ ab4ff309362044ad594efe45cd9934cf24bb0978 | CPU WASM parses Scene JSON then conditionally runs image and layout prepasses before rendering. |
+| S-WASM-VELLO | UPSTREAM_SOURCE | packages/wasm-vello/src/lib.rs @ 3741dd4bdf17187f5b2931c3b30430e6e91226a0 | GPU WASM follows the same JSON, image, and layout boundary before asynchronous rendering. |

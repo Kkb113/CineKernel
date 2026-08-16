@@ -1,0 +1,40 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/materialization-hypotheses.schema.json",
+  "data": {
+    "materialization_hypotheses": [
+      {
+        "id": "M-001",
+        "risk": "high for long or dense compositions",
+        "source_refs": [
+          "S-REACT-LOWER",
+          "S-NODE-EXPORT"
+        ],
+        "statement": "React full export memory and temporary JSON scale with frame count times scene size.",
+        "status": "verified-structurally"
+      },
+      {
+        "id": "M-002",
+        "risk": "multiplicative",
+        "source_refs": [
+          "S-REACT-LOWER",
+          "S-NODE-EXPORT"
+        ],
+        "statement": "Motion blur multiplies authoring evaluations and materialized scenes by sample count.",
+        "status": "verified-structurally"
+      },
+      {
+        "id": "M-003",
+        "risk": "requires deterministic backpressure and media contracts",
+        "source_refs": [
+          "S-NODE-EXPORT",
+          "E-GSTREAMER"
+        ],
+        "statement": "Streaming evaluated scenes into a bounded renderer queue could remove whole-video scene materialization.",
+        "status": "candidate"
+      }
+    ]
+  },
+  "generated_at": "2026-08-16T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.3"
+}

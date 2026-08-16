@@ -1,0 +1,4937 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/research-model.schema.json",
+  "architecture_edges": [
+    {
+      "data_form": "Cinema payload",
+      "error_behavior": "structured diagnostics",
+      "from": "N-CINEMA",
+      "id": "AE-01",
+      "kind": "VALIDATES",
+      "semantic_disposition": "intent retained",
+      "source_refs": [
+        "S-CINEMA-TEST",
+        "S-CINEMA-COMPILER"
+      ],
+      "to": "N-CINEMA-VALIDATE",
+      "validation": "schema and semantic checks"
+    },
+    {
+      "data_form": "Cinema payload",
+      "error_behavior": "inspection findings",
+      "from": "N-CINEMA",
+      "id": "AE-02",
+      "kind": "INSPECTS",
+      "semantic_disposition": "roles and paths retained",
+      "source_refs": [
+        "S-CINEMA-INSPECT",
+        "S-CINEMA-RESOLVE"
+      ],
+      "to": "N-INSPECT",
+      "validation": "payload accepted for analysis"
+    },
+    {
+      "data_form": "React element program",
+      "error_behavior": "warnings, placeholders, or throw",
+      "from": "N-CINEMA",
+      "id": "AE-03",
+      "kind": "LOWERS_TO",
+      "semantic_disposition": "named intent partly consumed",
+      "source_refs": [
+        "S-CINEMA-COMPILER"
+      ],
+      "to": "N-REACT",
+      "validation": "post-validation construction"
+    },
+    {
+      "data_form": "React elements and frame context",
+      "error_behavior": "unsupported host error",
+      "from": "N-REACT",
+      "id": "AE-04",
+      "kind": "INVOKES",
+      "semantic_disposition": "component structure evaluated",
+      "source_refs": [
+        "S-REACT-LOWER",
+        "S-REACT-HOST"
+      ],
+      "to": "N-RECONCILER",
+      "validation": "host element contract"
+    },
+    {
+      "data_form": "host commits",
+      "error_behavior": "commit failure",
+      "from": "N-RECONCILER",
+      "id": "AE-05",
+      "kind": "MUTATES",
+      "semantic_disposition": "React tree materialized",
+      "source_refs": [
+        "S-REACT-HOST"
+      ],
+      "to": "N-HOST",
+      "validation": "host-config validation"
+    },
+    {
+      "data_form": "finite host primitives",
+      "error_behavior": "conversion error",
+      "from": "N-HOST",
+      "id": "AE-06",
+      "kind": "LOWERS_TO",
+      "semantic_disposition": "React key and component provenance dropped unless explicit",
+      "source_refs": [
+        "S-REACT-LOWER"
+      ],
+      "to": "N-SCENE",
+      "validation": "toNode conversion"
+    },
+    {
+      "data_form": "Scene plus tracks",
+      "error_behavior": "missing target or property behavior",
+      "from": "N-TIMELINE",
+      "id": "AE-07",
+      "kind": "CLONES",
+      "semantic_disposition": "keyframes materialized into values",
+      "source_refs": [
+        "S-ANIMATION"
+      ],
+      "to": "N-SCENE",
+      "validation": "target lookup"
+    },
+    {
+      "data_form": "Scene or Scene array",
+      "error_behavior": "serialization error",
+      "from": "N-SCENE",
+      "id": "AE-08",
+      "kind": "SERIALIZES",
+      "semantic_disposition": "renderer data preserved",
+      "source_refs": [
+        "S-SCENE",
+        "S-NODE-EXPORT"
+      ],
+      "to": "N-SERIAL",
+      "validation": "serde serialization"
+    },
+    {
+      "data_form": "Scene JSON",
+      "error_behavior": "parse or version error",
+      "from": "N-SERIAL",
+      "id": "AE-09",
+      "kind": "DESERIALIZES",
+      "semantic_disposition": "authoring semantics unavailable",
+      "source_refs": [
+        "S-CLI",
+        "S-WASM"
+      ],
+      "to": "N-PREPASSES",
+      "validation": "serde and version handling"
+    },
+    {
+      "data_form": "Scene",
+      "error_behavior": "prepass error",
+      "from": "N-SCENE",
+      "id": "AE-10",
+      "kind": "NORMALIZES",
+      "semantic_disposition": "layout and document structure materialized",
+      "source_refs": [
+        "S-LAYOUT",
+        "S-IMAGE",
+        "S-SVG"
+      ],
+      "to": "N-PREPASSES",
+      "validation": "media/layout/SVG resolution"
+    },
+    {
+      "data_form": "resolved Scene",
+      "error_behavior": "renderer failure",
+      "from": "N-PREPASSES",
+      "id": "AE-11",
+      "kind": "EMITS",
+      "semantic_disposition": "supported visual semantics rasterized",
+      "source_refs": [
+        "S-WASM",
+        "S-CLI"
+      ],
+      "to": "N-CPU",
+      "validation": "CPU capability checks"
+    },
+    {
+      "data_form": "resolved Scene",
+      "error_behavior": "GPU failure",
+      "from": "N-PREPASSES",
+      "id": "AE-12",
+      "kind": "EMITS",
+      "semantic_disposition": "supported visual semantics rasterized",
+      "source_refs": [
+        "S-WASM-VELLO",
+        "S-CLI"
+      ],
+      "to": "N-GPU",
+      "validation": "GPU capability checks"
+    },
+    {
+      "data_form": "resolved Scene",
+      "error_behavior": "diagnosed or runtime fallback",
+      "from": "N-GPU",
+      "id": "AE-13",
+      "kind": "FALLS_BACK_TO",
+      "semantic_disposition": "GPU-only fidelity may reduce",
+      "source_refs": [
+        "S-PLAYER",
+        "S-MANDATORY-PACKAGES-PLAYER-SRC-ENGINE-DRAWER-TS"
+      ],
+      "to": "N-CPU",
+      "validation": "runtime capability/failure"
+    },
+    {
+      "data_form": "Scene subset",
+      "error_behavior": "preview fallback",
+      "from": "N-CPU",
+      "id": "AE-14",
+      "kind": "FALLS_BACK_TO",
+      "semantic_disposition": "unsupported features approximated or omitted",
+      "source_refs": [
+        "S-CANVAS",
+        "S-PLAYER"
+      ],
+      "to": "N-CANVAS",
+      "validation": "Canvas support checks"
+    },
+    {
+      "data_form": "Scene subset",
+      "error_behavior": "unsupported node handling",
+      "from": "N-SCENE",
+      "id": "AE-15",
+      "kind": "APPROXIMATES_AS",
+      "semantic_disposition": "finite subset rendered approximately",
+      "source_refs": [
+        "S-CANVAS"
+      ],
+      "to": "N-CANVAS",
+      "validation": "Canvas dispatch"
+    },
+    {
+      "data_form": "requested output frame",
+      "error_behavior": "playback diagnostic",
+      "from": "N-PLAYER",
+      "id": "AE-16",
+      "kind": "OWNS_TIME",
+      "semantic_disposition": "frame choice only",
+      "source_refs": [
+        "S-PLAYER"
+      ],
+      "to": "N-REACT",
+      "validation": "playback range and rate"
+    },
+    {
+      "data_form": "ordered pixel frames",
+      "error_behavior": "CLI/encoder failure",
+      "from": "N-CPU",
+      "id": "AE-17",
+      "kind": "EMITS",
+      "semantic_disposition": "scene semantics become timestamps and pixels",
+      "source_refs": [
+        "S-CLI"
+      ],
+      "to": "N-ENCODER",
+      "validation": "encoder contract"
+    },
+    {
+      "data_form": "ordered pixel frames",
+      "error_behavior": "CLI/encoder failure",
+      "from": "N-GPU",
+      "id": "AE-18",
+      "kind": "EMITS",
+      "semantic_disposition": "scene semantics become timestamps and pixels",
+      "source_refs": [
+        "S-CLI"
+      ],
+      "to": "N-ENCODER",
+      "validation": "encoder contract"
+    }
+  ],
+  "architecture_nodes": [
+    {
+      "authority": "PRESENTATION_ONLY",
+      "id": "N-CANVAS",
+      "identity_behavior": "DOM/canvas identity is preview-only",
+      "input_types": [
+        "Scene subset"
+      ],
+      "kind": "FALLBACK",
+      "mutability": "INSTANCE_MUTABLE",
+      "name": "Canvas2D approximation",
+      "output_types": [
+        "approximate pixels"
+      ],
+      "source_refs": [
+        "S-CANVAS"
+      ],
+      "time_domains": [
+        "FRAME_INDEX_INTEGER"
+      ]
+    },
+    {
+      "authority": "AUTHORITATIVE",
+      "id": "N-CINEMA",
+      "identity_behavior": "string IDs retained during Cinema lowering",
+      "input_types": [
+        "Cinema payload"
+      ],
+      "kind": "AUTHORING_SURFACE",
+      "mutability": "IMMUTABLE_DATA",
+      "name": "Cinema payload",
+      "output_types": [
+        "React elements"
+      ],
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER"
+      ],
+      "time_domains": [
+        "SECONDS_NUMBER",
+        "COMPOSITION_FRAME_LOCAL"
+      ]
+    },
+    {
+      "authority": "DERIVED",
+      "id": "N-CINEMA-VALIDATE",
+      "identity_behavior": "reports payload paths",
+      "input_types": [
+        "Cinema payload"
+      ],
+      "kind": "VALIDATOR",
+      "mutability": "IMMUTABLE_DATA",
+      "name": "Cinema validator",
+      "output_types": [
+        "diagnostics"
+      ],
+      "source_refs": [
+        "S-CINEMA-TEST",
+        "S-CINEMA-COMPILER"
+      ],
+      "time_domains": [
+        "NONE"
+      ]
+    },
+    {
+      "authority": "DERIVED",
+      "id": "N-CPU",
+      "identity_behavior": "renderer-bound identity only",
+      "input_types": [
+        "resolved Scene"
+      ],
+      "kind": "RENDERER_BOUNDARY",
+      "mutability": "INSTANCE_MUTABLE",
+      "name": "CPU renderer",
+      "output_types": [
+        "pixels"
+      ],
+      "source_refs": [
+        "S-WASM",
+        "S-CLI"
+      ],
+      "time_domains": [
+        "FRAME_INDEX_FLOAT"
+      ]
+    },
+    {
+      "authority": "EXTERNAL_RUNTIME",
+      "id": "N-ENCODER",
+      "identity_behavior": "frame ordering replaces scene identity",
+      "input_types": [
+        "ordered pixels and audio"
+      ],
+      "kind": "ENCODER_BOUNDARY",
+      "mutability": "EXTERNAL_RUNTIME",
+      "name": "native encoder",
+      "output_types": [
+        "encoded media"
+      ],
+      "source_refs": [
+        "S-CLI"
+      ],
+      "time_domains": [
+        "ENCODED_TIMESTAMP"
+      ]
+    },
+    {
+      "authority": "DERIVED",
+      "id": "N-GPU",
+      "identity_behavior": "renderer-bound identity only",
+      "input_types": [
+        "resolved Scene"
+      ],
+      "kind": "RENDERER_BOUNDARY",
+      "mutability": "GLOBAL_MUTABLE",
+      "name": "Vello GPU renderer",
+      "output_types": [
+        "pixels"
+      ],
+      "source_refs": [
+        "S-WASM-VELLO",
+        "S-CLI"
+      ],
+      "time_domains": [
+        "FRAME_INDEX_FLOAT"
+      ]
+    },
+    {
+      "authority": "TRANSIENT",
+      "id": "N-HOST",
+      "identity_behavior": "React keys are not retained as source maps",
+      "input_types": [
+        "host commits"
+      ],
+      "kind": "TRANSIENT_TREE",
+      "mutability": "MUTABLE_TREE",
+      "name": "mutable HostNode tree",
+      "output_types": [
+        "Scene nodes"
+      ],
+      "source_refs": [
+        "S-REACT-HOST",
+        "S-REACT-LOWER"
+      ],
+      "time_domains": [
+        "FRAME_INDEX_FLOAT"
+      ]
+    },
+    {
+      "authority": "DERIVED",
+      "id": "N-INSPECT",
+      "identity_behavior": "retains payload paths for inspection",
+      "input_types": [
+        "Cinema payload"
+      ],
+      "kind": "SEMANTIC_MODEL",
+      "mutability": "IMMUTABLE_DATA",
+      "name": "Cinema inspector analysis",
+      "output_types": [
+        "inspection model"
+      ],
+      "source_refs": [
+        "S-CINEMA-INSPECT",
+        "S-CINEMA-RESOLVE"
+      ],
+      "time_domains": [
+        "COMPOSITION_FRAME_LOCAL"
+      ]
+    },
+    {
+      "authority": "PRESENTATION_ONLY",
+      "id": "N-PLAYER",
+      "identity_behavior": "selection and playback state are instance-owned",
+      "input_types": [
+        "composition and controls"
+      ],
+      "kind": "PREVIEW_RUNTIME",
+      "mutability": "INSTANCE_MUTABLE",
+      "name": "browser player",
+      "output_types": [
+        "requested frame and audio schedule"
+      ],
+      "source_refs": [
+        "S-PLAYER",
+        "S-AUDIO"
+      ],
+      "time_domains": [
+        "RAF_WALL_TIME",
+        "FRAME_INDEX_INTEGER",
+        "AUDIO_CONTEXT_SECONDS"
+      ]
+    },
+    {
+      "authority": "DERIVED",
+      "id": "N-PREPASSES",
+      "identity_behavior": "numeric IDs may remain while intent is materialized",
+      "input_types": [
+        "Scene"
+      ],
+      "kind": "PREPASS",
+      "mutability": "CLONED_AND_MUTATED",
+      "name": "layout and media prepasses",
+      "output_types": [
+        "resolved Scene"
+      ],
+      "source_refs": [
+        "S-LAYOUT",
+        "S-IMAGE",
+        "S-SVG",
+        "S-WASM",
+        "S-CLI"
+      ],
+      "time_domains": [
+        "COMPOSITION_FRAME_LOCAL",
+        "SOURCE_MEDIA_SECONDS"
+      ]
+    },
+    {
+      "authority": "AUTHORITATIVE",
+      "id": "N-REACT",
+      "identity_behavior": "React keys are transient",
+      "input_types": [
+        "React elements",
+        "FrameContext"
+      ],
+      "kind": "AUTHORING_SURFACE",
+      "mutability": "PER_FRAME_REBUILT",
+      "name": "React program",
+      "output_types": [
+        "HostNode tree"
+      ],
+      "source_refs": [
+        "S-REACT-LOWER",
+        "S-REACT-HOST"
+      ],
+      "time_domains": [
+        "FRAME_INDEX_INTEGER",
+        "FRAME_INDEX_FLOAT"
+      ]
+    },
+    {
+      "authority": "TRANSIENT",
+      "id": "N-RECONCILER",
+      "identity_behavior": "reconciliation identity lasts one evaluation",
+      "input_types": [
+        "React elements"
+      ],
+      "kind": "RECONCILER",
+      "mutability": "GLOBAL_MUTABLE",
+      "name": "custom React reconciler",
+      "output_types": [
+        "HostNode mutations"
+      ],
+      "source_refs": [
+        "S-REACT-LOWER",
+        "S-REACT-HOST"
+      ],
+      "time_domains": [
+        "FRAME_INDEX_FLOAT"
+      ]
+    },
+    {
+      "authority": "AUTHORITATIVE",
+      "id": "N-SCENE",
+      "identity_behavior": "optional numeric NodeId",
+      "input_types": [
+        "finite NodeKind tree"
+      ],
+      "kind": "SCENE_MODEL",
+      "mutability": "IMMUTABLE_DATA",
+      "name": "per-frame Scene",
+      "output_types": [
+        "serialized or prepass Scene"
+      ],
+      "source_refs": [
+        "S-SCENE"
+      ],
+      "time_domains": [
+        "COMPOSITION_FRAME_LOCAL",
+        "SOURCE_MEDIA_SECONDS"
+      ]
+    },
+    {
+      "authority": "DERIVED",
+      "id": "N-SERIAL",
+      "identity_behavior": "serializes numeric IDs only",
+      "input_types": [
+        "Scene or Scene array"
+      ],
+      "kind": "SERIALIZATION_BOUNDARY",
+      "mutability": "IMMUTABLE_DATA",
+      "name": "Scene JSON",
+      "output_types": [
+        "JSON bytes"
+      ],
+      "source_refs": [
+        "S-SCENE",
+        "S-NODE-EXPORT",
+        "S-CLI"
+      ],
+      "time_domains": [
+        "COMPOSITION_FRAME_LOCAL",
+        "SOURCE_MEDIA_SECONDS"
+      ]
+    },
+    {
+      "authority": "AUTHORITATIVE",
+      "id": "N-TIMELINE",
+      "identity_behavior": "targets numeric NodeId",
+      "input_types": [
+        "tracks and keyframes"
+      ],
+      "kind": "ANIMATION_MODEL",
+      "mutability": "IMMUTABLE_DATA",
+      "name": "Rust Timeline",
+      "output_types": [
+        "cloned and mutated Scene"
+      ],
+      "source_refs": [
+        "S-ANIMATION"
+      ],
+      "time_domains": [
+        "SECONDS_NUMBER"
+      ]
+    }
+  ],
+  "authoring_surfaces": [
+    {
+      "authoritative_state": "serialized payload",
+      "confidence": "HIGH",
+      "creative_programmability_class": [
+        "DECLARATIVE_SCENE_PROGRAM",
+        "EXTENSIBLE_COMPONENT_SYSTEM",
+        "FINITE_PATTERN_CATALOG"
+      ],
+      "entry_points": [
+        "packages/cinema/src/index.tsx"
+      ],
+      "error_model": "validation errors, warnings, and placeholders",
+      "export_path": "React frame array then native export",
+      "extension_mechanism": "custom registry and finite named patterns",
+      "fallback_model": "named-pattern omission or placeholder",
+      "identity_model": "string scene, track, and entry identity",
+      "input_representation": "typed high-level payload",
+      "intended_user": "agent and structured authoring tools",
+      "name": "Cinema payload",
+      "normalization_entry_points": [
+        "timeToSeconds",
+        "resolveScene"
+      ],
+      "output_representation": "React element program",
+      "preview_path": "Cinema inspector and React preview",
+      "renderer_dependency": "React and Scene vocabulary",
+      "semantic_information_lost": [
+        "named choreography identity",
+        "brand-token identity"
+      ],
+      "semantic_information_preserved": [
+        "roles",
+        "labels",
+        "timing intent"
+      ],
+      "serialization_boundary": "JSON payload",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-TIME",
+        "S-CINEMA-COMPILER",
+        "S-MANDATORY-PACKAGES-CINEMA-SRC-PROPS-TS"
+      ],
+      "state_mutability": "IMMUTABLE_DATA",
+      "status": "VERIFIED_AT_PIN",
+      "surface_id": "AS-CINEMA",
+      "time_model": "TimeSpec converted to frames",
+      "validation_entry_points": [
+        "validatePayload"
+      ]
+    },
+    {
+      "authoritative_state": "host-language program",
+      "confidence": "HIGH",
+      "creative_programmability_class": [
+        "PROCEDURAL_HOST_LANGUAGE",
+        "GENERAL_PRIMITIVE_SYSTEM",
+        "EXTERNAL_CODE_ESCAPE_HATCH"
+      ],
+      "entry_points": [
+        "packages/react/src/index.ts",
+        "renderFrame"
+      ],
+      "error_model": "throws on unsupported host structure and conversion errors",
+      "export_path": "renderFrames materializes Scene snapshots",
+      "extension_mechanism": "arbitrary host-language components lowering to supported primitives",
+      "fallback_model": "host-language code can substitute supported primitives",
+      "identity_model": "React key during one reconciliation; optional numeric Scene NodeId",
+      "input_representation": "React element tree plus frame context",
+      "intended_user": "JavaScript and TypeScript authors",
+      "name": "React composition",
+      "normalization_entry_points": [
+        "reconcile",
+        "toNode"
+      ],
+      "output_representation": "one Scene snapshot",
+      "preview_path": "player requests evaluated frames",
+      "renderer_dependency": "finite host and Scene vocabulary",
+      "semantic_information_lost": [
+        "component identity",
+        "React key",
+        "hook history"
+      ],
+      "semantic_information_preserved": [
+        "computed geometry",
+        "paint",
+        "media references"
+      ],
+      "serialization_boundary": "temporary frames JSON during export",
+      "source_refs": [
+        "S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS",
+        "S-REACT-HOST",
+        "S-REACT-LOWER"
+      ],
+      "state_mutability": "PER_FRAME_REBUILT",
+      "status": "VERIFIED_AT_PIN",
+      "surface_id": "AS-REACT",
+      "time_model": "integer or fractional output frame",
+      "validation_entry_points": [
+        "host element and prop conversion"
+      ]
+    },
+    {
+      "authoritative_state": "serialized Scene document",
+      "confidence": "HIGH",
+      "creative_programmability_class": [
+        "DECLARATIVE_SCENE_PROGRAM",
+        "GENERAL_PRIMITIVE_SYSTEM"
+      ],
+      "entry_points": [
+        "Scene serde boundary",
+        "CLI JSON ingestion",
+        "WASM JSON ingestion"
+      ],
+      "error_model": "deserialization and prepass failures",
+      "export_path": "CLI ingestion",
+      "extension_mechanism": "compose supported NodeKind values",
+      "fallback_model": "renderer or preview fallback after parse",
+      "identity_model": "optional numeric NodeId",
+      "input_representation": "serialized composition and finite NodeKind tree",
+      "intended_user": "tooling and low-level integrators",
+      "name": "Direct Scene JSON",
+      "normalization_entry_points": [
+        "layout, image, SVG, and timeline prepasses"
+      ],
+      "output_representation": "prepass-ready Scene",
+      "preview_path": "WASM/player ingestion",
+      "renderer_dependency": "Scene and renderer capability set",
+      "semantic_information_lost": [
+        "high-level authoring intent",
+        "React component identity"
+      ],
+      "semantic_information_preserved": [
+        "renderer-facing values",
+        "numeric IDs"
+      ],
+      "serialization_boundary": "JSON",
+      "source_refs": [
+        "S-SCENE",
+        "S-WASM",
+        "S-CLI"
+      ],
+      "state_mutability": "IMMUTABLE_DATA",
+      "status": "VERIFIED_AT_PIN",
+      "surface_id": "AS-JSON",
+      "time_model": "composition frames plus media seconds",
+      "validation_entry_points": [
+        "JSON deserialization",
+        "version interpretation"
+      ]
+    },
+    {
+      "authoritative_state": "typed Rust values",
+      "confidence": "HIGH",
+      "creative_programmability_class": [
+        "PROCEDURAL_HOST_LANGUAGE",
+        "DECLARATIVE_SCENE_PROGRAM"
+      ],
+      "entry_points": [
+        "Scene",
+        "Timeline",
+        "AnimatedScene"
+      ],
+      "error_model": "typed construction, targeting, and runtime errors",
+      "export_path": "native renderer",
+      "extension_mechanism": "construct supported enums and custom host logic",
+      "fallback_model": "unsupported renderer features may demote",
+      "identity_model": "numeric NodeId targets",
+      "input_representation": "typed Scene with optional Timeline",
+      "intended_user": "Rust integrators",
+      "name": "Rust Scene and Timeline",
+      "normalization_entry_points": [
+        "timeline evaluation and renderer prepasses"
+      ],
+      "output_representation": "evaluated Scene",
+      "preview_path": "WASM/native adapters",
+      "renderer_dependency": "Scene and Timeline type vocabulary",
+      "semantic_information_lost": [
+        "external authoring provenance unless separately retained"
+      ],
+      "semantic_information_preserved": [
+        "numeric identity",
+        "keyframe data"
+      ],
+      "serialization_boundary": "optional JSON",
+      "source_refs": [
+        "S-SCENE",
+        "S-ANIMATION"
+      ],
+      "state_mutability": "CLONED_AND_MUTATED",
+      "status": "VERIFIED_AT_PIN",
+      "surface_id": "AS-RUST",
+      "time_model": "frame divided by fps to timeline seconds",
+      "validation_entry_points": [
+        "Rust type system",
+        "serde when serialized"
+      ]
+    },
+    {
+      "authoritative_state": "registry definition",
+      "confidence": "HIGH",
+      "creative_programmability_class": [
+        "EXTENSIBLE_COMPONENT_SYSTEM",
+        "FINITE_REGISTRY",
+        "EXTERNAL_CODE_ESCAPE_HATCH"
+      ],
+      "entry_points": [
+        "packages/components/src/index.ts",
+        "component manifest",
+        "Cinema registry"
+      ],
+      "error_model": "unknown component diagnostics",
+      "export_path": "React export",
+      "extension_mechanism": "package code or caller-supplied registry",
+      "fallback_model": "placeholder or omission depending on caller",
+      "identity_model": "component name before expansion",
+      "input_representation": "named component and schema-described properties",
+      "intended_user": "authors selecting or extending components",
+      "name": "Component package and registry",
+      "normalization_entry_points": [
+        "component invocation to React subtree"
+      ],
+      "output_representation": "React primitive subtree",
+      "preview_path": "React preview",
+      "renderer_dependency": "React and Scene primitives",
+      "semantic_information_lost": [
+        "registry identity after expansion"
+      ],
+      "semantic_information_preserved": [
+        "component property values"
+      ],
+      "serialization_boundary": "package exports and manifest",
+      "source_refs": [
+        "S-MANDATORY-PACKAGES-COMPONENTS-PACKAGE-JSON",
+        "S-MANDATORY-PACKAGES-COMPONENTS-SRC-INDEX-TS",
+        "S-COMPONENTS"
+      ],
+      "state_mutability": "IMMUTABLE_DATA",
+      "status": "VERIFIED_AT_PIN",
+      "surface_id": "AS-COMPONENTS",
+      "time_model": "component-defined frame computation",
+      "validation_entry_points": [
+        "manifest and component property validation"
+      ]
+    }
+  ],
+  "boundary_contracts": [
+    {
+      "boundary_id": "BC-AE-01",
+      "consumer": "N-CINEMA-VALIDATE",
+      "data_form": "Cinema payload",
+      "error_behavior": "structured diagnostics",
+      "producer": "N-CINEMA",
+      "semantic_disposition": "intent retained",
+      "source_refs": [
+        "S-CINEMA-TEST",
+        "S-CINEMA-COMPILER"
+      ],
+      "validation": "schema and semantic checks"
+    },
+    {
+      "boundary_id": "BC-AE-02",
+      "consumer": "N-INSPECT",
+      "data_form": "Cinema payload",
+      "error_behavior": "inspection findings",
+      "producer": "N-CINEMA",
+      "semantic_disposition": "roles and paths retained",
+      "source_refs": [
+        "S-CINEMA-INSPECT",
+        "S-CINEMA-RESOLVE"
+      ],
+      "validation": "payload accepted for analysis"
+    },
+    {
+      "boundary_id": "BC-AE-03",
+      "consumer": "N-REACT",
+      "data_form": "React element program",
+      "error_behavior": "warnings, placeholders, or throw",
+      "producer": "N-CINEMA",
+      "semantic_disposition": "named intent partly consumed",
+      "source_refs": [
+        "S-CINEMA-COMPILER"
+      ],
+      "validation": "post-validation construction"
+    },
+    {
+      "boundary_id": "BC-AE-04",
+      "consumer": "N-RECONCILER",
+      "data_form": "React elements and frame context",
+      "error_behavior": "unsupported host error",
+      "producer": "N-REACT",
+      "semantic_disposition": "component structure evaluated",
+      "source_refs": [
+        "S-REACT-LOWER",
+        "S-REACT-HOST"
+      ],
+      "validation": "host element contract"
+    },
+    {
+      "boundary_id": "BC-AE-05",
+      "consumer": "N-HOST",
+      "data_form": "host commits",
+      "error_behavior": "commit failure",
+      "producer": "N-RECONCILER",
+      "semantic_disposition": "React tree materialized",
+      "source_refs": [
+        "S-REACT-HOST"
+      ],
+      "validation": "host-config validation"
+    },
+    {
+      "boundary_id": "BC-AE-06",
+      "consumer": "N-SCENE",
+      "data_form": "finite host primitives",
+      "error_behavior": "conversion error",
+      "producer": "N-HOST",
+      "semantic_disposition": "React key and component provenance dropped unless explicit",
+      "source_refs": [
+        "S-REACT-LOWER"
+      ],
+      "validation": "toNode conversion"
+    },
+    {
+      "boundary_id": "BC-AE-07",
+      "consumer": "N-SCENE",
+      "data_form": "Scene plus tracks",
+      "error_behavior": "missing target or property behavior",
+      "producer": "N-TIMELINE",
+      "semantic_disposition": "keyframes materialized into values",
+      "source_refs": [
+        "S-ANIMATION"
+      ],
+      "validation": "target lookup"
+    },
+    {
+      "boundary_id": "BC-AE-08",
+      "consumer": "N-SERIAL",
+      "data_form": "Scene or Scene array",
+      "error_behavior": "serialization error",
+      "producer": "N-SCENE",
+      "semantic_disposition": "renderer data preserved",
+      "source_refs": [
+        "S-SCENE",
+        "S-NODE-EXPORT"
+      ],
+      "validation": "serde serialization"
+    },
+    {
+      "boundary_id": "BC-AE-09",
+      "consumer": "N-PREPASSES",
+      "data_form": "Scene JSON",
+      "error_behavior": "parse or version error",
+      "producer": "N-SERIAL",
+      "semantic_disposition": "authoring semantics unavailable",
+      "source_refs": [
+        "S-CLI",
+        "S-WASM"
+      ],
+      "validation": "serde and version handling"
+    },
+    {
+      "boundary_id": "BC-AE-10",
+      "consumer": "N-PREPASSES",
+      "data_form": "Scene",
+      "error_behavior": "prepass error",
+      "producer": "N-SCENE",
+      "semantic_disposition": "layout and document structure materialized",
+      "source_refs": [
+        "S-LAYOUT",
+        "S-IMAGE",
+        "S-SVG"
+      ],
+      "validation": "media/layout/SVG resolution"
+    },
+    {
+      "boundary_id": "BC-AE-11",
+      "consumer": "N-CPU",
+      "data_form": "resolved Scene",
+      "error_behavior": "renderer failure",
+      "producer": "N-PREPASSES",
+      "semantic_disposition": "supported visual semantics rasterized",
+      "source_refs": [
+        "S-WASM",
+        "S-CLI"
+      ],
+      "validation": "CPU capability checks"
+    },
+    {
+      "boundary_id": "BC-AE-12",
+      "consumer": "N-GPU",
+      "data_form": "resolved Scene",
+      "error_behavior": "GPU failure",
+      "producer": "N-PREPASSES",
+      "semantic_disposition": "supported visual semantics rasterized",
+      "source_refs": [
+        "S-WASM-VELLO",
+        "S-CLI"
+      ],
+      "validation": "GPU capability checks"
+    },
+    {
+      "boundary_id": "BC-AE-13",
+      "consumer": "N-CPU",
+      "data_form": "resolved Scene",
+      "error_behavior": "diagnosed or runtime fallback",
+      "producer": "N-GPU",
+      "semantic_disposition": "GPU-only fidelity may reduce",
+      "source_refs": [
+        "S-PLAYER",
+        "S-MANDATORY-PACKAGES-PLAYER-SRC-ENGINE-DRAWER-TS"
+      ],
+      "validation": "runtime capability/failure"
+    },
+    {
+      "boundary_id": "BC-AE-14",
+      "consumer": "N-CANVAS",
+      "data_form": "Scene subset",
+      "error_behavior": "preview fallback",
+      "producer": "N-CPU",
+      "semantic_disposition": "unsupported features approximated or omitted",
+      "source_refs": [
+        "S-CANVAS",
+        "S-PLAYER"
+      ],
+      "validation": "Canvas support checks"
+    },
+    {
+      "boundary_id": "BC-AE-15",
+      "consumer": "N-CANVAS",
+      "data_form": "Scene subset",
+      "error_behavior": "unsupported node handling",
+      "producer": "N-SCENE",
+      "semantic_disposition": "finite subset rendered approximately",
+      "source_refs": [
+        "S-CANVAS"
+      ],
+      "validation": "Canvas dispatch"
+    },
+    {
+      "boundary_id": "BC-AE-16",
+      "consumer": "N-REACT",
+      "data_form": "requested output frame",
+      "error_behavior": "playback diagnostic",
+      "producer": "N-PLAYER",
+      "semantic_disposition": "frame choice only",
+      "source_refs": [
+        "S-PLAYER"
+      ],
+      "validation": "playback range and rate"
+    },
+    {
+      "boundary_id": "BC-AE-17",
+      "consumer": "N-ENCODER",
+      "data_form": "ordered pixel frames",
+      "error_behavior": "CLI/encoder failure",
+      "producer": "N-CPU",
+      "semantic_disposition": "scene semantics become timestamps and pixels",
+      "source_refs": [
+        "S-CLI"
+      ],
+      "validation": "encoder contract"
+    },
+    {
+      "boundary_id": "BC-AE-18",
+      "consumer": "N-ENCODER",
+      "data_form": "ordered pixel frames",
+      "error_behavior": "CLI/encoder failure",
+      "producer": "N-GPU",
+      "semantic_disposition": "scene semantics become timestamps and pixels",
+      "source_refs": [
+        "S-CLI"
+      ],
+      "validation": "encoder contract"
+    }
+  ],
+  "candidate_requirements": [
+    {
+      "abstract_requirement": "Preserve stable source identity and source-map chains across lowering stages.",
+      "affected_cinekernel_programs": [
+        "P06",
+        "P07",
+        "P08",
+        "P09",
+        "P10",
+        "P14",
+        "P23",
+        "P25"
+      ],
+      "creative_programming_impact": "Preserves semantic targets for open-ended generation and repair.",
+      "independent_primary_source_refs": [
+        "E-MLIR"
+      ],
+      "onda_observation_refs": [
+        "C-003",
+        "C-004",
+        "C-011"
+      ],
+      "onda_source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-RESOLVE",
+        "S-CINEMA-COMPILER",
+        "S-SCENE"
+      ],
+      "performance_impact": "Adds metadata and lookup cost that R0.03 and R0.07 must measure.",
+      "problem_addressed": "Early identity loss weakens inspection and repair.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Enables precise edits without reconstructing flattened authoring intent.",
+      "required_follow_up_research": [
+        "R0.03",
+        "R0.05",
+        "R0.07",
+        "R0.08"
+      ],
+      "requirement_id": "CK-R002-REQ-001",
+      "status": "CANDIDATE_ONLY",
+      "trust_impact": "Lets agents and reviewers trace rendered results to stable authored entities."
+    },
+    {
+      "abstract_requirement": "Represent time domains and conversions explicitly.",
+      "affected_cinekernel_programs": [
+        "P01",
+        "P02",
+        "P03",
+        "P07",
+        "P08",
+        "P14",
+        "P18",
+        "P19"
+      ],
+      "creative_programming_impact": "Gives procedural animation a deterministic temporal contract.",
+      "independent_primary_source_refs": [
+        "E-GSTREAMER"
+      ],
+      "onda_observation_refs": [
+        "C-007",
+        "C-010",
+        "C-011"
+      ],
+      "onda_source_refs": [
+        "S-CINEMA-TIME",
+        "S-ANIMATION",
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-CLI"
+      ],
+      "performance_impact": "Allows conversion and synchronization overhead to be measured explicitly.",
+      "problem_addressed": "Fragmented clocks, rounding, and sampling obscure determinism.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Prevents timing drift across authoring, preview, media, and export.",
+      "required_follow_up_research": [
+        "R0.03",
+        "R0.06",
+        "R0.07"
+      ],
+      "requirement_id": "CK-R002-REQ-002",
+      "status": "CANDIDATE_ONLY",
+      "trust_impact": "Makes rounding, rate ownership, and clock conversion auditable."
+    },
+    {
+      "abstract_requirement": "Separate semantic authoring IR from renderer IR through explicit lowering contracts.",
+      "affected_cinekernel_programs": [
+        "P05",
+        "P06",
+        "P07",
+        "P08",
+        "P09",
+        "P10",
+        "P14",
+        "P23",
+        "P25"
+      ],
+      "creative_programming_impact": "Supports novel high-level constructs without forcing them into a template catalog.",
+      "independent_primary_source_refs": [
+        "E-MLIR"
+      ],
+      "onda_observation_refs": [
+        "C-003",
+        "C-004",
+        "C-005",
+        "C-011"
+      ],
+      "onda_source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "performance_impact": "Permits renderer IR optimization without silently changing authoring meaning.",
+      "problem_addressed": "High-level intent is consumed before rendering.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Keeps authoring semantics available while renderer data stays constrained.",
+      "required_follow_up_research": [
+        "R0.03",
+        "R0.04",
+        "R0.05",
+        "R0.08"
+      ],
+      "requirement_id": "CK-R002-REQ-003",
+      "status": "CANDIDATE_ONLY",
+      "trust_impact": "Makes each semantic-loss boundary explicit and reviewable."
+    },
+    {
+      "abstract_requirement": "Make capability fallback typed, diagnosed, and quality-classified.",
+      "affected_cinekernel_programs": [
+        "P05",
+        "P08",
+        "P10",
+        "P14",
+        "P20",
+        "P21",
+        "P23",
+        "P24"
+      ],
+      "creative_programming_impact": "Lets authors deliberately choose approximations without mistaking them for equivalence.",
+      "independent_primary_source_refs": [
+        "E-GSTREAMER"
+      ],
+      "onda_observation_refs": [
+        "C-007",
+        "C-008"
+      ],
+      "onda_source_refs": [
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-WASM",
+        "S-WASM-VELLO",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "performance_impact": "Supports capability-aware planning instead of repeated failing work.",
+      "problem_addressed": "Automatic fallback can alter visible semantics.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Prevents silent quality loss when a backend or media capability is unavailable.",
+      "required_follow_up_research": [
+        "R0.03",
+        "R0.04",
+        "R0.06",
+        "R0.07"
+      ],
+      "requirement_id": "CK-R002-REQ-004",
+      "status": "CANDIDATE_ONLY",
+      "trust_impact": "Makes every demotion visible to users, agents, and certification logic."
+    },
+    {
+      "abstract_requirement": "Support bounded streaming frame generation.",
+      "affected_cinekernel_programs": [
+        "P08",
+        "P14",
+        "P18",
+        "P19",
+        "P20",
+        "P26"
+      ],
+      "creative_programming_impact": "Allows long procedural works without requiring whole-program frame materialization.",
+      "independent_primary_source_refs": [
+        "E-GSTREAMER"
+      ],
+      "onda_observation_refs": [
+        "C-006",
+        "C-009"
+      ],
+      "onda_source_refs": [
+        "S-REACT-LOWER",
+        "S-NODE-EXPORT",
+        "S-LAYOUT",
+        "S-IMAGE",
+        "S-VIDEO",
+        "S-CLI"
+      ],
+      "performance_impact": "Bounds memory and I/O, with thresholds reserved for R0.07 measurement.",
+      "problem_addressed": "Whole-video Scene materialization scales with duration and graph size.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Avoids duration-driven exhaustion that can prevent otherwise valid renders.",
+      "required_follow_up_research": [
+        "R0.03",
+        "R0.07"
+      ],
+      "requirement_id": "CK-R002-REQ-005",
+      "status": "CANDIDATE_ONLY",
+      "trust_impact": "Makes buffering and materialization limits explicit failure contracts."
+    },
+    {
+      "abstract_requirement": "Version serialized boundaries with compatibility fixtures and negotiation.",
+      "affected_cinekernel_programs": [
+        "P07",
+        "P08",
+        "P09",
+        "P10",
+        "P14",
+        "P18",
+        "P19",
+        "P23",
+        "P24"
+      ],
+      "creative_programming_impact": "Protects editable creative programs across tool and runtime upgrades.",
+      "independent_primary_source_refs": [
+        "E-MLIR"
+      ],
+      "onda_observation_refs": [
+        "C-005",
+        "C-011"
+      ],
+      "onda_source_refs": [
+        "S-SCENE",
+        "S-CLI",
+        "S-WASM",
+        "S-WASM-VELLO"
+      ],
+      "performance_impact": "Makes migration cost measurable and avoids accidental full recompilation paths.",
+      "problem_addressed": "Current compatibility guarantees are incomplete.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Prevents schema evolution from corrupting or rejecting valid creative documents unpredictably.",
+      "required_follow_up_research": [
+        "R0.03",
+        "R0.06",
+        "R0.08"
+      ],
+      "requirement_id": "CK-R002-REQ-006",
+      "status": "CANDIDATE_ONLY",
+      "trust_impact": "Provides explicit compatibility evidence for stored and exchanged artifacts."
+    },
+    {
+      "abstract_requirement": "Preserve deterministic random, media, and global-state ownership contracts.",
+      "affected_cinekernel_programs": [
+        "P01",
+        "P02",
+        "P03",
+        "P07",
+        "P08",
+        "P14",
+        "P18",
+        "P19",
+        "P20",
+        "P21"
+      ],
+      "creative_programming_impact": "Keeps procedural randomness and media behavior reproducible for agent iteration.",
+      "independent_primary_source_refs": [
+        "E-REACT",
+        "E-GSTREAMER"
+      ],
+      "onda_observation_refs": [
+        "C-002",
+        "C-010",
+        "C-012"
+      ],
+      "onda_source_refs": [
+        "S-REACT-FRAME",
+        "S-REACT-STATE",
+        "S-REACT-WARM",
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-REACT-LOWER"
+      ],
+      "performance_impact": "Enables safe parallelism only where isolation costs and benefits are known.",
+      "problem_addressed": "Module-global and external runtime state complicate reentrancy.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Produces repeatable frames under concurrency, seeking, and retries.",
+      "required_follow_up_research": [
+        "R0.03",
+        "R0.06",
+        "R0.07"
+      ],
+      "requirement_id": "CK-R002-REQ-007",
+      "status": "CANDIDATE_ONLY",
+      "trust_impact": "Makes nondeterministic state ownership observable and testable."
+    },
+    {
+      "abstract_requirement": "Keep open-ended host-language escape hatches while retaining inspectable primitives.",
+      "affected_cinekernel_programs": [
+        "P01",
+        "P02",
+        "P03",
+        "P05",
+        "P06",
+        "P07",
+        "P25",
+        "P26",
+        "P28"
+      ],
+      "creative_programming_impact": "Maintains the project goal of general creative programming rather than template selection.",
+      "independent_primary_source_refs": [
+        "E-REACT",
+        "E-MLIR"
+      ],
+      "onda_observation_refs": [
+        "C-001",
+        "C-003",
+        "C-005"
+      ],
+      "onda_source_refs": [
+        "S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS",
+        "S-MANDATORY-PACKAGES-REACT-SRC-COMPONENTS-TS",
+        "S-CINEMA-COMPILER",
+        "S-COMPONENTS",
+        "S-SCENE"
+      ],
+      "performance_impact": "Allows specialization while retaining analyzable primitive output and later measurement.",
+      "problem_addressed": "Finite catalogs alone cannot guarantee novel-scene expressibility.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Combines reusable components with precise low-level control.",
+      "required_follow_up_research": [
+        "R0.04",
+        "R0.05",
+        "R0.06",
+        "R0.08"
+      ],
+      "requirement_id": "CK-R002-REQ-008",
+      "status": "CANDIDATE_ONLY",
+      "trust_impact": "Keeps generated structures inspectable instead of hiding behavior behind opaque presets."
+    }
+  ],
+  "cinekernel_base": "974d93ef224b75383499cdb2b70cc086a0dd6f40",
+  "claims": [
+    {
+      "claim_id": "C-001",
+      "confidence": "HIGH",
+      "contradictions": [],
+      "source_refs": [
+        "S-REACT-HOST",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "statement": "React authoring is programmatic, but its render boundary is a finite scene vocabulary.",
+      "status": "VERIFIED_AT_PIN"
+    },
+    {
+      "claim_id": "C-002",
+      "confidence": "HIGH",
+      "contradictions": [],
+      "source_refs": [
+        "S-REACT-LOWER",
+        "S-REACT-TEST"
+      ],
+      "statement": "React component state is not retained between output frames because every frame uses a fresh root that is unmounted.",
+      "status": "VERIFIED_AT_PIN"
+    },
+    {
+      "claim_id": "C-003",
+      "confidence": "HIGH",
+      "contradictions": [],
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-INSPECT",
+        "S-CINEMA-RESOLVE"
+      ],
+      "statement": "Cinema retains more editorial identity and intent than Scene, while its inspector is a parallel high-level analysis path.",
+      "status": "VERIFIED_AT_PIN"
+    },
+    {
+      "claim_id": "C-004",
+      "confidence": "HIGH",
+      "contradictions": [],
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TYPES",
+        "S-SCENE"
+      ],
+      "statement": "Cinema roles, choreography names, brand identity, and most string ids do not survive as first-class Scene fields.",
+      "status": "VERIFIED_AT_PIN"
+    },
+    {
+      "claim_id": "C-005",
+      "confidence": "HIGH",
+      "contradictions": [],
+      "source_refs": [
+        "S-SCENE",
+        "S-CLI",
+        "S-WASM"
+      ],
+      "statement": "Direct Scene JSON and typed Rust construction converge at the same finite Scene contract.",
+      "status": "VERIFIED_AT_PIN"
+    },
+    {
+      "claim_id": "C-006",
+      "confidence": "HIGH",
+      "contradictions": [],
+      "source_refs": [
+        "S-LAYOUT",
+        "S-SVG",
+        "S-IMAGE",
+        "S-VIDEO",
+        "S-CLI"
+      ],
+      "statement": "Layout, SVG, image, video, and timeline behavior includes destructive or materializing prepasses rather than a single immutable IR pipeline.",
+      "status": "VERIFIED_AT_PIN"
+    },
+    {
+      "claim_id": "C-007",
+      "confidence": "HIGH",
+      "contradictions": [],
+      "source_refs": [
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-WASM",
+        "S-WASM-VELLO",
+        "S-CLI"
+      ],
+      "statement": "GPU and CPU preview can share renderer semantics with native export, but browser media resolution and scheduling keep end-to-end parity conditional.",
+      "status": "VERIFIED_AT_PIN"
+    },
+    {
+      "claim_id": "C-008",
+      "confidence": "HIGH",
+      "contradictions": [],
+      "source_refs": [
+        "S-CANVAS",
+        "S-PLAYER"
+      ],
+      "statement": "Canvas2D is an explicit approximation and not a parity path.",
+      "status": "VERIFIED_AT_PIN"
+    },
+    {
+      "claim_id": "C-009",
+      "confidence": "HIGH",
+      "contradictions": [],
+      "source_refs": [
+        "S-REACT-LOWER",
+        "S-NODE-EXPORT"
+      ],
+      "statement": "Full React export materializes every evaluated frame before the native export call, creating duration-proportional scene memory and JSON I/O.",
+      "status": "VERIFIED_AT_PIN"
+    },
+    {
+      "claim_id": "C-010",
+      "confidence": "HIGH",
+      "contradictions": [],
+      "source_refs": [
+        "S-REACT-STATE",
+        "S-REACT-WARM",
+        "S-PLAYER",
+        "S-VIDEO"
+      ],
+      "statement": "Global registries and caches require explicit isolation if authoring evaluation is parallelized or made multi-tenant.",
+      "status": "VERIFIED_AT_PIN"
+    },
+    {
+      "claim_id": "C-011",
+      "confidence": "HIGH",
+      "contradictions": [],
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-RESOLVE",
+        "S-SCENE",
+        "E-MLIR",
+        "E-GSTREAMER"
+      ],
+      "statement": "A future CineKernel IR should preserve stable identity, semantic intent, time domains, diagnostics, and capability requirements until explicit lowering stages.",
+      "status": "CANDIDATE_ONLY"
+    },
+    {
+      "claim_id": "C-012",
+      "confidence": "HIGH",
+      "contradictions": [],
+      "source_refs": [
+        "S-REACT-LOWER",
+        "E-REACT"
+      ],
+      "statement": "React's render and commit model is analogous only at a high level; ONDA deliberately remounts per frame rather than preserving a committed application tree.",
+      "status": "VERIFIED_AT_PIN"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_id": "CON-001",
+      "source_refs": [
+        "S-REACT-LOWER"
+      ],
+      "statement": "Fresh React roots isolate host trees, but module-global active frame and depth-of-field state leave concurrent or nested reentrancy unresolved."
+    },
+    {
+      "contradiction_id": "CON-002",
+      "source_refs": [
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-CLI"
+      ],
+      "statement": "Renderer sharing does not imply end-to-end preview/export parity because media scheduling and fallbacks differ."
+    },
+    {
+      "contradiction_id": "CON-003",
+      "source_refs": [
+        "S-SCENE",
+        "S-CANVAS"
+      ],
+      "statement": "A universal Scene vocabulary is still finite and Canvas preview explicitly approximates only a subset."
+    }
+  ],
+  "creative_programmability": {
+    "overall_verdict": "MULTI_LAYER_PROGRAMMABILITY_WITH_FINITE_RENDERER_VOCABULARY",
+    "scoring_policy": "No numeric creativity score is assigned; every capability uses an evidence-backed categorical state that distinguishes native, host-language, registry, lower-level, finite-catalog, partial, and unknown support.",
+    "surface_assessments": [
+      {
+        "black_box_risk": "MEDIUM",
+        "can_descend_to_primitives": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "custom_animation": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "custom_component_extension": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "custom_geometry": "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+        "escape_hatch_evidence": "Custom registry code can emit React and reach Scene primitives, while built-in named patterns remain finite.",
+        "general_primitive_access": "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+        "inspectability": "PARTIALLY_SUPPORTED",
+        "named_pattern_dependence": "FINITE_CATALOG_LIMIT",
+        "novel_scene_expressibility": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "post_generation_editability": "PARTIALLY_SUPPORTED",
+        "procedural_logic": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "registry_dependence": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "source_mapping": "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+        "source_refs": [
+          "S-CINEMA-TYPES",
+          "S-CINEMA-COMPILER",
+          "S-CINEMA-RESOLVE",
+          "S-COMPONENTS"
+        ],
+        "surface_id": "AS-CINEMA"
+      },
+      {
+        "black_box_risk": "LOW",
+        "can_descend_to_primitives": "SUPPORTED",
+        "custom_animation": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "custom_component_extension": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "custom_geometry": "FINITE_CATALOG_LIMIT",
+        "escape_hatch_evidence": "Frame hooks, interpolation, spring, sequencing, transitions, loops, and primitive nodes are directly available to host-language code.",
+        "general_primitive_access": "SUPPORTED",
+        "inspectability": "SUPPORTED",
+        "named_pattern_dependence": "NOT_NATIVE",
+        "novel_scene_expressibility": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "post_generation_editability": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "procedural_logic": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "registry_dependence": "NOT_NATIVE",
+        "source_mapping": "PARTIALLY_SUPPORTED",
+        "source_refs": [
+          "S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS",
+          "S-MANDATORY-PACKAGES-REACT-SRC-COMPONENTS-TS",
+          "S-MANDATORY-PACKAGES-REACT-SRC-INTERPOLATE-TS",
+          "S-MANDATORY-PACKAGES-REACT-SRC-SPRING-TS",
+          "S-MANDATORY-PACKAGES-REACT-SRC-TRANSITIONS-TS",
+          "S-REACT-LOWER"
+        ],
+        "surface_id": "AS-REACT"
+      },
+      {
+        "black_box_risk": "MEDIUM",
+        "can_descend_to_primitives": "SUPPORTED",
+        "custom_animation": "SUPPORTED",
+        "custom_component_extension": "NOT_NATIVE",
+        "custom_geometry": "FINITE_CATALOG_LIMIT",
+        "escape_hatch_evidence": "Direct JSON composes the finite Scene schema; it cannot define a new component implementation at this layer.",
+        "general_primitive_access": "SUPPORTED",
+        "inspectability": "SUPPORTED",
+        "named_pattern_dependence": "NOT_NATIVE",
+        "novel_scene_expressibility": "PARTIALLY_SUPPORTED",
+        "post_generation_editability": "SUPPORTED",
+        "procedural_logic": "NOT_NATIVE",
+        "registry_dependence": "NOT_NATIVE",
+        "source_mapping": "PARTIALLY_SUPPORTED",
+        "source_refs": [
+          "S-SCENE",
+          "S-CLI",
+          "S-WASM"
+        ],
+        "surface_id": "AS-JSON"
+      },
+      {
+        "black_box_risk": "LOW",
+        "can_descend_to_primitives": "SUPPORTED",
+        "custom_animation": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "custom_component_extension": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "custom_geometry": "FINITE_CATALOG_LIMIT",
+        "escape_hatch_evidence": "Typed Rust constructs Scene and Timeline values directly without depending on the Cinema component registry.",
+        "general_primitive_access": "SUPPORTED",
+        "inspectability": "SUPPORTED",
+        "named_pattern_dependence": "NOT_NATIVE",
+        "novel_scene_expressibility": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "post_generation_editability": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "procedural_logic": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "registry_dependence": "NOT_NATIVE",
+        "source_mapping": "PARTIALLY_SUPPORTED",
+        "source_refs": [
+          "S-SCENE",
+          "S-ANIMATION",
+          "S-CLI"
+        ],
+        "surface_id": "AS-RUST"
+      },
+      {
+        "black_box_risk": "MEDIUM",
+        "can_descend_to_primitives": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "custom_animation": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "custom_component_extension": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "custom_geometry": "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+        "escape_hatch_evidence": "Catalog identity is present before expansion, but complete component-to-Scene-to-pixel source mapping is not preserved.",
+        "general_primitive_access": "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+        "inspectability": "PARTIALLY_SUPPORTED",
+        "named_pattern_dependence": "FINITE_CATALOG_LIMIT",
+        "novel_scene_expressibility": "FINITE_CATALOG_LIMIT",
+        "post_generation_editability": "PARTIALLY_SUPPORTED",
+        "procedural_logic": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "registry_dependence": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "source_mapping": "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+        "source_refs": [
+          "S-COMPONENTS",
+          "S-MANDATORY-PACKAGES-COMPONENTS-SRC-INDEX-TS",
+          "S-CINEMA-COMPILER",
+          "S-REACT-LOWER"
+        ],
+        "surface_id": "AS-COMPONENTS"
+      }
+    ]
+  },
+  "deferred_topics": [
+    {
+      "phase": "R0.03",
+      "topic": "Native GPU, CPU, WASM, and encoding architecture",
+      "topic_id": "DEF-001"
+    },
+    {
+      "phase": "R0.04",
+      "topic": "Typography, layout, effects, color, and 3D architecture",
+      "topic_id": "DEF-002"
+    },
+    {
+      "phase": "R0.05",
+      "topic": "Agent component catalog and cinematic composition model",
+      "topic_id": "DEF-003"
+    },
+    {
+      "phase": "R0.06",
+      "topic": "CLI, installation, preview, embedding, and developer experience",
+      "topic_id": "DEF-004"
+    },
+    {
+      "phase": "R0.07",
+      "topic": "Independent benchmark and failure analysis",
+      "topic_id": "DEF-005"
+    },
+    {
+      "phase": "R0.08",
+      "topic": "Adoption, rejection, clean-room, and roadmap-delta matrix",
+      "topic_id": "DEF-006"
+    }
+  ],
+  "generated_at": "2026-08-16T00:00:00Z",
+  "hypotheses": [
+    {
+      "id": "H-R002-001",
+      "source_refs": [
+        "S-README",
+        "S-CINEMA-TYPES",
+        "S-SCENE"
+      ],
+      "statement": "ONDA exposes more than one authoring surface.",
+      "verdict": "verified"
+    },
+    {
+      "id": "H-R002-002",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER"
+      ],
+      "statement": "Cinema is a semantic compiler into React rather than the renderer IR itself.",
+      "verdict": "verified"
+    },
+    {
+      "id": "H-R002-003",
+      "source_refs": [
+        "S-REACT-LOWER",
+        "S-REACT-TEST"
+      ],
+      "statement": "React evaluation retains component state across output frames.",
+      "verdict": "rejected"
+    },
+    {
+      "id": "H-R002-004",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-SCENE"
+      ],
+      "statement": "All high-level Cinema identity survives lowering into Scene.",
+      "verdict": "rejected"
+    },
+    {
+      "id": "H-R002-005",
+      "source_refs": [
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "statement": "Preview and export are unconditionally identical.",
+      "verdict": "rejected"
+    },
+    {
+      "id": "H-R002-006",
+      "source_refs": [
+        "S-REACT-LOWER",
+        "S-NODE-EXPORT"
+      ],
+      "statement": "Frame materialization creates a scalability risk for long React exports.",
+      "verdict": "verified"
+    },
+    {
+      "id": "H-R002-007",
+      "source_refs": [
+        "S-SCENE",
+        "S-REACT-LOWER",
+        "S-COMPONENTS"
+      ],
+      "statement": "The finite primitive scene graph prevents novel visuals entirely.",
+      "verdict": "rejected"
+    }
+  ],
+  "identity_and_provenance": [
+    {
+      "concept": "Cinema scene ID",
+      "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+      "disposition": "USED_ONLY_DURING_LOWERING",
+      "final_scene_traceable": false,
+      "identity_id": "ID-01",
+      "source_map_available": false,
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-RESOLVE",
+        "S-REACT-LOWER"
+      ],
+      "source_representation": "Cinema scene",
+      "target_representation": "React composition"
+    },
+    {
+      "concept": "Cinema track ID",
+      "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+      "disposition": "USED_ONLY_DURING_LOWERING",
+      "final_scene_traceable": false,
+      "identity_id": "ID-02",
+      "source_map_available": false,
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-RESOLVE",
+        "S-REACT-LOWER"
+      ],
+      "source_representation": "Cinema track",
+      "target_representation": "React grouping"
+    },
+    {
+      "concept": "Cinema entry ID",
+      "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+      "disposition": "USED_ONLY_AS_REACT_KEY",
+      "final_scene_traceable": false,
+      "identity_id": "ID-03",
+      "source_map_available": false,
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-RESOLVE",
+        "S-REACT-LOWER"
+      ],
+      "source_representation": "Cinema entry",
+      "target_representation": "React key"
+    },
+    {
+      "concept": "Cinema morph key",
+      "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+      "disposition": "USED_ONLY_DURING_LOWERING",
+      "final_scene_traceable": false,
+      "identity_id": "ID-04",
+      "source_map_available": false,
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-RESOLVE",
+        "S-REACT-LOWER"
+      ],
+      "source_representation": "Cinema entry",
+      "target_representation": "transition matching"
+    },
+    {
+      "concept": "React key",
+      "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+      "disposition": "DROPPED",
+      "final_scene_traceable": false,
+      "identity_id": "ID-05",
+      "source_map_available": false,
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-RESOLVE",
+        "S-REACT-LOWER"
+      ],
+      "source_representation": "React element",
+      "target_representation": "HostNode/Scene"
+    },
+    {
+      "concept": "React host node",
+      "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+      "disposition": "REMAPPED",
+      "final_scene_traceable": false,
+      "identity_id": "ID-06",
+      "source_map_available": false,
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-RESOLVE",
+        "S-REACT-LOWER"
+      ],
+      "source_representation": "HostNode tree",
+      "target_representation": "Scene Node"
+    },
+    {
+      "concept": "numeric Scene NodeId",
+      "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+      "disposition": "PRESERVED",
+      "final_scene_traceable": true,
+      "identity_id": "ID-07",
+      "source_map_available": false,
+      "source_refs": [
+        "S-SCENE",
+        "S-ANIMATION"
+      ],
+      "source_representation": "Scene",
+      "target_representation": "renderer/timeline"
+    },
+    {
+      "concept": "Timeline target NodeId",
+      "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+      "disposition": "PRESERVED",
+      "final_scene_traceable": true,
+      "identity_id": "ID-08",
+      "source_map_available": false,
+      "source_refs": [
+        "S-SCENE",
+        "S-ANIMATION"
+      ],
+      "source_representation": "Timeline",
+      "target_representation": "Scene mutation target"
+    },
+    {
+      "concept": "renderer element identity",
+      "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+      "disposition": "USED_ONLY_DURING_LOWERING",
+      "final_scene_traceable": false,
+      "identity_id": "ID-09",
+      "source_map_available": false,
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-RESOLVE",
+        "S-REACT-LOWER"
+      ],
+      "source_representation": "Scene Node",
+      "target_representation": "render pass"
+    },
+    {
+      "concept": "preview selection identity",
+      "diagnostic_impact": "full intent-to-pixel repair is unavailable when identity is consumed",
+      "disposition": "NOT_REPRESENTABLE",
+      "final_scene_traceable": false,
+      "identity_id": "ID-10",
+      "source_map_available": false,
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-RESOLVE",
+        "S-REACT-LOWER"
+      ],
+      "source_representation": "Cinema inspector",
+      "target_representation": "rendered node"
+    }
+  ],
+  "materialization_hypotheses": [
+    {
+      "id": "M-001",
+      "risk": "high for long or dense compositions",
+      "source_refs": [
+        "S-REACT-LOWER",
+        "S-NODE-EXPORT"
+      ],
+      "statement": "React full export memory and temporary JSON scale with frame count times scene size.",
+      "status": "verified-structurally"
+    },
+    {
+      "id": "M-002",
+      "risk": "multiplicative",
+      "source_refs": [
+        "S-REACT-LOWER",
+        "S-NODE-EXPORT"
+      ],
+      "statement": "Motion blur multiplies authoring evaluations and materialized scenes by sample count.",
+      "status": "verified-structurally"
+    },
+    {
+      "id": "M-003",
+      "risk": "requires deterministic backpressure and media contracts",
+      "source_refs": [
+        "S-NODE-EXPORT",
+        "E-GSTREAMER"
+      ],
+      "statement": "Streaming evaluated scenes into a bounded renderer queue could remove whole-video scene materialization.",
+      "status": "candidate"
+    }
+  ],
+  "method": {
+    "execution_prohibited": true,
+    "kind": "clean-room-static-archaeology",
+    "permanent_dependencies": {
+      "hyperframes": 0,
+      "onda": 0,
+      "remotion": 0
+    },
+    "source_precedence": [
+      "implementation",
+      "test",
+      "manifest",
+      "documentation",
+      "external-official",
+      "comment",
+      "inference"
+    ]
+  },
+  "model_version": "r0.02.3",
+  "novel_scene_litmus": [
+    {
+      "asset_truthfulness": "external assets must be declared and cannot be inferred as physically accurate",
+      "capability_decomposition": [
+        {
+          "dimension": "part hierarchy",
+          "evidence_scope": "A presegmented model or manually supplied hierarchy can be composed.",
+          "required_primitive": "inspectable part hierarchy representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "SUPPORTED_OR_COMPOSABLE"
+        },
+        {
+          "dimension": "segmentation",
+          "evidence_scope": "Manual or presegmented hierarchy is supported; automatic semantic or mechanical segmentation of a monolithic asset is not established.",
+          "required_primitive": "inspectable segmentation representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
+        },
+        {
+          "dimension": "exploded-view planning",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+          "required_primitive": "inspectable exploded-view planning representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
+        },
+        {
+          "dimension": "collision avoidance",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+          "required_primitive": "inspectable collision avoidance representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
+        },
+        {
+          "dimension": "mechanical geometry",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+          "required_primitive": "inspectable mechanical geometry representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
+        },
+        {
+          "dimension": "materials",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+          "required_primitive": "inspectable materials representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
+        },
+        {
+          "dimension": "emissive lighting",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+          "required_primitive": "inspectable emissive lighting representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
+        },
+        {
+          "dimension": "camera",
+          "evidence_scope": "The cited authoring and Scene surfaces expose composable primitives for this dimension.",
+          "required_primitive": "inspectable camera representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "SUPPORTED_OR_COMPOSABLE"
+        },
+        {
+          "dimension": "particles",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+          "required_primitive": "inspectable particles representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
+        },
+        {
+          "dimension": "timing",
+          "evidence_scope": "The cited authoring and Scene surfaces expose composable primitives for this dimension.",
+          "required_primitive": "inspectable timing representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "SUPPORTED_OR_COMPOSABLE"
+        },
+        {
+          "dimension": "sound",
+          "evidence_scope": "Audio authoring lowers to runtime scheduling with distinct clock ownership.",
+          "required_primitive": "inspectable sound representation",
+          "source_refs": [
+            "S-AUDIO",
+            "S-PLAYER",
+            "S-REACT-LOWER"
+          ],
+          "status": "SUPPORTED_OR_COMPOSABLE"
+        },
+        {
+          "dimension": "semantic grouping",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+          "required_primitive": "inspectable semantic grouping representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
+        },
+        {
+          "dimension": "inspectability",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+          "required_primitive": "inspectable inspectability representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
+        },
+        {
+          "dimension": "editability",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+          "required_primitive": "inspectable editability representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
+        },
+        {
+          "dimension": "asset truthfulness",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
+          "required_primitive": "inspectable asset truthfulness representation",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
+        }
+      ],
+      "editability": "value-level editing remains; semantic repair is weakened",
+      "inspectability": "Scene values are inspectable; high-level planning intent is not retained",
+      "limitations": "general mechanical constraints, collision solving, physically based materials, and general shaders are not established",
+      "litmus_id": "LITMUS-LAPTOP",
+      "required_primitives": [
+        "hierarchy",
+        "geometry",
+        "transforms",
+        "camera",
+        "timing",
+        "effects",
+        "media"
+      ],
+      "scene": "exploded laptop layers",
+      "source_refs": [
+        "S-SCENE",
+        "S-REACT-LOWER",
+        "S-CINEMA-COMPILER",
+        "S-COMPONENTS"
+      ],
+      "surface_comparison": [
+        {
+          "result": "guided composition; novel mechanics require registry code",
+          "surface_id": "AS-CINEMA"
+        },
+        {
+          "result": "procedural composition over finite Scene primitives",
+          "surface_id": "AS-REACT"
+        },
+        {
+          "result": "explicit renderer graph without high-level planning semantics",
+          "surface_id": "AS-JSON"
+        },
+        {
+          "result": "typed procedural graph and timeline construction",
+          "surface_id": "AS-RUST"
+        },
+        {
+          "result": "finite catalog unless extended with code",
+          "surface_id": "AS-COMPONENTS"
+        }
+      ],
+      "verdict": "PARTIALLY_EXPRESSIBLE"
+    },
+    {
+      "asset_truthfulness": "external assets must be declared and cannot be inferred as physically accurate",
+      "capability_decomposition": [
+        {
+          "dimension": "overall primitive sufficiency",
+          "evidence_scope": "The cited Scene and React surfaces establish finite composition primitives, not a general solution for every requested visual or physical behavior.",
+          "required_primitive": "inspectable scene-specific primitive composition",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
+        }
+      ],
+      "editability": "value-level editing remains; semantic repair is weakened",
+      "inspectability": "Scene values are inspectable; high-level planning intent is not retained",
+      "limitations": "physically plausible transmissive glass and general lighting are not established",
+      "litmus_id": "LITMUS-CITY",
+      "required_primitives": [
+        "hierarchy",
+        "geometry",
+        "transforms",
+        "camera",
+        "timing",
+        "effects",
+        "media"
+      ],
+      "scene": "glass city revenue chart",
+      "source_refs": [
+        "S-SCENE",
+        "S-REACT-LOWER",
+        "S-CINEMA-COMPILER",
+        "S-COMPONENTS"
+      ],
+      "surface_comparison": [
+        {
+          "result": "guided composition; novel mechanics require registry code",
+          "surface_id": "AS-CINEMA"
+        },
+        {
+          "result": "procedural composition over finite Scene primitives",
+          "surface_id": "AS-REACT"
+        },
+        {
+          "result": "explicit renderer graph without high-level planning semantics",
+          "surface_id": "AS-JSON"
+        },
+        {
+          "result": "typed procedural graph and timeline construction",
+          "surface_id": "AS-RUST"
+        },
+        {
+          "result": "finite catalog unless extended with code",
+          "surface_id": "AS-COMPONENTS"
+        }
+      ],
+      "verdict": "PARTIALLY_EXPRESSIBLE"
+    },
+    {
+      "asset_truthfulness": "external assets must be declared and cannot be inferred as physically accurate",
+      "capability_decomposition": [
+        {
+          "dimension": "overall primitive sufficiency",
+          "evidence_scope": "The cited Scene and React surfaces establish finite composition primitives, not a general solution for every requested visual or physical behavior.",
+          "required_primitive": "inspectable scene-specific primitive composition",
+          "source_refs": [
+            "S-SCENE",
+            "S-REACT-LOWER"
+          ],
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
+        }
+      ],
+      "editability": "value-level editing remains; semantic repair is weakened",
+      "inspectability": "Scene values are inspectable; high-level planning intent is not retained",
+      "limitations": "liquid simulation, reflective materials, and environment lighting are not established",
+      "litmus_id": "LITMUS-SPACECRAFT",
+      "required_primitives": [
+        "hierarchy",
+        "geometry",
+        "transforms",
+        "camera",
+        "timing",
+        "effects",
+        "media"
+      ],
+      "scene": "chrome liquid title spacecraft",
+      "source_refs": [
+        "S-SCENE",
+        "S-REACT-LOWER",
+        "S-CINEMA-COMPILER",
+        "S-COMPONENTS"
+      ],
+      "surface_comparison": [
+        {
+          "result": "guided composition; novel mechanics require registry code",
+          "surface_id": "AS-CINEMA"
+        },
+        {
+          "result": "procedural composition over finite Scene primitives",
+          "surface_id": "AS-REACT"
+        },
+        {
+          "result": "explicit renderer graph without high-level planning semantics",
+          "surface_id": "AS-JSON"
+        },
+        {
+          "result": "typed procedural graph and timeline construction",
+          "surface_id": "AS-RUST"
+        },
+        {
+          "result": "finite catalog unless extended with code",
+          "surface_id": "AS-COMPONENTS"
+        }
+      ],
+      "verdict": "PARTIALLY_EXPRESSIBLE"
+    }
+  ],
+  "onda_pin": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+  "onda_repository": "https://github.com/onda-engine/onda-engine.git",
+  "onda_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+  "open_questions": [
+    {
+      "defer_to": [
+        "R0.03",
+        "R0.07"
+      ],
+      "id": "Q-001",
+      "question": "What scene-size and duration thresholds make full frame materialization unacceptable on target machines?",
+      "source_refs": [
+        "S-NODE-EXPORT",
+        "S-REACT-LOWER"
+      ]
+    },
+    {
+      "defer_to": [
+        "R0.03"
+      ],
+      "id": "Q-002",
+      "question": "Which renderer capabilities are intentionally stable across CPU, Vello, and browser hosts?",
+      "source_refs": [
+        "S-WASM",
+        "S-WASM-VELLO",
+        "S-CLI"
+      ]
+    },
+    {
+      "defer_to": [
+        "R0.03",
+        "R0.08"
+      ],
+      "id": "Q-003",
+      "question": "What serialization evolution policy is promised beyond current version handling?",
+      "source_refs": [
+        "S-SCENE",
+        "S-CLI",
+        "S-WASM"
+      ]
+    },
+    {
+      "defer_to": [
+        "R0.03",
+        "R0.06",
+        "R0.07"
+      ],
+      "id": "Q-004",
+      "question": "How should media clocks, frame rates, variable frame rate, and audio resampling compose?",
+      "source_refs": [
+        "S-AUDIO",
+        "S-VIDEO",
+        "S-CLI"
+      ]
+    },
+    {
+      "defer_to": [
+        "R0.04"
+      ],
+      "id": "Q-005",
+      "question": "What general material, shader, constraint, and simulation model is required for the target creative ceiling?",
+      "source_refs": [
+        "S-SCENE",
+        "S-COMPONENTS"
+      ]
+    },
+    {
+      "defer_to": [
+        "R0.05",
+        "R0.08"
+      ],
+      "id": "Q-006",
+      "question": "Which authoring semantics must remain editable after lowering and round-trip serialization?",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER"
+      ]
+    }
+  ],
+  "preview_export_parity": [
+    {
+      "certification_impact": "end-to-end parity must be capability-aware and measured",
+      "comparison_id": "PE-01",
+      "export_path": "batch renderFrames evaluation",
+      "feature": "React frame evaluation",
+      "known_difference": "media scheduling, backend capability, or frame ordering differs",
+      "parity_class": "SHARED_WITH_DIFFERENT_SCHEDULING",
+      "preview_path": "player-requested frame evaluation",
+      "shared_authoring_evaluation": true,
+      "source_refs": [
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-WASM",
+        "S-WASM-VELLO",
+        "S-CLI",
+        "S-CANVAS"
+      ]
+    },
+    {
+      "certification_impact": "end-to-end parity must be capability-aware and measured",
+      "comparison_id": "PE-02",
+      "export_path": "native CPU boundary",
+      "feature": "CPU renderer core",
+      "known_difference": "media scheduling, backend capability, or frame ordering differs",
+      "parity_class": "CONDITIONAL_PARITY",
+      "preview_path": "WASM CPU boundary",
+      "shared_authoring_evaluation": true,
+      "source_refs": [
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-WASM",
+        "S-WASM-VELLO",
+        "S-CLI",
+        "S-CANVAS"
+      ]
+    },
+    {
+      "certification_impact": "end-to-end parity must be capability-aware and measured",
+      "comparison_id": "PE-03",
+      "export_path": "native GPU boundary",
+      "feature": "GPU renderer core",
+      "known_difference": "media scheduling, backend capability, or frame ordering differs",
+      "parity_class": "CONDITIONAL_PARITY",
+      "preview_path": "WASM Vello boundary",
+      "shared_authoring_evaluation": true,
+      "source_refs": [
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-WASM",
+        "S-WASM-VELLO",
+        "S-CLI",
+        "S-CANVAS"
+      ]
+    },
+    {
+      "certification_impact": "end-to-end parity must be capability-aware and measured",
+      "comparison_id": "PE-04",
+      "export_path": "native media prepass",
+      "feature": "video decode",
+      "known_difference": "media scheduling, backend capability, or frame ordering differs",
+      "parity_class": "DIFFERENT_EXECUTION",
+      "preview_path": "browser media element/cache",
+      "shared_authoring_evaluation": true,
+      "source_refs": [
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-WASM",
+        "S-WASM-VELLO",
+        "S-CLI",
+        "S-CANVAS"
+      ]
+    },
+    {
+      "certification_impact": "end-to-end parity must be capability-aware and measured",
+      "comparison_id": "PE-05",
+      "export_path": "native audio/encoder path",
+      "feature": "audio scheduling",
+      "known_difference": "media scheduling, backend capability, or frame ordering differs",
+      "parity_class": "DIFFERENT_EXECUTION",
+      "preview_path": "AudioContext transport",
+      "shared_authoring_evaluation": true,
+      "source_refs": [
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-WASM",
+        "S-WASM-VELLO",
+        "S-CLI",
+        "S-CANVAS"
+      ]
+    },
+    {
+      "certification_impact": "end-to-end parity must be capability-aware and measured",
+      "comparison_id": "PE-06",
+      "export_path": "not equivalent certification path",
+      "feature": "Canvas2D",
+      "known_difference": "media scheduling, backend capability, or frame ordering differs",
+      "parity_class": "KNOWN_APPROXIMATION",
+      "preview_path": "approximate preview fallback",
+      "shared_authoring_evaluation": true,
+      "source_refs": [
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-WASM",
+        "S-WASM-VELLO",
+        "S-CLI",
+        "S-CANVAS"
+      ]
+    },
+    {
+      "certification_impact": "end-to-end parity must be capability-aware and measured",
+      "comparison_id": "PE-07",
+      "export_path": "ordered complete export frame sequence",
+      "feature": "frame scheduling",
+      "known_difference": "media scheduling, backend capability, or frame ordering differs",
+      "parity_class": "DIFFERENT_EXECUTION",
+      "preview_path": "RAF may skip requested frames",
+      "shared_authoring_evaluation": true,
+      "source_refs": [
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-WASM",
+        "S-WASM-VELLO",
+        "S-CLI",
+        "S-CANVAS"
+      ]
+    }
+  ],
+  "primary_source_comparison": [
+    {
+      "comparison": "ONDA uses reconciliation to collect a host tree, but remounts each frame, so React identity and state preservation are intentionally not an output-time contract.",
+      "lesson": "Specify evaluation purity and retained-state policy explicitly.",
+      "source_refs": [
+        "S-REACT-HOST",
+        "S-REACT-LOWER",
+        "E-REACT"
+      ],
+      "system": "React"
+    },
+    {
+      "comparison": "ONDA has several implicit levels, but most high-level semantics disappear during direct lowering rather than remaining in explicitly typed intermediate levels.",
+      "lesson": "Use staged, inspectable lowering and record semantic loss.",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-SCENE",
+        "E-MLIR"
+      ],
+      "system": "MLIR"
+    },
+    {
+      "comparison": "ONDA export is mostly batch-oriented while GStreamer exposes pipeline direction, element boundaries, messages and clock ownership.",
+      "lesson": "Make media flow, clocks, backpressure and diagnostics first-class.",
+      "source_refs": [
+        "S-PLAYER",
+        "S-NODE-EXPORT",
+        "E-GSTREAMER"
+      ],
+      "system": "GStreamer"
+    }
+  ],
+  "semantic_preservation": [
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "scene purpose",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "DROPPED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-001",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "entry role",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "USED_ONLY_DURING_LOWERING",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-002",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "focal/support/ambient hierarchy",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "USED_ONLY_DURING_LOWERING",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-003",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "scene ID",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "DROPPED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-004",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "track ID",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "DROPPED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-005",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "entry ID",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "USED_ONLY_AS_REACT_KEY",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-006",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "labels",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "DROPPED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-007",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "component name",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "USED_ONLY_DURING_LOWERING",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-008",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "component property semantics",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "MATERIALIZED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-009",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "choreography pattern",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "MATERIALIZED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-010",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "choreography parameters",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "MATERIALIZED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-011",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "transition name",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "MATERIALIZED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-012",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "transition options",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "MATERIALIZED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-013",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "camera intent",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "MATERIALIZED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-014",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "brand-token identity",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "DROPPED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-015",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "responsive intent",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "MATERIALIZED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-016",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "placement intent",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "MATERIALIZED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-017",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "size-role intent",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "MATERIALIZED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-018",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "morph key",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "USED_ONLY_DURING_LOWERING",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-019",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "matte intent",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "PRESERVED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "PARTIAL",
+      "semantic_id": "SEM-020",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "clip intent",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "PRESERVED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "PARTIAL",
+      "semantic_id": "SEM-021",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "effect intent",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "PRESERVED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "PARTIAL",
+      "semantic_id": "SEM-022",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "depth intent",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "MATERIALIZED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-023",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "3D placement intent",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "MATERIALIZED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-024",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "source asset reference",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "PRESERVED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "PARTIAL",
+      "semantic_id": "SEM-025",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "audio relationship",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "PRESERVED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "PARTIAL",
+      "semantic_id": "SEM-026",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "timing intent",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "NORMALIZED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "PARTIAL",
+      "semantic_id": "SEM-027",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "diagnostics",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "DROPPED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-028",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "fidelity classification",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "DROPPED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-029",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "backend requirement",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "UNRESOLVED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-030",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    },
+    {
+      "agent_repair_impact": "agent may need to reconstruct authoring context",
+      "change_stage": "authoring validation, Cinema-to-React lowering, React-to-Scene lowering, or renderer prepass",
+      "concept": "source provenance",
+      "confidence": "MEDIUM",
+      "diagnostic_impact": "errors cannot always identify the originating intent",
+      "disposition": "DROPPED",
+      "editing_impact": "semantic edits become value-level edits after lowering",
+      "incremental_compilation_impact": "coarse invalidation when source mapping is absent",
+      "reversibility": "NO",
+      "semantic_id": "SEM-031",
+      "source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-COMPILER",
+        "S-REACT-LOWER",
+        "S-SCENE"
+      ],
+      "source_representation": "Cinema, React, or direct authoring representation",
+      "target_representation": "renderer-facing Scene or pixels"
+    }
+  ],
+  "serialization": {
+    "current_version_omitted": true,
+    "format": "JSON",
+    "future_version_roundtrip": "observed",
+    "runtime_pixels_serialized": false,
+    "scene_version": 1,
+    "source_refs": [
+      "S-SCENE",
+      "S-REACT-LOWER"
+    ],
+    "unknown_fields": "serde-default acceptance inferred; requires focused compatibility contract"
+  },
+  "sources": [
+    {
+      "accessed_at_utc": "2026-08-15T00:00:00Z",
+      "classification": "PRIMARY_STANDARD",
+      "document_title": "Design overview",
+      "document_url": "https://gstreamer.freedesktop.org/documentation/additional/design/overview.html",
+      "facts_supported": [
+        "A media pipeline makes graph direction, element boundaries, messages, and a shared running-time clock explicit."
+      ],
+      "publisher": "GStreamer Project",
+      "section": "Pipeline and clock",
+      "source_id": "E-GSTREAMER"
+    },
+    {
+      "accessed_at_utc": "2026-08-15T00:00:00Z",
+      "classification": "PRIMARY_STANDARD",
+      "document_title": "MLIR Rationale",
+      "document_url": "https://mlir.llvm.org/docs/Rationale/MLIRForGraphAlgorithms/",
+      "facts_supported": [
+        "Multi-level representations can preserve useful abstraction until progressive lowering is justified."
+      ],
+      "publisher": "LLVM Project",
+      "section": "Incremental lowering",
+      "source_id": "E-MLIR"
+    },
+    {
+      "accessed_at_utc": "2026-08-15T00:00:00Z",
+      "classification": "PRIMARY_IMPLEMENTATION_DOC",
+      "document_title": "Render and Commit",
+      "document_url": "https://react.dev/learn/render-and-commit",
+      "facts_supported": [
+        "React separates recursive render calculation from commit mutations and recommends pure rendering."
+      ],
+      "publisher": "Meta Open Source",
+      "section": "Render and commit",
+      "source_id": "E-REACT"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 787,
+      "facts_supported": [
+        "Rust animation stores keyframe time in seconds and evaluates a cloned scene by NodeId.",
+        "Missing targets are unchanged."
+      ],
+      "file_sha256": "041bc23b67d2e8c9d4d99ec87b2188b033bc93cf0124858d0e14dfad934c5ad1",
+      "git_blob": "ee87aa2a9ec9d1f7dc1cdf5d14fce9e3748ed852",
+      "path": "packages/animation-rs/src/lib.rs",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-ANIMATION",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 306,
+      "facts_supported": [
+        "Preview audio has an instance clock mapping and is muted off-speed.",
+        "Decode failures warn and skip."
+      ],
+      "file_sha256": "3cdb79c33fda6e27df41832229569380de201978407555658b04fb5fcdb6e418",
+      "git_blob": "a89e4b7c278fb66a0a7a8432c41effa249167fd3",
+      "path": "packages/player/src/audio-engine.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-AUDIO",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 197,
+      "facts_supported": [
+        "Canvas fallback omits image and SVG nodes and approximates text and procedural gradients."
+      ],
+      "file_sha256": "ca2e85f68e08e88558edabf559b1fcdf193f4de8914b719bd02c42561fc8b1c6",
+      "git_blob": "ceab5a9cbc86e6391db1c6b5a786c4dbfe883fe1",
+      "path": "packages/player/src/canvas-renderer.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-CANVAS",
+      "start_line": 1,
+      "symbol_or_section": "drawScene"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 1180,
+      "facts_supported": [
+        "Cinema resolves a finite choreography and transition vocabulary to React elements.",
+        "A caller may supply a custom component registry.",
+        "Unknown components produce a visible placeholder."
+      ],
+      "file_sha256": "5a37d1489b77a77faa540510834483c72d053de7ca79f08dda4edd1f7cac6487",
+      "git_blob": "91f331f1620482fe8668ddbbc76a489124920682",
+      "path": "packages/cinema/src/index.tsx",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-CINEMA-COMPILER",
+      "start_line": 1,
+      "symbol_or_section": "buildComposition"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 121,
+      "facts_supported": [
+        "Inspection runs over the high-level Cinema payload rather than the lowered Scene."
+      ],
+      "file_sha256": "ae03a67186b0a3713e4557d263ec96d7b0ff37d3447b0fd38a81b35460390104",
+      "git_blob": "c9aa10fbd004f1859b1972cef376ab217b97a9ea",
+      "path": "packages/cinema/src/inspect/index.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-CINEMA-INSPECT",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 188,
+      "facts_supported": [
+        "Inspector identities derive from entry id or payload path and retain role labels."
+      ],
+      "file_sha256": "85c135cd9eef651386a6bfd66835d1792df4b0d012b1446b37cc6fc93fdba0d6",
+      "git_blob": "06aee728e309ce767a0a725b5b3e5a65a858fa8e",
+      "path": "packages/cinema/src/inspect/resolve.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-CINEMA-RESOLVE",
+      "start_line": 1,
+      "symbol_or_section": "resolveComposition"
+    },
+    {
+      "classification": "UPSTREAM_TEST",
+      "end_line": 109,
+      "facts_supported": [
+        "Tests distinguish unknown component errors from unknown choreography warnings."
+      ],
+      "file_sha256": "3cdbe9b651943f922b29abc1b8e89533cc4d4925a573c2fda5cd66d602eb4dca",
+      "git_blob": "23633715c3b4e2b04f63f381091a1d967fd46f82",
+      "path": "packages/cinema/src/validate.test.tsx",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-CINEMA-TEST",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 100,
+      "facts_supported": [
+        "Time specifications become rounded frames.",
+        "Scene overlaps shorten accumulated placement."
+      ],
+      "file_sha256": "f6a12b1f7e19e2230659a47d7b84f39be81ee7963b5706cd8eea7b5ad78ed2d5",
+      "git_blob": "f3393683ce56d62d2cc50c7a9c2aaa326c7e83a4",
+      "path": "packages/cinema/src/timing.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-CINEMA-TIME",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 261,
+      "facts_supported": [
+        "Cinema preserves scene, track, entry, role, component, choreography, transition, brand, and finish semantics before lowering."
+      ],
+      "file_sha256": "07b3bdf0874067c54d92b2d1b6fcebb6be395172335c63f72a2b2207fd2f10df",
+      "git_blob": "1fb71040324f5247eb56f591cd9c3f9f13f62c31",
+      "path": "packages/cinema/src/types.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-CINEMA-TYPES",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 3207,
+      "facts_supported": [
+        "Native commands parse scene JSON and run ordered source, timeline, SVG, image, layout, and render stages.",
+        "Auto backend may choose GPU or CPU."
+      ],
+      "file_sha256": "e58aff89cd79b842f470992de290a50ffc82c139a0d326ec4677c2544b50a8b9",
+      "git_blob": "fabf0315afff1308ed1114338d0c4449f2be15be",
+      "path": "packages/cli-rs/src/main.rs",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-CLI",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 11559,
+      "facts_supported": [
+        "The packaged component catalog is finite and schema-described."
+      ],
+      "file_sha256": "580fde84594dbbbbf359491848125b7d1978adac72987913ae0178160f933ee7",
+      "git_blob": "4a26286613b57e8248a7bc7f5823c1fbdb5f2ab5",
+      "path": "packages/components/src/manifest.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-COMPONENTS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 706,
+      "facts_supported": [
+        "Image decoding attaches skipped pixel data and may downscale.",
+        "Remote URLs remain unresolved and are skipped by renderers."
+      ],
+      "file_sha256": "9f903d801b6186942f8ef7cf442447a698a91deef8f66ce581a98403ab9f582c",
+      "git_blob": "3bc10936de5e457f7cfeed0ed67046dcf123f85a",
+      "path": "packages/image-rs/src/lib.rs",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-IMAGE",
+      "start_line": 1,
+      "symbol_or_section": "load_images"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 327,
+      "facts_supported": [
+        "Layout is a clone-and-rewrite prepass that materializes absolute child translations."
+      ],
+      "file_sha256": "edb986f05d129dc0fdd45764887fce00822ca77adde49cbfffa4a088c3d963fd",
+      "git_blob": "95ffb7f27881530833a86ad89fa842e7d1744d60",
+      "path": "packages/layout-rs/src/lib.rs",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-LAYOUT",
+      "start_line": 1,
+      "symbol_or_section": "layout"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 158,
+      "facts_supported": [
+        "Required evidence for Cinema validation, property adaptation, inspection, or lowering behavior."
+      ],
+      "file_sha256": "07fb109f938eb5c447b7b95ccd7909d3453bd18add62d34ea438ad5f9471032b",
+      "git_blob": "7a76c8b0a2439b4cfe5f59b9089dbd09fc0dc92f",
+      "path": "packages/cinema/src/props.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-CINEMA-SRC-PROPS-TS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_TEST",
+      "end_line": 104,
+      "facts_supported": [
+        "Required evidence for Cinema validation, property adaptation, inspection, or lowering behavior."
+      ],
+      "file_sha256": "b058432bc1240ddb8d03d9d34ad2e722d4864f1508f85267c6b847e88e276d7e",
+      "git_blob": "5de67fa214f9075e282c011d9bbee9e798e4a97f",
+      "path": "packages/cinema/src/studio-payload.test.tsx",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-CINEMA-SRC-STUDIO-PAYLOAD-TEST-TSX",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_MANIFEST",
+      "end_line": 61,
+      "facts_supported": [
+        "Required evidence for public component discovery and registry boundaries."
+      ],
+      "file_sha256": "5ef41f6a35928276e4fa95bb4b0df4b90caf673a465c94e86fd5c7909c82e1ba",
+      "git_blob": "26978de66be3fb9708cc91f54c35661b07952611",
+      "path": "packages/components/package.json",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-COMPONENTS-PACKAGE-JSON",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 354,
+      "facts_supported": [
+        "Required evidence for public component discovery and registry boundaries."
+      ],
+      "file_sha256": "a28c103ca33e744b55dc19f78b930f6df766f1525d49bdb741150f7dc70edeee",
+      "git_blob": "eb22408812d89f493501e23660ad73343e750309",
+      "path": "packages/components/src/index.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-COMPONENTS-SRC-INDEX-TS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 48,
+      "facts_supported": [
+        "Required evidence for preview scheduling, media, fallback, or engine-boundary behavior."
+      ],
+      "file_sha256": "fab52a2adfdbd94e389e897842a631bf820ffde31429b4ee1c898b4dc8708e83",
+      "git_blob": "0e2d514bdbf8e03060423d6f6025a0cf8aaed922",
+      "path": "packages/player/src/audio.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-PLAYER-SRC-AUDIO-TS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 65,
+      "facts_supported": [
+        "Required evidence for preview scheduling, media, fallback, or engine-boundary behavior."
+      ],
+      "file_sha256": "f3079bbb5346ffe7d0ea9a0db468169241e36a1fdeccd2e6cdf29d0f3b91ad80",
+      "git_blob": "827d54eb4ba604e59701ed3b0dcb7d5347c17a34",
+      "path": "packages/player/src/engine-drawer.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-PLAYER-SRC-ENGINE-DRAWER-TS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 89,
+      "facts_supported": [
+        "Required evidence for preview scheduling, media, fallback, or engine-boundary behavior."
+      ],
+      "file_sha256": "184f3d8b349355ccebdd1dd7632af31755f7d355ff9fbaeb6bf09436a393f204",
+      "git_blob": "4209fd4a0718c585a6064bf3515f14a43dd87f3d",
+      "path": "packages/player/src/images.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-PLAYER-SRC-IMAGES-TS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_TEST",
+      "end_line": 55,
+      "facts_supported": [
+        "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
+      ],
+      "file_sha256": "94c1acdc767db0451924f72bfc621055ce72724126de42bc78fde64f2cef7873",
+      "git_blob": "cb271729875eb189e3b96ee1604fb4501c5117c8",
+      "path": "packages/react/src/animation.test.tsx",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-REACT-SRC-ANIMATION-TEST-TSX",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 651,
+      "facts_supported": [
+        "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
+      ],
+      "file_sha256": "711d3e18c61fcf2e5b0a0d25b12253e287d31a9b9cafe90e18364e86d89266dc",
+      "git_blob": "3a0d08b68fd339649eddb5f01ed362e53027b4b6",
+      "path": "packages/react/src/components.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-REACT-SRC-COMPONENTS-TS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 158,
+      "facts_supported": [
+        "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
+      ],
+      "file_sha256": "34f17a5537d5638a95af72a7a2de73124ae9359a3a1de4a012985e190e487eb8",
+      "git_blob": "dd1e3902b7ca0993128a70cc6860bd87cd469e37",
+      "path": "packages/react/src/index.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 116,
+      "facts_supported": [
+        "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
+      ],
+      "file_sha256": "1c6f505d0b1eb8b6e05cbef1ec02f600f83055a4b3536417c94515b28442cca2",
+      "git_blob": "a2a5fcf0281ba774b6151f5fd6c990b18d98f490",
+      "path": "packages/react/src/interpolate.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-REACT-SRC-INTERPOLATE-TS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_TEST",
+      "end_line": 63,
+      "facts_supported": [
+        "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
+      ],
+      "file_sha256": "bf2996c762f9d695fb22931a916d5d111207f161b7d5431a1e5d27ee75b49e0a",
+      "git_blob": "53a7322c44abfa3d1fe71518b8d9b2c64d4b17d9",
+      "path": "packages/react/src/random.test.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-REACT-SRC-RANDOM-TEST-TS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 112,
+      "facts_supported": [
+        "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
+      ],
+      "file_sha256": "a8498bf82d779d3695bd59a9cc11fdac2079fd0a3c67543b372487c98d46ab48",
+      "git_blob": "b07f06b7a0f8a88b0f1a12be050999df6d8cd2d9",
+      "path": "packages/react/src/random.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-REACT-SRC-RANDOM-TS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 398,
+      "facts_supported": [
+        "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
+      ],
+      "file_sha256": "26588b3b6a52c03d863e0f7d68728ac9ef619baaef10a56c5abe7b263bd7b9ab",
+      "git_blob": "68c4c109619f5bf1dd942dabe3cce46c35666826",
+      "path": "packages/react/src/scene.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-REACT-SRC-SCENE-TS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_TEST",
+      "end_line": 71,
+      "facts_supported": [
+        "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
+      ],
+      "file_sha256": "4e955aa1701a1ce54eef239f083d58e272c87f24316e262e2839f97d71ccd6b1",
+      "git_blob": "024785a7b291d69b00726b77e95c778e69ed5aaf",
+      "path": "packages/react/src/sequence.test.tsx",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-REACT-SRC-SEQUENCE-TEST-TSX",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 130,
+      "facts_supported": [
+        "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
+      ],
+      "file_sha256": "814cdeca2c78531025e4f4d006751db5129adfd7e6c0bb9c42c602dfbaf91c3b",
+      "git_blob": "54dd83372e66c14a2a97fe09b2593e22b076a057",
+      "path": "packages/react/src/spring.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-REACT-SRC-SPRING-TS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_TEST",
+      "end_line": 193,
+      "facts_supported": [
+        "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
+      ],
+      "file_sha256": "643a0aa37298020649b21701d06846bae796568dbd7e3552b28138f68934e2d2",
+      "git_blob": "2c603faca622c4d90bbb36aac94fc8876ae4ae14",
+      "path": "packages/react/src/transitions.test.tsx",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-REACT-SRC-TRANSITIONS-TEST-TSX",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 995,
+      "facts_supported": [
+        "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
+      ],
+      "file_sha256": "dd10634c62e5a4c982053aaee460a4c30ebbf543d77705da434f11e7f3a86f12",
+      "git_blob": "a3e9dbc6c6120ea5bc5b2458bb56da0546655763",
+      "path": "packages/react/src/transitions.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-REACT-SRC-TRANSITIONS-TS",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_TEST",
+      "end_line": 37,
+      "facts_supported": [
+        "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
+      ],
+      "file_sha256": "1972aff71a29cf343dd443382047b49c8fe032498233c43e4a643b9871ac4b78",
+      "git_blob": "17be6f3aba653eb17d6dc15047e0be70b280245b",
+      "path": "packages/react/src/video.test.tsx",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PACKAGES-REACT-SRC-VIDEO-TEST-TSX",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_MANIFEST",
+      "end_line": 11,
+      "facts_supported": [
+        "Required R0.02 repository or compiler-boundary evidence."
+      ],
+      "file_sha256": "8758a7d328d354763411136d4188960eb734eb4b9ee6d99ec2acc0a4b243827d",
+      "git_blob": "b440d7f2d27b865a585bec507ce3b2f1f86dbac7",
+      "path": "pnpm-workspace.yaml",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-MANDATORY-PNPM-WORKSPACE-YAML",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 183,
+      "facts_supported": [
+        "Node export materializes all React scenes into a temporary JSON array and invokes the native CLI."
+      ],
+      "file_sha256": "4f3c888f45b60cd02c3911acc622c93f5eb87e5d365cc64cf9f80c359f2d0167",
+      "git_blob": "971e155db975f06f28a80b7ea924e0bb5cdaac9f",
+      "path": "packages/render/src/index.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-NODE-EXPORT",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 1440,
+      "facts_supported": [
+        "Preview renders requested frames on demand.",
+        "GPU work is serialized per engine and intermediate frames may be dropped.",
+        "Runtime renderer failure demotes to a fallback."
+      ],
+      "file_sha256": "be84195324d0dbbadf41ecef6cac844d62b4d59900ae8418be4ce1725c839847",
+      "git_blob": "1f621b6b3f9c244f975f9ed5e5789d83f9e8a2c3",
+      "path": "packages/player/src/player.tsx",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-PLAYER",
+      "start_line": 1,
+      "symbol_or_section": "Player"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 41,
+      "facts_supported": [
+        "Frame and video configuration are context values."
+      ],
+      "file_sha256": "04906fcf50c774136c9e902de69ae1dc56117d75a4d3e132b71f9aa45354e21e",
+      "git_blob": "18283e80c56bd6d40a862ab08258f28b1114e544",
+      "path": "packages/react/src/frame.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-REACT-FRAME",
+      "start_line": 1,
+      "symbol_or_section": "FrameContext"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 204,
+      "facts_supported": [
+        "Custom reconciler uses mutable HostNode children.",
+        "Persistence and hydration are disabled."
+      ],
+      "file_sha256": "a6c04b25b4570333741f3ccff8b145dd04f73ad9d21f19fed4e3acc417153a01",
+      "git_blob": "93a654a83fc641bbda1d8d04a109e514fd038594",
+      "path": "packages/react/src/host-config.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-REACT-HOST",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 935,
+      "facts_supported": [
+        "Each requested frame creates, commits, lowers, unmounts, and discards a fresh React root.",
+        "Motion blur evaluates fractional subframes.",
+        "Full export materializes a Scene array."
+      ],
+      "file_sha256": "4d59f24e5201b9c4ef1986d1dd8c10a12d4c46436d9a9acdd8d3947208443aa7",
+      "git_blob": "484be37c2c79f5b4c530d5897fa2228800fd38d5",
+      "path": "packages/react/src/reconciler.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-REACT-LOWER",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 97,
+      "facts_supported": [
+        "Sequences translate global frame to local frame.",
+        "Series calculates cumulative offsets."
+      ],
+      "file_sha256": "e43e78ffa7fc2b924d24602604f01c625820fe33d6e110e04fadd1f7f91b4292",
+      "git_blob": "7b9dcb0fef79d2b0debde0ca452e5e349beb4897",
+      "path": "packages/react/src/sequence.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-REACT-SEQUENCE",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 49,
+      "facts_supported": [
+        "Registered font bytes are process-global mutable state."
+      ],
+      "file_sha256": "62dd867092a45e2d76ec81ab0581b451a1a536aa009b8bae979ba897c92759c0",
+      "git_blob": "7dc5ee86479ef54bfa3378d43e9f20de718db192",
+      "path": "packages/react/src/fonts.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-REACT-STATE",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_TEST",
+      "end_line": 513,
+      "facts_supported": [
+        "Tests establish frame evaluation and lowering behavior."
+      ],
+      "file_sha256": "8264478f134c26e631385c2aaa36f3fabf0823b6b0edd1312f20eda2b90fe9d1",
+      "git_blob": "2377070448bedad3d90d7669d3cf2bddfc777cf6",
+      "path": "packages/react/src/reconciler.test.tsx",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-REACT-TEST",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 23,
+      "facts_supported": [
+        "Warmers are process-global and failures are best-effort."
+      ],
+      "file_sha256": "4860a682c88fde481fc5cb92f360b7c0658d31a6366a0ad6df120177174eced1",
+      "git_blob": "e37b9f5e8295ac83cfefe8ade7c7c61df56bd812",
+      "path": "packages/react/src/warmers.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-REACT-WARM",
+      "start_line": 1,
+      "symbol_or_section": "warmer registry"
+    },
+    {
+      "classification": "UPSTREAM_DOCUMENTATION",
+      "end_line": 223,
+      "facts_supported": [
+        "Publicly described authoring and rendering surfaces."
+      ],
+      "file_sha256": "c3ff5ac038bf442a5668ebf4b246f6254cd04b0bf24f6b418f4c3b194d1d9e16",
+      "git_blob": "c1c0524d1371d114d5c0a1130dd19fef1cc8f07a",
+      "path": "README.md",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-README",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_MANIFEST",
+      "end_line": 84,
+      "facts_supported": [
+        "Rust package and renderer boundaries."
+      ],
+      "file_sha256": "0f5acde0a9466c4f166109584c7cb00c860e26494dc664df63342d126482199e",
+      "git_blob": "91456b9c52568dcd41dd2588c39643d12bdf263e",
+      "path": "Cargo.toml",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-ROOT-CARGO",
+      "start_line": 1,
+      "symbol_or_section": "workspace"
+    },
+    {
+      "classification": "UPSTREAM_MANIFEST",
+      "end_line": 46,
+      "facts_supported": [
+        "JavaScript package and test boundaries."
+      ],
+      "file_sha256": "ce04a081b16017bd3b6ec5ed030b9a9e877e6d742fc654753a36b58a61b32f59",
+      "git_blob": "ecc02f78f9cf336564f5328a0ee9e338674ee7b0",
+      "path": "package.json",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-ROOT-PKG",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 2472,
+      "facts_supported": [
+        "Scene is a composition plus a finite node tree.",
+        "Optional numeric NodeId supports addressing.",
+        "Timeline nodes resolve an active clip for a requested frame.",
+        "Current scene version is one."
+      ],
+      "file_sha256": "eaec06397ba05e92f5192643c83ce495d6917320b73572311c68812c68207d35",
+      "git_blob": "6e650e50ef2b0cc7adc83ceb2a807bfa4df2917c",
+      "path": "packages/scene-rs/src/lib.rs",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-SCENE",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 285,
+      "facts_supported": [
+        "SVG is parsed and lowered to supported scene shapes.",
+        "Unsupported SVG features are not preserved as authoring semantics."
+      ],
+      "file_sha256": "7f6573aabd8cd287724c31234c751a79d25aad9c187b21703f5fd75a23a47498",
+      "git_blob": "d8fbafaf7365fafcbd307eeb7de954bf02bd05c9",
+      "path": "packages/svg-rs/src/lib.rs",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-SVG",
+      "start_line": 1,
+      "symbol_or_section": "expand_svg"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 277,
+      "facts_supported": [
+        "Preview video is bucketed at thirty source frames per second and may hold the last good decoded frame.",
+        "A DOM overlay fallback is preview-only."
+      ],
+      "file_sha256": "7f81bfa87bf2378ef2f43d1a772e1b539ba64e17ad8469693740bcdefdbaa2ea",
+      "git_blob": "c18b2360a46b7acf79f0e83a1f666375ed4b1292",
+      "path": "packages/player/src/video.ts",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-VIDEO",
+      "start_line": 1,
+      "symbol_or_section": "resolveVideoFrames"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 352,
+      "facts_supported": [
+        "CPU WASM parses Scene JSON then conditionally runs image and layout prepasses before rendering."
+      ],
+      "file_sha256": "e5188c952cd7812c37dfbb9097229e7572d86fb289cf69c591fafd469961361c",
+      "git_blob": "ab4ff309362044ad594efe45cd9934cf24bb0978",
+      "path": "packages/wasm/src/lib.rs",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-WASM",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    },
+    {
+      "classification": "UPSTREAM_SOURCE",
+      "end_line": 175,
+      "facts_supported": [
+        "GPU WASM follows the same JSON, image, and layout boundary before asynchronous rendering."
+      ],
+      "file_sha256": "28a429dc0a01580fdd6915e1fc0ec387b5bbba15d8502c1dfe193b5ac21396f8",
+      "git_blob": "3741dd4bdf17187f5b2931c3b30430e6e91226a0",
+      "path": "packages/wasm-vello/src/lib.rs",
+      "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+      "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+      "repository": "https://github.com/onda-engine/onda-engine.git",
+      "source_id": "S-WASM-VELLO",
+      "start_line": 1,
+      "symbol_or_section": "WHOLE_FILE"
+    }
+  ],
+  "state_and_time": {
+    "state_records": [
+      {
+        "authority": "AUTHORITATIVE",
+        "carries_source_provenance": true,
+        "mutability": "IMMUTABLE_DATA",
+        "owner_scope": "serialized document",
+        "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+        "representation": "Cinema payload",
+        "shared": false,
+        "source_refs": [
+          "S-CINEMA-TYPES"
+        ],
+        "state_id": "ST-CINEMA",
+        "survives_frame_evaluation": true,
+        "thread_safe": false
+      },
+      {
+        "authority": "TRANSIENT",
+        "carries_source_provenance": false,
+        "mutability": "PER_FRAME_REBUILT",
+        "owner_scope": "one requested frame",
+        "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+        "representation": "React element evaluation",
+        "shared": false,
+        "source_refs": [
+          "S-REACT-LOWER"
+        ],
+        "state_id": "ST-REACT",
+        "survives_frame_evaluation": false,
+        "thread_safe": false
+      },
+      {
+        "authority": "TRANSIENT",
+        "carries_source_provenance": false,
+        "mutability": "GLOBAL_MUTABLE",
+        "owner_scope": "process/module",
+        "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+        "representation": "module-level activeFrameState and activeDof",
+        "shared": true,
+        "source_refs": [
+          "S-REACT-LOWER"
+        ],
+        "state_id": "ST-ACTIVE",
+        "survives_frame_evaluation": false,
+        "thread_safe": false
+      },
+      {
+        "authority": "TRANSIENT",
+        "carries_source_provenance": false,
+        "mutability": "MUTABLE_TREE",
+        "owner_scope": "one reconciliation",
+        "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+        "representation": "HostNode tree",
+        "shared": false,
+        "source_refs": [
+          "S-REACT-HOST"
+        ],
+        "state_id": "ST-HOST",
+        "survives_frame_evaluation": false,
+        "thread_safe": false
+      },
+      {
+        "authority": "AUTHORITATIVE",
+        "carries_source_provenance": false,
+        "mutability": "IMMUTABLE_DATA",
+        "owner_scope": "frame/document",
+        "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+        "representation": "Scene snapshot",
+        "shared": true,
+        "source_refs": [
+          "S-SCENE"
+        ],
+        "state_id": "ST-SCENE",
+        "survives_frame_evaluation": true,
+        "thread_safe": true
+      },
+      {
+        "authority": "AUTHORITATIVE",
+        "carries_source_provenance": false,
+        "mutability": "IMMUTABLE_DATA",
+        "owner_scope": "document",
+        "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+        "representation": "Rust Timeline",
+        "shared": true,
+        "source_refs": [
+          "S-ANIMATION"
+        ],
+        "state_id": "ST-TIMELINE",
+        "survives_frame_evaluation": true,
+        "thread_safe": true
+      },
+      {
+        "authority": "DERIVED",
+        "carries_source_provenance": false,
+        "mutability": "CLONED_AND_MUTATED",
+        "owner_scope": "prepass",
+        "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+        "representation": "layout-resolved Scene",
+        "shared": false,
+        "source_refs": [
+          "S-LAYOUT"
+        ],
+        "state_id": "ST-LAYOUT",
+        "survives_frame_evaluation": true,
+        "thread_safe": false
+      },
+      {
+        "authority": "CACHE",
+        "carries_source_provenance": false,
+        "mutability": "CACHE_MUTABLE",
+        "owner_scope": "prepass/cache",
+        "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+        "representation": "image-resolved Scene",
+        "shared": true,
+        "source_refs": [
+          "S-IMAGE"
+        ],
+        "state_id": "ST-IMAGE",
+        "survives_frame_evaluation": true,
+        "thread_safe": false
+      },
+      {
+        "authority": "PRESENTATION_ONLY",
+        "carries_source_provenance": false,
+        "mutability": "INSTANCE_MUTABLE",
+        "owner_scope": "component instance",
+        "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+        "representation": "player transport",
+        "shared": false,
+        "source_refs": [
+          "S-PLAYER"
+        ],
+        "state_id": "ST-PLAYER",
+        "survives_frame_evaluation": false,
+        "thread_safe": false
+      },
+      {
+        "authority": "EXTERNAL_RUNTIME",
+        "carries_source_provenance": false,
+        "mutability": "GLOBAL_MUTABLE",
+        "owner_scope": "browser process",
+        "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+        "representation": "GPU engine coordination",
+        "shared": true,
+        "source_refs": [
+          "S-MANDATORY-PACKAGES-PLAYER-SRC-ENGINE-DRAWER-TS"
+        ],
+        "state_id": "ST-GPU",
+        "survives_frame_evaluation": false,
+        "thread_safe": false
+      },
+      {
+        "authority": "EXTERNAL_RUNTIME",
+        "carries_source_provenance": false,
+        "mutability": "EXTERNAL_RUNTIME",
+        "owner_scope": "AudioContext",
+        "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+        "representation": "audio transport",
+        "shared": true,
+        "source_refs": [
+          "S-AUDIO",
+          "S-MANDATORY-PACKAGES-PLAYER-SRC-AUDIO-TS"
+        ],
+        "state_id": "ST-AUDIO",
+        "survives_frame_evaluation": false,
+        "thread_safe": false
+      },
+      {
+        "authority": "DERIVED",
+        "carries_source_provenance": false,
+        "mutability": "IMMUTABLE_DATA",
+        "owner_scope": "export invocation",
+        "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+        "representation": "temporary frames JSON",
+        "shared": false,
+        "source_refs": [
+          "S-NODE-EXPORT"
+        ],
+        "state_id": "ST-FRAMES",
+        "survives_frame_evaluation": true,
+        "thread_safe": false
+      }
+    ],
+    "time_conversions": [
+      {
+        "clamping_behavior": "none established",
+        "conversion_id": "TC-01",
+        "fractional_time_behavior": "fraction removed",
+        "negative_time_behavior": "negative values possible before validation",
+        "operation": "round seconds multiplied by fps",
+        "owner": "Cinema timing",
+        "precision_risk": "rounding changes authored timing",
+        "rate_behavior": "fps multiplication",
+        "rounding_behavior": "nearest integer",
+        "source_domain": "SECONDS_NUMBER",
+        "source_refs": [
+          "S-CINEMA-TIME"
+        ],
+        "target_domain": "COMPOSITION_FRAME_LOCAL"
+      },
+      {
+        "clamping_behavior": "validated by Cinema",
+        "conversion_id": "TC-02",
+        "fractional_time_behavior": "fraction removed",
+        "negative_time_behavior": "integer frames",
+        "operation": "duration and transition overlap derivation",
+        "owner": "Cinema compiler",
+        "precision_risk": "overlap accumulation",
+        "rate_behavior": "fps-dependent",
+        "rounding_behavior": "rounding from TimeSpec",
+        "source_domain": "COMPOSITION_FRAME_LOCAL",
+        "source_refs": [
+          "S-CINEMA-TIME",
+          "S-CINEMA-COMPILER"
+        ],
+        "target_domain": "FRAME_INDEX_INTEGER"
+      },
+      {
+        "clamping_behavior": "inherits output-frame range",
+        "conversion_id": "TC-03",
+        "fractional_time_behavior": "preserved",
+        "negative_time_behavior": "fractional samples introduced",
+        "operation": "motion-blur sample offsets",
+        "owner": "React exporter",
+        "precision_risk": "floating sample precision",
+        "rate_behavior": "sample-count dependent",
+        "rounding_behavior": "none",
+        "source_domain": "FRAME_INDEX_INTEGER",
+        "source_refs": [
+          "S-NODE-EXPORT",
+          "S-REACT-LOWER"
+        ],
+        "target_domain": "FRAME_INDEX_FLOAT"
+      },
+      {
+        "clamping_behavior": "negative behavior unresolved",
+        "conversion_id": "TC-04",
+        "fractional_time_behavior": "preserved",
+        "negative_time_behavior": "preserved",
+        "operation": "FrameContext assignment",
+        "owner": "React frame evaluator",
+        "precision_risk": "module-global ownership",
+        "rate_behavior": "fps-independent",
+        "rounding_behavior": "none",
+        "source_domain": "FRAME_INDEX_FLOAT",
+        "source_refs": [
+          "S-REACT-FRAME",
+          "S-REACT-LOWER"
+        ],
+        "target_domain": "COMPOSITION_FRAME_LOCAL"
+      },
+      {
+        "clamping_behavior": "negative local frames can be outside active range",
+        "conversion_id": "TC-05",
+        "fractional_time_behavior": "preserved",
+        "negative_time_behavior": "preserved",
+        "operation": "subtract sequence start",
+        "owner": "Sequence",
+        "precision_risk": "boundary semantics",
+        "rate_behavior": "fps-independent",
+        "rounding_behavior": "none",
+        "source_domain": "COMPOSITION_FRAME_LOCAL",
+        "source_refs": [
+          "S-REACT-SEQUENCE"
+        ],
+        "target_domain": "SEQUENCE_FRAME_LOCAL"
+      },
+      {
+        "clamping_behavior": "negative time possible",
+        "conversion_id": "TC-06",
+        "fractional_time_behavior": "preserved",
+        "negative_time_behavior": "preserved",
+        "operation": "divide frame by fps",
+        "owner": "Rust Timeline evaluator",
+        "precision_risk": "floating precision",
+        "rate_behavior": "fps division",
+        "rounding_behavior": "none",
+        "source_domain": "FRAME_INDEX_FLOAT",
+        "source_refs": [
+          "S-ANIMATION"
+        ],
+        "target_domain": "SECONDS_NUMBER"
+      },
+      {
+        "clamping_behavior": "source bounds may clamp",
+        "conversion_id": "TC-07",
+        "fractional_time_behavior": "fractional seconds retained or bucketed",
+        "negative_time_behavior": "media-specific",
+        "operation": "map node frame/start/rate to source time",
+        "owner": "video node/player",
+        "precision_risk": "decoder and bucket precision",
+        "rate_behavior": "playback-rate dependent",
+        "rounding_behavior": "surface-specific",
+        "source_domain": "COMPOSITION_FRAME_LOCAL",
+        "source_refs": [
+          "S-VIDEO",
+          "S-SCENE"
+        ],
+        "target_domain": "SOURCE_MEDIA_SECONDS"
+      },
+      {
+        "clamping_behavior": "clip bounds",
+        "conversion_id": "TC-08",
+        "fractional_time_behavior": "fractional source time",
+        "negative_time_behavior": "negative source time unresolved",
+        "operation": "clip placement plus source offset divided by rate",
+        "owner": "timeline/prepass",
+        "precision_risk": "clip/source boundary",
+        "rate_behavior": "clip-rate dependent",
+        "rounding_behavior": "implementation-specific",
+        "source_domain": "TIMELINE_CLIP_FRAME",
+        "source_refs": [
+          "S-SCENE",
+          "S-CLI"
+        ],
+        "target_domain": "SOURCE_MEDIA_SECONDS"
+      },
+      {
+        "clamping_behavior": "playback range clamp",
+        "conversion_id": "TC-09",
+        "fractional_time_behavior": "fraction discarded",
+        "negative_time_behavior": "seek/range controlled",
+        "operation": "floor elapsed time times fps and playback rate",
+        "owner": "Player",
+        "precision_risk": "skipped frames under load",
+        "rate_behavior": "playback-rate dependent",
+        "rounding_behavior": "floor",
+        "source_domain": "RAF_WALL_TIME",
+        "source_refs": [
+          "S-PLAYER"
+        ],
+        "target_domain": "FRAME_INDEX_INTEGER"
+      },
+      {
+        "clamping_behavior": "playback range",
+        "conversion_id": "TC-10",
+        "fractional_time_behavior": "seconds preserved",
+        "negative_time_behavior": "seek before zero controlled",
+        "operation": "map visual frame to context transport time",
+        "owner": "audio engine",
+        "precision_risk": "two-clock drift",
+        "rate_behavior": "playback-rate dependent",
+        "rounding_behavior": "implementation-specific",
+        "source_domain": "FRAME_INDEX_INTEGER",
+        "source_refs": [
+          "S-AUDIO",
+          "S-PLAYER"
+        ],
+        "target_domain": "AUDIO_CONTEXT_SECONDS"
+      },
+      {
+        "clamping_behavior": "output range",
+        "conversion_id": "TC-11",
+        "fractional_time_behavior": "timebase rational",
+        "negative_time_behavior": "not applicable",
+        "operation": "ordered output frame converted by encoder timebase",
+        "owner": "native encoder",
+        "precision_risk": "timestamp quantization",
+        "rate_behavior": "fps/timebase dependent",
+        "rounding_behavior": "encoder-defined",
+        "source_domain": "FRAME_INDEX_INTEGER",
+        "source_refs": [
+          "S-CLI"
+        ],
+        "target_domain": "ENCODED_TIMESTAMP"
+      },
+      {
+        "clamping_behavior": "source-dependent",
+        "conversion_id": "TC-12",
+        "fractional_time_behavior": "quantized",
+        "negative_time_behavior": "negative behavior unresolved",
+        "operation": "round to one-thirtieth-second preview cache bucket",
+        "owner": "video preview cache",
+        "precision_risk": "preview/export frame mismatch",
+        "rate_behavior": "independent of composition fps",
+        "rounding_behavior": "nearest 1/30",
+        "source_domain": "SOURCE_MEDIA_SECONDS",
+        "source_refs": [
+          "S-VIDEO"
+        ],
+        "target_domain": "SOURCE_MEDIA_SECONDS"
+      }
+    ]
+  },
+  "validation_and_fallbacks": [
+    {
+      "behavior": "VALIDATION_ERROR",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "unknown component",
+      "id": "VF-001",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "component cannot lower",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "unknown component",
+      "user_or_agent_informed": true,
+      "visual_impact": "visible build placeholder or stop",
+      "visual_outcome": "visible build placeholder or stop"
+    },
+    {
+      "behavior": "WARNING",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "unknown choreography",
+      "id": "VF-002",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "named motion omitted",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "unknown choreography",
+      "user_or_agent_informed": true,
+      "visual_impact": "static or default motion",
+      "visual_outcome": "static or default motion"
+    },
+    {
+      "behavior": "WARNING",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "unknown transition",
+      "id": "VF-003",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "transition intent omitted",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "unknown transition",
+      "user_or_agent_informed": true,
+      "visual_impact": "cut/default transition",
+      "visual_outcome": "cut/default transition"
+    },
+    {
+      "behavior": "MALFORMED_VALUE_DROPPED",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "unknown property",
+      "id": "VF-004",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "LIMITED",
+      "semantic_impact": "property semantics lost",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "unknown property",
+      "user_or_agent_informed": false,
+      "visual_impact": "default or unchanged value",
+      "visual_outcome": "default or unchanged value"
+    },
+    {
+      "behavior": "VALIDATION_ERROR",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "invalid time specification",
+      "id": "VF-005",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "timing cannot normalize",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "invalid time specification",
+      "user_or_agent_informed": true,
+      "visual_impact": "build stops",
+      "visual_outcome": "build stops"
+    },
+    {
+      "behavior": "DEFAULT_SUBSTITUTION",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "malformed finish or LUT",
+      "id": "VF-006",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": true,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "grade intent changes",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "malformed finish or LUT",
+      "user_or_agent_informed": true,
+      "visual_impact": "default finish",
+      "visual_outcome": "default finish"
+    },
+    {
+      "behavior": "HARD_ERROR",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "unsupported React host element",
+      "id": "VF-007",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "tree cannot lower",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "unsupported React host element",
+      "user_or_agent_informed": true,
+      "visual_impact": "evaluation stops",
+      "visual_outcome": "evaluation stops"
+    },
+    {
+      "behavior": "HARD_ERROR",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "raw text in wrong parent",
+      "id": "VF-008",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "text cannot lower safely",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "raw text in wrong parent",
+      "user_or_agent_informed": true,
+      "visual_impact": "evaluation stops",
+      "visual_outcome": "evaluation stops"
+    },
+    {
+      "behavior": "HARD_ERROR",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "missing root Composition",
+      "id": "VF-009",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "no Scene root",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "missing root Composition",
+      "user_or_agent_informed": true,
+      "visual_impact": "evaluation stops",
+      "visual_outcome": "evaluation stops"
+    },
+    {
+      "behavior": "UNSUPPORTED",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "GPU-only component on CPU",
+      "id": "VF-010",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "capability unavailable",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "GPU-only component on CPU",
+      "user_or_agent_informed": true,
+      "visual_impact": "placeholder, omission, or failure",
+      "visual_outcome": "placeholder, omission, or failure"
+    },
+    {
+      "behavior": "APPROXIMATION",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "degraded component fidelity",
+      "id": "VF-011",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": true,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "quality classification reduced",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "degraded component fidelity",
+      "user_or_agent_informed": true,
+      "visual_impact": "approximate rendering",
+      "visual_outcome": "approximate rendering"
+    },
+    {
+      "behavior": "AUTOMATIC_BACKEND_FALLBACK",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "renderer runtime failure",
+      "id": "VF-012",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": true,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "backend changes",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "renderer runtime failure",
+      "user_or_agent_informed": true,
+      "visual_impact": "GPU to CPU",
+      "visual_outcome": "GPU to CPU"
+    },
+    {
+      "behavior": "AUTOMATIC_BACKEND_FALLBACK",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "CPU renderer failure",
+      "id": "VF-013",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": true,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "renderer subset changes",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "CPU renderer failure",
+      "user_or_agent_informed": true,
+      "visual_impact": "CPU to Canvas preview",
+      "visual_outcome": "CPU to Canvas preview"
+    },
+    {
+      "behavior": "ASYNC_RETRY_OR_REPAINT",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "failed font load",
+      "id": "VF-014",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "text metrics may change",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "failed font load",
+      "user_or_agent_informed": true,
+      "visual_impact": "retry or repaint",
+      "visual_outcome": "retry or repaint"
+    },
+    {
+      "behavior": "VISUAL_PLACEHOLDER",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "missing image",
+      "id": "VF-015",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": true,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "asset absent",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "missing image",
+      "user_or_agent_informed": true,
+      "visual_impact": "placeholder or skipped draw",
+      "visual_outcome": "placeholder or skipped draw"
+    },
+    {
+      "behavior": "DEFAULT_SUBSTITUTION",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "cross-origin video preview",
+      "id": "VF-016",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": true,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "browser decode path differs",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "cross-origin video preview",
+      "user_or_agent_informed": true,
+      "visual_impact": "media-element fallback",
+      "visual_outcome": "media-element fallback"
+    },
+    {
+      "behavior": "MALFORMED_VALUE_DROPPED",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "malformed progress message",
+      "id": "VF-017",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "LIMITED",
+      "semantic_impact": "progress visibility lost",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "malformed progress message",
+      "user_or_agent_informed": false,
+      "visual_impact": "continue without update",
+      "visual_outcome": "continue without update"
+    },
+    {
+      "behavior": "HARD_ERROR",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "CLI process failure",
+      "id": "VF-018",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "export cannot complete",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "CLI process failure",
+      "user_or_agent_informed": true,
+      "visual_impact": "process error",
+      "visual_outcome": "process error"
+    },
+    {
+      "behavior": "HARD_ERROR",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "direct JSON deserialization",
+      "id": "VF-019",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "Scene unavailable",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "direct JSON deserialization",
+      "user_or_agent_informed": true,
+      "visual_impact": "parse failure",
+      "visual_outcome": "parse failure"
+    },
+    {
+      "behavior": "UNSUPPORTED",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "future scene version",
+      "id": "VF-020",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "ACTIONABLE",
+      "semantic_impact": "compatibility unresolved",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "future scene version",
+      "user_or_agent_informed": true,
+      "visual_impact": "reject or retain version depending boundary",
+      "visual_outcome": "reject or retain version depending boundary"
+    },
+    {
+      "behavior": "UNKNOWN",
+      "determinism_impact": "fallback selection can be capability- or runtime-dependent",
+      "diagnostic_code_or_message_class": "unknown scene fields",
+      "id": "VF-021",
+      "preview_export_difference": "browser-only fallbacks do not establish native-export equivalence",
+      "quality_reducing": false,
+      "repairability": "LIMITED",
+      "semantic_impact": "forward semantics unresolved",
+      "source_refs": [
+        "S-CINEMA-COMPILER",
+        "S-CINEMA-TEST",
+        "S-REACT-LOWER",
+        "S-PLAYER",
+        "S-CANVAS",
+        "S-CLI"
+      ],
+      "surface": "Cinema, React, Scene, preview, or export boundary",
+      "timing_impact": "none unless media, timing, or asynchronous retry is involved",
+      "trigger": "unknown scene fields",
+      "user_or_agent_informed": false,
+      "visual_impact": "serde behavior requires fixture",
+      "visual_outcome": "serde behavior requires fixture"
+    }
+  ]
+}

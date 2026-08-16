@@ -1,0 +1,20 @@
+{
+  "$schema": "../../../../schemas/research/r0.02/serialization-and-versioning.schema.json",
+  "data": {
+    "serialization": {
+      "current_version_omitted": true,
+      "format": "JSON",
+      "future_version_roundtrip": "observed",
+      "runtime_pixels_serialized": false,
+      "scene_version": 1,
+      "source_refs": [
+        "S-SCENE",
+        "S-REACT-LOWER"
+      ],
+      "unknown_fields": "serde-default acceptance inferred; requires focused compatibility contract"
+    }
+  },
+  "generated_at": "2026-08-16T00:00:00Z",
+  "model_ref": "R0_02_RESEARCH_MODEL.json",
+  "schema_version": "r0.02.3"
+}

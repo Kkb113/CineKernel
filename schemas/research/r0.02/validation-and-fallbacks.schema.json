@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "validation_and_fallbacks": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "behavior": {
+                "enum": [
+                  "HARD_ERROR",
+                  "VALIDATION_ERROR",
+                  "WARNING",
+                  "INFO_DIAGNOSTIC",
+                  "SILENT_IGNORE",
+                  "DEFAULT_SUBSTITUTION",
+                  "VISUAL_PLACEHOLDER",
+                  "AUTOMATIC_BACKEND_FALLBACK",
+                  "APPROXIMATION",
+                  "MALFORMED_VALUE_DROPPED",
+                  "ASYNC_RETRY_OR_REPAINT",
+                  "UNSUPPORTED",
+                  "UNKNOWN"
+                ],
+                "type": "string"
+              },
+              "determinism_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "diagnostic_code_or_message_class": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "id": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "preview_export_difference": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "quality_reducing": {
+                "type": "boolean"
+              },
+              "repairability": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "semantic_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "surface": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "timing_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "trigger": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "user_or_agent_informed": {
+                "type": "boolean"
+              },
+              "visual_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "visual_outcome": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "behavior",
+              "determinism_impact",
+              "diagnostic_code_or_message_class",
+              "id",
+              "preview_export_difference",
+              "quality_reducing",
+              "repairability",
+              "semantic_impact",
+              "source_refs",
+              "surface",
+              "timing_impact",
+              "trigger",
+              "user_or_agent_informed",
+              "visual_impact",
+              "visual_outcome"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "validation_and_fallbacks"
+      ],
+      "type": "object"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "model_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema",
+    "data",
+    "generated_at",
+    "model_ref",
+    "schema_version"
+  ],
+  "type": "object"
+}

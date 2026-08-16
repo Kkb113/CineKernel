@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_requirements": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "abstract_requirement": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "affected_cinekernel_programs": {
+                "items": {
+                  "pattern": "^P(?:0[1-9]|1[0-9]|2[0-8])$",
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "creative_programming_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "independent_primary_source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "onda_observation_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "onda_source_refs": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "performance_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "problem_addressed": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "prohibited_reuse_note": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "quality_impact": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "required_follow_up_research": {
+                "items": {
+                  "enum": [
+                    "R0.03",
+                    "R0.04",
+                    "R0.05",
+                    "R0.06",
+                    "R0.07",
+                    "R0.08"
+                  ],
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "requirement_id": {
+                "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
+                "type": "string"
+              },
+              "status": {
+                "const": "CANDIDATE_ONLY"
+              },
+              "trust_impact": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "abstract_requirement",
+              "affected_cinekernel_programs",
+              "creative_programming_impact",
+              "independent_primary_source_refs",
+              "onda_observation_refs",
+              "onda_source_refs",
+              "performance_impact",
+              "problem_addressed",
+              "prohibited_reuse_note",
+              "quality_impact",
+              "required_follow_up_research",
+              "requirement_id",
+              "status",
+              "trust_impact"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "candidate_requirements"
+      ],
+      "type": "object"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "model_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema",
+    "data",
+    "generated_at",
+    "model_ref",
+    "schema_version"
+  ],
+  "type": "object"
+}
