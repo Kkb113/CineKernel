@@ -7,7 +7,8 @@ The register contains **31 semantic concepts**.
 | DROPPED | 8 |
 | MATERIALIZED | 11 |
 | NORMALIZED | 1 |
-| PRESERVED | 5 |
+| PRESERVED | 4 |
+| REMAPPED | 1 |
 | UNRESOLVED | 1 |
 | USED_ONLY_AS_REACT_KEY | 1 |
 | USED_ONLY_DURING_LOWERING | 4 |

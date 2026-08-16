@@ -3,141 +3,107 @@
   "data": {
     "preview_export_parity": [
       {
-        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "certification_impact": "Certify value equivalence separately from scheduling/completeness.",
         "comparison_id": "PE-01",
         "export_path": "batch renderFrames evaluation",
         "feature": "React frame evaluation",
-        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "known_difference": "Preview requests current targets and may coalesce work; export evaluates and retains the complete ordered frame set.",
         "parity_class": "SHARED_WITH_DIFFERENT_SCHEDULING",
         "preview_path": "player-requested frame evaluation",
         "shared_authoring_evaluation": true,
         "source_refs": [
-          "S-PLAYER",
-          "S-VIDEO",
-          "S-AUDIO",
-          "S-WASM",
-          "S-WASM-VELLO",
-          "S-CLI",
-          "S-CANVAS"
+          "S-EVID-REACT-LOWER",
+          "S-EVID-PLAYER-FALLBACK",
+          "S-EVID-NODE-EXPORT"
         ]
       },
       {
-        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "certification_impact": "Require fixture parity with identical fonts and materialized media.",
         "comparison_id": "PE-02",
         "export_path": "native CPU boundary",
         "feature": "CPU renderer core",
-        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "known_difference": "Both consume Scene, but WASM and native use different host, font, filesystem, and media prepass environments.",
         "parity_class": "CONDITIONAL_PARITY",
         "preview_path": "WASM CPU boundary",
         "shared_authoring_evaluation": true,
         "source_refs": [
-          "S-PLAYER",
-          "S-VIDEO",
-          "S-AUDIO",
-          "S-WASM",
-          "S-WASM-VELLO",
-          "S-CLI",
-          "S-CANVAS"
+          "S-EVID-WASM-CPU",
+          "S-EVID-CLI-RENDER"
         ]
       },
       {
-        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "certification_impact": "Backend name alone is insufficient; compare exact-capability pixels.",
         "comparison_id": "PE-03",
         "export_path": "native GPU boundary",
         "feature": "GPU renderer core",
-        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "known_difference": "The browser Vello engine is asynchronous WebGPU while native export selects and drives a native renderer path.",
         "parity_class": "CONDITIONAL_PARITY",
         "preview_path": "WASM Vello boundary",
         "shared_authoring_evaluation": true,
         "source_refs": [
-          "S-PLAYER",
-          "S-VIDEO",
-          "S-AUDIO",
-          "S-WASM",
-          "S-WASM-VELLO",
-          "S-CLI",
-          "S-CANVAS"
+          "S-EVID-WASM-GPU",
+          "S-EVID-CLI-RENDER"
         ]
       },
       {
-        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "certification_impact": "Video parity requires source-time, CORS, decode, and overlay exclusions.",
         "comparison_id": "PE-04",
         "export_path": "native media prepass",
         "feature": "video decode",
-        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "known_difference": "Preview seeks HTML media and extracts data URIs or overlays; native render fetches to files and decodes before rendering.",
         "parity_class": "DIFFERENT_EXECUTION",
         "preview_path": "browser media element/cache",
-        "shared_authoring_evaluation": true,
+        "shared_authoring_evaluation": false,
         "source_refs": [
-          "S-PLAYER",
-          "S-VIDEO",
-          "S-AUDIO",
-          "S-WASM",
-          "S-WASM-VELLO",
-          "S-CLI",
-          "S-CANVAS"
+          "S-EVID-VIDEO-PREVIEW",
+          "S-EVID-CLI-MATERIALIZE"
         ]
       },
       {
-        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "certification_impact": "Audio certification must compare clock mapping and encoded mix, not preview audibility.",
         "comparison_id": "PE-05",
         "export_path": "native audio/encoder path",
         "feature": "audio scheduling",
-        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "known_difference": "Preview anchors composition time to AudioContext and schedules ahead; export materializes audio for the encoder timeline.",
         "parity_class": "DIFFERENT_EXECUTION",
         "preview_path": "AudioContext transport",
-        "shared_authoring_evaluation": true,
+        "shared_authoring_evaluation": false,
         "source_refs": [
-          "S-PLAYER",
-          "S-VIDEO",
-          "S-AUDIO",
-          "S-WASM",
-          "S-WASM-VELLO",
-          "S-CLI",
-          "S-CANVAS"
+          "S-EVID-AUDIO-CLOCK",
+          "S-EVID-CLI-MATERIALIZE"
         ]
       },
       {
-        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "certification_impact": "Any Canvas-selected run is excluded from renderer equivalence certification.",
         "comparison_id": "PE-06",
         "export_path": "not equivalent certification path",
         "feature": "Canvas2D",
-        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "known_difference": "Canvas2D implements only a subset and may omit or simplify nodes/effects.",
         "parity_class": "KNOWN_APPROXIMATION",
         "preview_path": "approximate preview fallback",
-        "shared_authoring_evaluation": true,
+        "shared_authoring_evaluation": false,
         "source_refs": [
-          "S-PLAYER",
-          "S-VIDEO",
-          "S-AUDIO",
-          "S-WASM",
-          "S-WASM-VELLO",
-          "S-CLI",
-          "S-CANVAS"
+          "S-EVID-CANVAS-APPROX",
+          "S-EVID-PLAYER-FALLBACK"
         ]
       },
       {
-        "certification_impact": "end-to-end parity must be capability-aware and measured",
+        "certification_impact": "Temporal certification requires the export sequence, while preview is responsiveness evidence only.",
         "comparison_id": "PE-07",
         "export_path": "ordered complete export frame sequence",
         "feature": "frame scheduling",
-        "known_difference": "media scheduling, backend capability, or frame ordering differs",
+        "known_difference": "The Player can skip intermediate targets while catching up; export must emit every requested frame in order.",
         "parity_class": "DIFFERENT_EXECUTION",
         "preview_path": "RAF may skip requested frames",
-        "shared_authoring_evaluation": true,
+        "shared_authoring_evaluation": false,
         "source_refs": [
-          "S-PLAYER",
-          "S-VIDEO",
-          "S-AUDIO",
-          "S-WASM",
-          "S-WASM-VELLO",
-          "S-CLI",
-          "S-CANVAS"
+          "S-EVID-PLAYER-FALLBACK",
+          "S-EVID-REACT-LOWER"
         ]
       }
     ]
   },
   "generated_at": "2026-08-16T00:00:00Z",
   "model_ref": "R0_02_RESEARCH_MODEL.json",
-  "schema_version": "r0.02.3"
+  "schema_version": "r0.02.4"
 }

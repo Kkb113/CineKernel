@@ -150,6 +150,13 @@ fn verify(root: &Path) -> Result<Outcome> {
     }
     validate_refs(&model)?;
     checks.push("all source references resolve".into());
+    source_index::verify_claim_evidence(
+        model["sources"].as_array().context("sources missing")?,
+        model["claims"].as_array().context("claims missing")?,
+    )?;
+    checks.push(
+        "formal claims use claim-supporting evidence rather than coverage-only inventory".into(),
+    );
     model_validation::validate(&model)?;
     checks.push(
         "graph, semantic, fallback, creative, requirement, and stable-order contracts pass".into(),
@@ -219,8 +226,8 @@ fn inventory(root: &Path) -> Result<Outcome> {
         ok: true,
         checks: vec![
             format!(
-                "{} pinned ONDA files hashed and fully verified",
-                counts.onda_files
+                "{} unique pinned ONDA files covered by {} verified source records",
+                counts.onda_files, counts.onda_records
             ),
             format!(
                 "{} official external references indexed separately",
@@ -294,7 +301,7 @@ fn generate_machine_outputs(root: &Path, model: &Value) -> Result<()> {
             .replace(".json", ".schema.json");
         write_stable_json(
             &root.join(DOC_DIR).join(name),
-            &serde_json::json!({"$schema":format!("../../../../schemas/research/r0.02/{schema}"),"schema_version":"r0.02.3","model_ref":"R0_02_RESEARCH_MODEL.json","generated_at":"2026-08-16T00:00:00Z","data":data}),
+            &serde_json::json!({"$schema":format!("../../../../schemas/research/r0.02/{schema}"),"schema_version":"r0.02.4","model_ref":"R0_02_RESEARCH_MODEL.json","generated_at":"2026-08-16T00:00:00Z","data":data}),
         )?;
     }
     Ok(())

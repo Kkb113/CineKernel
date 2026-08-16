@@ -6,9 +6,11 @@
         {
           "authority": "AUTHORITATIVE",
           "carries_source_provenance": true,
+          "concurrency_status": "SAFE_IF_CALLER_TREATS_PAYLOAD_AS_IMMUTABLE",
+          "created_by": "Cinema author or payload-producing tool",
           "mutability": "IMMUTABLE_DATA",
           "owner_scope": "serialized document",
-          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "reentrancy": "UNRESOLVED unless explicitly evidenced; fresh React roots do not neutralize module-global state",
           "representation": "Cinema payload",
           "shared": false,
           "source_refs": [
@@ -16,14 +18,17 @@
           ],
           "state_id": "ST-CINEMA",
           "survives_frame_evaluation": true,
-          "thread_safe": false
+          "thread_safe": false,
+          "versioned": "UNKNOWN"
         },
         {
           "authority": "TRANSIENT",
           "carries_source_provenance": false,
+          "concurrency_status": "PER_FRAME_ROOT_ISOLATED_BUT_GLOBAL_CONTEXT_UNRESOLVED",
+          "created_by": "renderFrame for each requested frame",
           "mutability": "PER_FRAME_REBUILT",
           "owner_scope": "one requested frame",
-          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "reentrancy": "UNRESOLVED unless explicitly evidenced; fresh React roots do not neutralize module-global state",
           "representation": "React element evaluation",
           "shared": false,
           "source_refs": [
@@ -31,14 +36,17 @@
           ],
           "state_id": "ST-REACT",
           "survives_frame_evaluation": false,
-          "thread_safe": false
+          "thread_safe": false,
+          "versioned": "NO"
         },
         {
           "authority": "TRANSIENT",
           "carries_source_provenance": false,
+          "concurrency_status": "UNSAFE_SHARED_MUTABLE",
+          "created_by": "renderFrame module assignment",
           "mutability": "GLOBAL_MUTABLE",
           "owner_scope": "process/module",
-          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "reentrancy": "UNRESOLVED unless explicitly evidenced; fresh React roots do not neutralize module-global state",
           "representation": "module-level activeFrameState and activeDof",
           "shared": true,
           "source_refs": [
@@ -46,14 +54,17 @@
           ],
           "state_id": "ST-ACTIVE",
           "survives_frame_evaluation": false,
-          "thread_safe": false
+          "thread_safe": false,
+          "versioned": "NO"
         },
         {
           "authority": "TRANSIENT",
           "carries_source_provenance": false,
+          "concurrency_status": "PER_RECONCILIATION_ISOLATED",
+          "created_by": "React reconciler commit",
           "mutability": "MUTABLE_TREE",
           "owner_scope": "one reconciliation",
-          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "reentrancy": "UNRESOLVED unless explicitly evidenced; fresh React roots do not neutralize module-global state",
           "representation": "HostNode tree",
           "shared": false,
           "source_refs": [
@@ -61,14 +72,17 @@
           ],
           "state_id": "ST-HOST",
           "survives_frame_evaluation": false,
-          "thread_safe": false
+          "thread_safe": false,
+          "versioned": "NO"
         },
         {
           "authority": "AUTHORITATIVE",
           "carries_source_provenance": false,
+          "concurrency_status": "SAFE_AFTER_CONSTRUCTION_IF_IMMUTABLE",
+          "created_by": "React lowering, JSON caller, or Rust constructor",
           "mutability": "IMMUTABLE_DATA",
           "owner_scope": "frame/document",
-          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "reentrancy": "UNRESOLVED unless explicitly evidenced; fresh React roots do not neutralize module-global state",
           "representation": "Scene snapshot",
           "shared": true,
           "source_refs": [
@@ -76,14 +90,17 @@
           ],
           "state_id": "ST-SCENE",
           "survives_frame_evaluation": true,
-          "thread_safe": true
+          "thread_safe": true,
+          "versioned": "YES"
         },
         {
           "authority": "AUTHORITATIVE",
           "carries_source_provenance": false,
+          "concurrency_status": "SAFE_AFTER_CONSTRUCTION_IF_IMMUTABLE",
+          "created_by": "Rust caller or Scene deserializer",
           "mutability": "IMMUTABLE_DATA",
           "owner_scope": "document",
-          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "reentrancy": "UNRESOLVED unless explicitly evidenced; fresh React roots do not neutralize module-global state",
           "representation": "Rust Timeline",
           "shared": true,
           "source_refs": [
@@ -91,14 +108,17 @@
           ],
           "state_id": "ST-TIMELINE",
           "survives_frame_evaluation": true,
-          "thread_safe": true
+          "thread_safe": true,
+          "versioned": "YES"
         },
         {
           "authority": "DERIVED",
           "carries_source_provenance": false,
+          "concurrency_status": "PER_PREPASS_CLONE",
+          "created_by": "layout prepass",
           "mutability": "CLONED_AND_MUTATED",
           "owner_scope": "prepass",
-          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "reentrancy": "UNRESOLVED unless explicitly evidenced; fresh React roots do not neutralize module-global state",
           "representation": "layout-resolved Scene",
           "shared": false,
           "source_refs": [
@@ -106,14 +126,17 @@
           ],
           "state_id": "ST-LAYOUT",
           "survives_frame_evaluation": true,
-          "thread_safe": false
+          "thread_safe": false,
+          "versioned": "INHERITS_SCENE_VERSION"
         },
         {
           "authority": "CACHE",
           "carries_source_provenance": false,
+          "concurrency_status": "CALLER_CACHE_CONCURRENCY_UNRESOLVED",
+          "created_by": "image prepass",
           "mutability": "CACHE_MUTABLE",
           "owner_scope": "prepass/cache",
-          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "reentrancy": "UNRESOLVED unless explicitly evidenced; fresh React roots do not neutralize module-global state",
           "representation": "image-resolved Scene",
           "shared": true,
           "source_refs": [
@@ -121,14 +144,17 @@
           ],
           "state_id": "ST-IMAGE",
           "survives_frame_evaluation": true,
-          "thread_safe": false
+          "thread_safe": false,
+          "versioned": "INHERITS_SCENE_VERSION"
         },
         {
           "authority": "PRESENTATION_ONLY",
           "carries_source_provenance": false,
+          "concurrency_status": "REACT_INSTANCE_SCOPED",
+          "created_by": "React Player instance",
           "mutability": "INSTANCE_MUTABLE",
           "owner_scope": "component instance",
-          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "reentrancy": "UNRESOLVED unless explicitly evidenced; fresh React roots do not neutralize module-global state",
           "representation": "player transport",
           "shared": false,
           "source_refs": [
@@ -136,14 +162,17 @@
           ],
           "state_id": "ST-PLAYER",
           "survives_frame_evaluation": false,
-          "thread_safe": false
+          "thread_safe": false,
+          "versioned": "NO"
         },
         {
           "authority": "EXTERNAL_RUNTIME",
           "carries_source_provenance": false,
+          "concurrency_status": "SERIALIZED_PER_ENGINE; CROSS_ENGINE_STATUS_UNKNOWN",
+          "created_by": "Player module and supplied GPU engine",
           "mutability": "GLOBAL_MUTABLE",
           "owner_scope": "browser process",
-          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "reentrancy": "UNRESOLVED unless explicitly evidenced; fresh React roots do not neutralize module-global state",
           "representation": "GPU engine coordination",
           "shared": true,
           "source_refs": [
@@ -151,14 +180,17 @@
           ],
           "state_id": "ST-GPU",
           "survives_frame_evaluation": false,
-          "thread_safe": false
+          "thread_safe": false,
+          "versioned": "NO"
         },
         {
           "authority": "EXTERNAL_RUNTIME",
           "carries_source_provenance": false,
+          "concurrency_status": "INSTANCE_SCOPED; EXTERNAL_RUNTIME_STATUS_UNKNOWN",
+          "created_by": "PreviewAudio instance and browser AudioContext",
           "mutability": "EXTERNAL_RUNTIME",
           "owner_scope": "AudioContext",
-          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "reentrancy": "UNRESOLVED unless explicitly evidenced; fresh React roots do not neutralize module-global state",
           "representation": "audio transport",
           "shared": true,
           "source_refs": [
@@ -167,14 +199,17 @@
           ],
           "state_id": "ST-AUDIO",
           "survives_frame_evaluation": false,
-          "thread_safe": false
+          "thread_safe": false,
+          "versioned": "NO"
         },
         {
           "authority": "DERIVED",
           "carries_source_provenance": false,
+          "concurrency_status": "INVOCATION_LOCAL",
+          "created_by": "Node renderToFile invocation",
           "mutability": "IMMUTABLE_DATA",
           "owner_scope": "export invocation",
-          "reentrancy": "UNRESOLVED unless explicitly serialized; fresh React roots do not neutralize module-global state",
+          "reentrancy": "UNRESOLVED unless explicitly evidenced; fresh React roots do not neutralize module-global state",
           "representation": "temporary frames JSON",
           "shared": false,
           "source_refs": [
@@ -182,7 +217,8 @@
           ],
           "state_id": "ST-FRAMES",
           "survives_frame_evaluation": true,
-          "thread_safe": false
+          "thread_safe": false,
+          "versioned": "INHERITS_SCENE_VERSION"
         }
       ],
       "time_conversions": [
@@ -389,5 +425,5 @@
   },
   "generated_at": "2026-08-16T00:00:00Z",
   "model_ref": "R0_02_RESEARCH_MODEL.json",
-  "schema_version": "r0.02.3"
+  "schema_version": "r0.02.4"
 }

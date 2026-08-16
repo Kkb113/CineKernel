@@ -27,6 +27,12 @@
                     "minimum": 1,
                     "type": "integer"
                   },
+                  "evidence_role": {
+                    "enum": [
+                      "COVERAGE_ONLY",
+                      "CLAIM_SUPPORTING"
+                    ]
+                  },
                   "facts_supported": {
                     "items": {
                       "minLength": 1,
@@ -84,6 +90,7 @@
                   "end_line",
                   "file_sha256",
                   "classification",
+                  "evidence_role",
                   "facts_supported"
                 ],
                 "type": "object"
@@ -109,6 +116,12 @@
                     "format": "uri",
                     "pattern": "^https://",
                     "type": "string"
+                  },
+                  "evidence_role": {
+                    "enum": [
+                      "COVERAGE_ONLY",
+                      "CLAIM_SUPPORTING"
+                    ]
                   },
                   "facts_supported": {
                     "items": {
@@ -139,6 +152,7 @@
                   "document_url",
                   "accessed_at_utc",
                   "section",
+                  "evidence_role",
                   "facts_supported"
                 ],
                 "type": "object"

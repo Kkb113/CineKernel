@@ -2,7 +2,7 @@
 
 ## Status
 
-**PASS — exact remediation-head research workflow and ordinary CI succeeded on all three operating systems.** PR #13 must remain draft and unmerged.
+**CONDITIONAL PASS — NOT LOCKED.** The focused closure requires exact-head three-OS evidence and explicit independent approval before merge.
 
 ## Locked identity
 
@@ -11,7 +11,11 @@
 - ONDA repository: `https://github.com/onda-engine/onda-engine.git`
 - ONDA pin: `3ddf1780c9799bf038ac90cec7d8cadb61acafbe`
 - ONDA tree: `639df83ebf0262afccd6d021bf6d16ef19777d85`
-- Branch: `research/r0.02-onda-scene-compiler-archaeology`
+- Closure branch: `research/r0.02-independent-review-closure`
+- PR #13 merged branch head: `6e7ff3d6016829357bb7f804dd916e6f7e796a64`
+- Master merge commit: `12024231b8983b07d9413cf96f4579bd9495f946`
+- Common merged research tree: `e01b2fe87d409e34f509847cdd66214d174eb0d6`
+- Process note: PR #13 was merged before independent approval; it is not reverted.
 
 ## Locked future-phase registry
 
@@ -26,7 +30,8 @@
 
 | Evidence | Count |
 |---|---:|
-| Pinned ONDA files | 50 |
+| Pinned ONDA source records | 74 |
+| Unique pinned ONDA files | 50 |
 | External official references | 3 |
 | Claims | 12 |
 | Authoring surfaces | 5 |
@@ -36,7 +41,7 @@
 | Time conversions | 12 |
 | Identity transitions | 10 |
 | Semantic-preservation rows | 31 |
-| Fallback/error rows | 21 |
+| Fallback/error rows | 22 |
 | Preview/export comparisons | 7 |
 | Candidate requirements | 8 |
 | Contradictions | 3 |
@@ -45,22 +50,22 @@
 | Generated machine projections | 16 |
 | Generated human reports | 20 |
 | Strict schemas | 17 |
-| Standalone verifier tests | 73 |
+| Standalone verifier tests | 82 |
 | Integrity-manifest entries | 68 |
 
 ## Gate results
 
 - R0.01 authoritative lock parsing: PASS
 - checkout remote/detached HEAD/pin/tree/clean validation: PASS
-- complete mandatory source coverage and blob/SHA/symbol/line checks: PASS
+- coverage-only versus claim-supporting source roles, immutable blob/SHA, and symbol-inside-line-range checks: PASS
 - strict nested Draft 2020-12 schemas: PASS
 - exact-file and normalized multiline clean-room guard: PASS
 - authoritative ONDA package identity, renamed Cargo/npm alias, workspace/dev/build/target dependency, Git source, ONDA-checkout path, and resolved lockfile guard: PASS
 - absolute path and tracked-upstream guard: PASS
 - Phase 0 and R0.01 frozen paths: PASS
-- two-run byte equality: PASS
-- remote workflow and artifacts: PASS — run 31927165059; three nonempty artifacts
-- standard three-OS CI: PASS — run 31927168409
+- two-run byte equality: run during final reproduction
+- historical final-head dedicated run 31927730892 and artifacts: PASS; new exact closure-head run: PENDING
+- historical final-head ordinary CI run 31927730849: PASS; new exact closure-head CI: PENDING
 
 ## Known check behavior
 
@@ -91,19 +96,6 @@ cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- guard
 cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- integrity --check --json
 ```
 
-## Implementation and evidence commits
+## Historical final-head evidence and closure requirement
 
-- `8d9d425024761715bbbb37f8a14104d1c1fd670b` — initial research packet
-- `e9a4546db0962cd30858ad71041ec92c33b81fa7` — workflow token correction
-- `c8d16e3d7d8029a3e2fe2e2e2019f48996533758` — immutable blob hashing correction
-- `81ba1835d759e332f2d73683161de28a1f0954fc` — historical attestation
-- `b528d651fa4e1f5678b098f39fc8c35ce034e1ef` — reviewer remediation evidence commit
-- `ca6b4dc85d66ef1d5d9c456dd3173776a0c448b8` — semantic/governance closure evidence commit
-
-## Final remote evidence
-
-- Dedicated R0.02 run: `31927165059` — Windows, Ubuntu, macOS success
-- Ordinary CI run: `31927168409` — Windows, Ubuntu, macOS success
-- `r0-02-windows-latest-evidence`: `sha256:58d59a5d8fcc2e043d01c646ff22303188fe3c780ffcfb45c4107a368169e0d9`
-- `r0-02-macos-latest-evidence`: `sha256:e2f181a75a839f034b84af8b3529f34d2f1c1b3157006ee8f565fee64101d73b`
-- `r0-02-ubuntu-latest-evidence`: `sha256:6b350cf3da3292c73b84483a896d64ac0a6e3e9079f74a40fcda23b9e1fe6c1f`
+Final PR head `6e7ff3d6016829357bb7f804dd916e6f7e796a64` passed dedicated run `31927730892` and ordinary CI `31927730849` on all three operating systems. The prior attestation was stale because executable `tools/research/onda-r0-02/src/reports.rs` changed after its recorded evidence commit. This closure changes executable verifier/model code, so none of that historical evidence substitutes for fresh exact-closure-head evidence or independent approval.

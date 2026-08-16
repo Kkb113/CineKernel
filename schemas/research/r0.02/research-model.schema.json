@@ -1585,6 +1585,12 @@
                 "minimum": 1,
                 "type": "integer"
               },
+              "evidence_role": {
+                "enum": [
+                  "COVERAGE_ONLY",
+                  "CLAIM_SUPPORTING"
+                ]
+              },
               "facts_supported": {
                 "items": {
                   "minLength": 1,
@@ -1642,6 +1648,7 @@
               "end_line",
               "file_sha256",
               "classification",
+              "evidence_role",
               "facts_supported"
             ],
             "type": "object"
@@ -1667,6 +1674,12 @@
                 "format": "uri",
                 "pattern": "^https://",
                 "type": "string"
+              },
+              "evidence_role": {
+                "enum": [
+                  "COVERAGE_ONLY",
+                  "CLAIM_SUPPORTING"
+                ]
               },
               "facts_supported": {
                 "items": {
@@ -1697,6 +1710,7 @@
               "document_url",
               "accessed_at_utc",
               "section",
+              "evidence_role",
               "facts_supported"
             ],
             "type": "object"
@@ -1727,6 +1741,14 @@
               },
               "carries_source_provenance": {
                 "type": "boolean"
+              },
+              "concurrency_status": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "created_by": {
+                "minLength": 1,
+                "type": "string"
               },
               "mutability": {
                 "enum": [
@@ -1774,20 +1796,27 @@
               },
               "thread_safe": {
                 "type": "boolean"
+              },
+              "versioned": {
+                "minLength": 1,
+                "type": "string"
               }
             },
             "required": [
-              "authority",
-              "carries_source_provenance",
-              "mutability",
-              "owner_scope",
-              "reentrancy",
-              "representation",
-              "shared",
-              "source_refs",
               "state_id",
+              "representation",
+              "owner_scope",
+              "created_by",
+              "versioned",
+              "concurrency_status",
+              "authority",
+              "mutability",
+              "shared",
+              "thread_safe",
               "survives_frame_evaluation",
-              "thread_safe"
+              "carries_source_provenance",
+              "reentrancy",
+              "source_refs"
             ],
             "type": "object"
           },
@@ -1909,6 +1938,9 @@
       "items": {
         "additionalProperties": false,
         "properties": {
+          "agent_informed": {
+            "type": "boolean"
+          },
           "behavior": {
             "enum": [
               "HARD_ERROR",
@@ -1922,6 +1954,7 @@
               "APPROXIMATION",
               "MALFORMED_VALUE_DROPPED",
               "ASYNC_RETRY_OR_REPAINT",
+              "BEST_EFFORT_MATERIALIZATION",
               "UNSUPPORTED",
               "UNKNOWN"
             ],
@@ -1933,6 +1966,16 @@
           },
           "diagnostic_code_or_message_class": {
             "minLength": 1,
+            "type": "string"
+          },
+          "diagnostic_visibility": {
+            "enum": [
+              "STRUCTURED_DIAGNOSTIC",
+              "STDERR_ONLY",
+              "UI_STATUS_ONLY",
+              "SILENT_STATE_DEMOTION",
+              "SILENT_SKIP"
+            ],
             "type": "string"
           },
           "id": {
@@ -1974,6 +2017,9 @@
             "minLength": 1,
             "type": "string"
           },
+          "user_informed": {
+            "type": "boolean"
+          },
           "user_or_agent_informed": {
             "type": "boolean"
           },
@@ -1987,21 +2033,24 @@
           }
         },
         "required": [
-          "behavior",
-          "determinism_impact",
-          "diagnostic_code_or_message_class",
           "id",
-          "preview_export_difference",
-          "quality_reducing",
-          "repairability",
-          "semantic_impact",
-          "source_refs",
           "surface",
-          "timing_impact",
           "trigger",
+          "behavior",
+          "diagnostic_visibility",
+          "user_informed",
+          "agent_informed",
           "user_or_agent_informed",
+          "diagnostic_code_or_message_class",
+          "semantic_impact",
+          "visual_outcome",
           "visual_impact",
-          "visual_outcome"
+          "timing_impact",
+          "determinism_impact",
+          "preview_export_difference",
+          "repairability",
+          "quality_reducing",
+          "source_refs"
         ],
         "type": "object"
       },

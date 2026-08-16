@@ -119,15 +119,16 @@
         "boundary_id": "BC-AE-10",
         "consumer": "N-PREPASSES",
         "data_form": "Scene",
-        "error_behavior": "prepass error",
+        "error_behavior": "remote fetch failure is stderr-only and nonfatal; decode/layout/SVG errors follow their boundary contracts",
         "producer": "N-SCENE",
-        "semantic_disposition": "layout and document structure materialized",
+        "semantic_disposition": "successful URLs are remapped to temporary files; failed URLs remain for decoder skip; layout/document structure is materialized",
         "source_refs": [
-          "S-LAYOUT",
-          "S-IMAGE",
-          "S-SVG"
+          "S-EVID-CLI-MATERIALIZE",
+          "S-EVID-LAYOUT-PREPASS",
+          "S-EVID-IMAGE-PREPASS",
+          "S-EVID-SVG-PREPASS"
         ],
-        "validation": "media/layout/SVG resolution"
+        "validation": "best-effort remote GET to temporary file, then media/layout/SVG resolution"
       },
       {
         "boundary_id": "BC-AE-11",
@@ -233,5 +234,5 @@
   },
   "generated_at": "2026-08-16T00:00:00Z",
   "model_ref": "R0_02_RESEARCH_MODEL.json",
-  "schema_version": "r0.02.3"
+  "schema_version": "r0.02.4"
 }
