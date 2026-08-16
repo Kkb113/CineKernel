@@ -11,7 +11,7 @@
 
 ## 1. Executive status
 
-CONDITIONAL PASS pending a final remediation-head remote reproduction and updated attestation. All local remediation gates pass before publication.
+PASS. The exact remediation evidence commit passed the dedicated R0.02 workflow and ordinary CineKernel CI on Windows, Ubuntu, and macOS, with three nonempty raw-evidence artifacts.
 
 ## 2. CineKernel base revision
 
@@ -151,7 +151,7 @@ The report command generates 16 machine projections, 20 human reports, and 17 sc
 
 ## 36. Remote reproduction
 
-Pending closure-head Windows, Ubuntu, and macOS reproduction. The attestation is updated only after those runs complete and three nonempty raw-evidence artifacts are published.
+Evidence commit `ca6b4dc85d66ef1d5d9c456dd3173776a0c448b8` passed dedicated run `31927165059` and ordinary CI run `31927168409` on Windows, Ubuntu, and macOS. Three nonempty raw-evidence artifacts and their SHA-256 digests are recorded in the attestation.
 
 ## 37. Phase 0 and R0.01 immutability
 
