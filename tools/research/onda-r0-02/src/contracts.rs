@@ -132,7 +132,7 @@ fn string_schema(field: Option<&str>) -> Value {
         return json!({"type":"string","enum":["FRAME_INDEX_INTEGER","FRAME_INDEX_FLOAT","COMPOSITION_FRAME_LOCAL","SEQUENCE_FRAME_LOCAL","SECONDS_NUMBER","FPS_FLOAT","SOURCE_MEDIA_SECONDS","AUDIO_CONTEXT_SECONDS","RAF_WALL_TIME","ENCODED_TIMESTAMP","TIMELINE_CLIP_FRAME","NONE","UNKNOWN"]});
     }
     if key == "behavior" {
-        return json!({"type":"string","enum":["HARD_ERROR","VALIDATION_ERROR","WARNING","INFO_DIAGNOSTIC","SILENT_IGNORE","DEFAULT_SUBSTITUTION","VISUAL_PLACEHOLDER","AUTOMATIC_BACKEND_FALLBACK","APPROXIMATION","MALFORMED_VALUE_DROPPED","ASYNC_RETRY_OR_REPAINT","UNSUPPORTED","UNKNOWN"]});
+        return json!({"type":"string","enum":["HARD_ERROR","VALIDATION_ERROR","WARNING","INFO_DIAGNOSTIC","SILENT_IGNORE","DEFAULT_SUBSTITUTION","VISUAL_PLACEHOLDER","AUTOMATIC_BACKEND_FALLBACK","APPROXIMATION","MALFORMED_VALUE_DROPPED","ASYNC_RETRY_OR_REPAINT","BEST_EFFORT_MATERIALIZATION","UNSUPPORTED","UNKNOWN"]});
     }
     if key == "confidence" {
         return json!({"type":"string","enum":["HIGH","MEDIUM","LOW"]});
@@ -213,6 +213,47 @@ fn harden_semantic_vocabularies(value: &mut Value) {
                 if let Some(claims) = properties.get_mut("claims") {
                     claims["items"]["properties"]["status"] = json!({"type":"string","enum":["VERIFIED_AT_PIN","INFERRED_FROM_MULTIPLE_SOURCES","CONTRADICTED","CANDIDATE_ONLY","UNRESOLVED"]});
                 }
+                if let Some(fallbacks) = properties.get_mut("validation_and_fallbacks") {
+                    fallbacks["items"]["required"] = json!([
+                        "id",
+                        "surface",
+                        "trigger",
+                        "behavior",
+                        "diagnostic_visibility",
+                        "user_informed",
+                        "agent_informed",
+                        "user_or_agent_informed",
+                        "diagnostic_code_or_message_class",
+                        "semantic_impact",
+                        "visual_outcome",
+                        "visual_impact",
+                        "timing_impact",
+                        "determinism_impact",
+                        "preview_export_difference",
+                        "repairability",
+                        "quality_reducing",
+                        "source_refs"
+                    ]);
+                    fallbacks["items"]["properties"]["diagnostic_visibility"] = json!({"type":"string","enum":["STRUCTURED_DIAGNOSTIC","STDERR_ONLY","UI_STATUS_ONLY","SILENT_STATE_DEMOTION","SILENT_SKIP"]});
+                }
+                if let Some(states) = properties.get_mut("state_records") {
+                    states["items"]["required"] = json!([
+                        "state_id",
+                        "representation",
+                        "owner_scope",
+                        "created_by",
+                        "versioned",
+                        "concurrency_status",
+                        "authority",
+                        "mutability",
+                        "shared",
+                        "thread_safe",
+                        "survives_frame_evaluation",
+                        "carries_source_provenance",
+                        "reentrancy",
+                        "source_refs"
+                    ]);
+                }
                 if let Some(questions) = properties.get_mut("open_questions") {
                     questions["items"]["properties"]["defer_to"]["items"] = phases.clone();
                 }
@@ -259,7 +300,7 @@ fn source_record_schema(lock: &UpstreamLock) -> Value {
     let facts = json!({"type":"array","minItems":1,"items":{"type":"string","minLength":1}});
     let local = json!({
         "type":"object","additionalProperties":false,
-        "required":["source_id","repository","pinned_commit","pinned_tree","path","git_blob","symbol_or_section","start_line","end_line","file_sha256","classification","facts_supported"],
+        "required":["source_id","repository","pinned_commit","pinned_tree","path","git_blob","symbol_or_section","start_line","end_line","file_sha256","classification","evidence_role","facts_supported"],
         "properties":{
             "source_id":{"type":"string","pattern":"^S-[A-Z0-9-]+$"},
             "repository":{"const":lock.repository},
@@ -272,12 +313,13 @@ fn source_record_schema(lock: &UpstreamLock) -> Value {
             "end_line":{"type":"integer","minimum":1},
             "file_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
             "classification":{"enum":["UPSTREAM_SOURCE","UPSTREAM_TEST","UPSTREAM_MANIFEST","UPSTREAM_DOCUMENTATION"]},
+            "evidence_role":{"enum":["COVERAGE_ONLY","CLAIM_SUPPORTING"]},
             "facts_supported":facts
         }
     });
     let external = json!({
         "type":"object","additionalProperties":false,
-        "required":["source_id","classification","publisher","document_title","document_url","accessed_at_utc","section","facts_supported"],
+        "required":["source_id","classification","publisher","document_title","document_url","accessed_at_utc","section","evidence_role","facts_supported"],
         "properties":{
             "source_id":{"type":"string","pattern":"^E-[A-Z0-9-]+$"},
             "classification":{"enum":["PRIMARY_STANDARD","PRIMARY_IMPLEMENTATION_DOC"]},
@@ -286,6 +328,7 @@ fn source_record_schema(lock: &UpstreamLock) -> Value {
             "document_url":{"type":"string","format":"uri","pattern":"^https://"},
             "accessed_at_utc":{"type":"string","format":"date-time"},
             "section":{"type":"string","minLength":1},
+            "evidence_role":{"enum":["COVERAGE_ONLY","CLAIM_SUPPORTING"]},
             "facts_supported":facts
         }
     });
@@ -322,7 +365,7 @@ mod tests {
     }
 
     fn source() -> Value {
-        json!({"sources":[{"source_id":"S-X","repository":"https://github.com/onda-engine/onda-engine.git","pinned_commit":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","pinned_tree":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","path":"x.ts","git_blob":"cccccccccccccccccccccccccccccccccccccccc","symbol_or_section":"WHOLE_FILE","start_line":1,"end_line":1,"file_sha256":"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","classification":"UPSTREAM_SOURCE","facts_supported":["fact"]}]})
+        json!({"sources":[{"source_id":"S-X","repository":"https://github.com/onda-engine/onda-engine.git","pinned_commit":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","pinned_tree":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","path":"x.ts","git_blob":"cccccccccccccccccccccccccccccccccccccccc","symbol_or_section":"WHOLE_FILE","start_line":1,"end_line":1,"file_sha256":"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","classification":"UPSTREAM_SOURCE","evidence_role":"COVERAGE_ONLY","facts_supported":["fact"]}]})
     }
 
     #[test]
@@ -367,5 +410,25 @@ mod tests {
             .unwrap()
             .remove("symbol_or_section");
         assert!(validate_one(&bad, &schema, "mutation").is_err());
+    }
+
+    #[test]
+    fn critical_contracts_are_required_independently_of_instance_shape() {
+        let doc = json!({
+            "validation_and_fallbacks":[{"id":"VF-001"}],
+            "state_records":[{"state_id":"ST-X"}]
+        });
+        let schema = document_schema(&doc, None).unwrap();
+        let fallback_required = schema["properties"]["validation_and_fallbacks"]["items"]
+            ["required"]
+            .as_array()
+            .unwrap();
+        let state_required = schema["properties"]["state_records"]["items"]["required"]
+            .as_array()
+            .unwrap();
+        assert!(fallback_required
+            .iter()
+            .any(|v| v == "diagnostic_visibility"));
+        assert!(state_required.iter().any(|v| v == "concurrency_status"));
     }
 }

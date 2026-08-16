@@ -31,6 +31,14 @@
                   "carries_source_provenance": {
                     "type": "boolean"
                   },
+                  "concurrency_status": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "created_by": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
                   "mutability": {
                     "enum": [
                       "IMMUTABLE_DATA",
@@ -77,20 +85,27 @@
                   },
                   "thread_safe": {
                     "type": "boolean"
+                  },
+                  "versioned": {
+                    "minLength": 1,
+                    "type": "string"
                   }
                 },
                 "required": [
-                  "authority",
-                  "carries_source_provenance",
-                  "mutability",
-                  "owner_scope",
-                  "reentrancy",
-                  "representation",
-                  "shared",
-                  "source_refs",
                   "state_id",
+                  "representation",
+                  "owner_scope",
+                  "created_by",
+                  "versioned",
+                  "concurrency_status",
+                  "authority",
+                  "mutability",
+                  "shared",
+                  "thread_safe",
                   "survives_frame_evaluation",
-                  "thread_safe"
+                  "carries_source_provenance",
+                  "reentrancy",
+                  "source_refs"
                 ],
                 "type": "object"
               },

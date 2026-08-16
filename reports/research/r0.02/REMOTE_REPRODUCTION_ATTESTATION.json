@@ -1,41 +1,43 @@
 {
-  "schema_version": "r0.02.3",
-  "recorded_at": "2026-08-16T04:50:00Z",
+  "schema_version": "r0.02.4",
+  "recorded_at": "2026-08-16T00:00:00Z",
   "repository": "Kkb113/CineKernel",
-  "attestation_state": "COMPLETE",
-  "evidence_commit": "ca6b4dc85d66ef1d5d9c456dd3173776a0c448b8",
-  "attestation_relationship": "This attestation is committed after the tested evidence commit. The finalization changes only report wording, evidence references, the attestation, and derived integrity hashes; it does not alter the verifier, research model, schemas, guards, or workflow exercised at the evidence commit.",
-  "conclusion": "PASS",
+  "attestation_state": "HISTORICAL_FINAL_HEAD_VERIFIED_CLOSURE_PENDING",
+  "merged_branch_head": "6e7ff3d6016829357bb7f804dd916e6f7e796a64",
+  "merged_master_commit": "12024231b8983b07d9413cf96f4579bd9495f946",
+  "merged_research_tree": "e01b2fe87d409e34f509847cdd66214d174eb0d6",
+  "closure_branch": "research/r0.02-independent-review-closure",
+  "closure_head": null,
+  "evidence_commit": "6e7ff3d6016829357bb7f804dd916e6f7e796a64",
+  "attestation_relationship": "PR #13 was merged before independent approval. Its actual final head changed executable reports.rs after the earlier ca6b4dc evidence commit. The final PR head nevertheless passed the dedicated and ordinary three-OS workflows listed here. This closure changes executable verifier and model code, so historical evidence is informative only and cannot close R0.02.",
+  "conclusion": "CONDITIONAL_PASS_CLOSURE_PENDING",
   "runs": [
     {
       "name": "R0.02 ONDA architecture archaeology",
-      "run_id": 31927165059,
-      "url": "https://github.com/Kkb113/CineKernel/actions/runs/31927165059",
-      "head_sha": "ca6b4dc85d66ef1d5d9c456dd3173776a0c448b8",
+      "run_id": 31927730892,
+      "url": "https://github.com/Kkb113/CineKernel/actions/runs/31927730892",
+      "head_sha": "6e7ff3d6016829357bb7f804dd916e6f7e796a64",
       "conclusion": "success",
-      "jobs": [
-        {"os": "windows-latest", "job_id": 95116427604, "conclusion": "success"},
-        {"os": "macos-latest", "job_id": 95116427644, "conclusion": "success"},
-        {"os": "ubuntu-latest", "job_id": 95116427667, "conclusion": "success"}
-      ],
       "artifacts": [
-        {"name": "r0-02-windows-latest-evidence", "artifact_id": 9258237818, "size_bytes": 1609, "digest": "sha256:58d59a5d8fcc2e043d01c646ff22303188fe3c780ffcfb45c4107a368169e0d9"},
-        {"name": "r0-02-macos-latest-evidence", "artifact_id": 9258200594, "size_bytes": 1609, "digest": "sha256:e2f181a75a839f034b84af8b3529f34d2f1c1b3157006ee8f565fee64101d73b"},
-        {"name": "r0-02-ubuntu-latest-evidence", "artifact_id": 9258199420, "size_bytes": 1609, "digest": "sha256:6b350cf3da3292c73b84483a896d64ac0a6e3e9079f74a40fcda23b9e1fe6c1f"}
+        {"os": "windows-latest", "artifact_id": 9258390393, "size_bytes": 1609, "digest": "sha256:f9d0a515502ea7e42a1f7977d36796f3fa9793dd4afe3d4cbadbee1d4faf2893"},
+        {"os": "ubuntu-latest", "artifact_id": 9258357569, "size_bytes": 1609, "digest": "sha256:3c7449790520f9bcfddc75bf606a99f467d3e66fa0f98caee4d6365c134cca77"},
+        {"os": "macos-latest", "artifact_id": 9258355764, "size_bytes": 1609, "digest": "sha256:3d2efb36f18d5ca22bf6078a4776d0c7a7ca72a08c2c52018a7b44005a7ebeaf"}
       ]
     },
     {
       "name": "CI",
-      "run_id": 31927168409,
-      "url": "https://github.com/Kkb113/CineKernel/actions/runs/31927168409",
-      "head_sha": "ca6b4dc85d66ef1d5d9c456dd3173776a0c448b8",
-      "conclusion": "success",
-      "jobs": [
-        {"os": "ubuntu-latest", "job_id": 95116435113, "conclusion": "success"},
-        {"os": "windows-latest", "job_id": 95116435166, "conclusion": "success"},
-        {"os": "macos-latest", "job_id": 95116435218, "conclusion": "success"}
-      ]
+      "run_id": 31927730849,
+      "url": "https://github.com/Kkb113/CineKernel/actions/runs/31927730849",
+      "head_sha": "6e7ff3d6016829357bb7f804dd916e6f7e796a64",
+      "conclusion": "success"
     }
+  ],
+  "closure_requirements": [
+    "dedicated workflow succeeds on Windows, Ubuntu, and macOS at closure_head",
+    "ordinary CI succeeds on Windows, Ubuntu, and macOS at closure_head",
+    "three nonempty exact-head raw-evidence artifacts are recorded",
+    "an independent reviewer explicitly approves before merge",
+    "post-merge tree equals the independently approved closure tree"
   ],
   "r0_01_immutability": {
     "method": "unchanged verifier executed in a detached exact-base worktree on every dedicated R0.02 operating-system job",

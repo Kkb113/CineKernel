@@ -13,6 +13,9 @@
           "items": {
             "additionalProperties": false,
             "properties": {
+              "agent_informed": {
+                "type": "boolean"
+              },
               "behavior": {
                 "enum": [
                   "HARD_ERROR",
@@ -26,6 +29,7 @@
                   "APPROXIMATION",
                   "MALFORMED_VALUE_DROPPED",
                   "ASYNC_RETRY_OR_REPAINT",
+                  "BEST_EFFORT_MATERIALIZATION",
                   "UNSUPPORTED",
                   "UNKNOWN"
                 ],
@@ -37,6 +41,16 @@
               },
               "diagnostic_code_or_message_class": {
                 "minLength": 1,
+                "type": "string"
+              },
+              "diagnostic_visibility": {
+                "enum": [
+                  "STRUCTURED_DIAGNOSTIC",
+                  "STDERR_ONLY",
+                  "UI_STATUS_ONLY",
+                  "SILENT_STATE_DEMOTION",
+                  "SILENT_SKIP"
+                ],
                 "type": "string"
               },
               "id": {
@@ -78,6 +92,9 @@
                 "minLength": 1,
                 "type": "string"
               },
+              "user_informed": {
+                "type": "boolean"
+              },
               "user_or_agent_informed": {
                 "type": "boolean"
               },
@@ -91,21 +108,24 @@
               }
             },
             "required": [
-              "behavior",
-              "determinism_impact",
-              "diagnostic_code_or_message_class",
               "id",
-              "preview_export_difference",
-              "quality_reducing",
-              "repairability",
-              "semantic_impact",
-              "source_refs",
               "surface",
-              "timing_impact",
               "trigger",
+              "behavior",
+              "diagnostic_visibility",
+              "user_informed",
+              "agent_informed",
               "user_or_agent_informed",
+              "diagnostic_code_or_message_class",
+              "semantic_impact",
+              "visual_outcome",
               "visual_impact",
-              "visual_outcome"
+              "timing_impact",
+              "determinism_impact",
+              "preview_export_difference",
+              "repairability",
+              "quality_reducing",
+              "source_refs"
             ],
             "type": "object"
           },

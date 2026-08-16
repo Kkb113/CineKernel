@@ -85,6 +85,10 @@ pub fn validate(model: &Value) -> Result<()> {
             .as_array()
             .context("edges missing")?,
     )?;
+    network_materialization_graph(
+        model["architecture_nodes"].as_array().unwrap(),
+        model["architecture_edges"].as_array().unwrap(),
+    )?;
     semantics(
         model["semantic_preservation"]
             .as_array()
@@ -94,6 +98,16 @@ pub fn validate(model: &Value) -> Result<()> {
         model["validation_and_fallbacks"]
             .as_array()
             .context("fallbacks missing")?,
+    )?;
+    state_ownership(
+        model["state_and_time"]["state_records"]
+            .as_array()
+            .context("state records missing")?,
+    )?;
+    preview_export(
+        model["preview_export_parity"]
+            .as_array()
+            .context("preview/export rows missing")?,
     )?;
     requirements(
         model["candidate_requirements"]
@@ -126,6 +140,67 @@ pub fn validate(model: &Value) -> Result<()> {
         model["candidate_requirements"].as_array().unwrap(),
         "requirement_id",
     )?;
+    Ok(())
+}
+
+pub fn network_materialization_graph(nodes: &[Value], edges: &[Value]) -> Result<()> {
+    let prepass = nodes
+        .iter()
+        .find(|node| node["id"] == "N-PREPASSES")
+        .context("materialization prepass node missing")?;
+    if !has(prepass, "source_refs", "S-EVID-CLI-MATERIALIZE") {
+        bail!("network materialization is absent from the prepass node")
+    }
+    let edge = edges
+        .iter()
+        .find(|edge| edge["id"] == "AE-10")
+        .context("materialization prepass edge missing")?;
+    if !req(edge, "validation")?.contains("remote GET")
+        || !req(edge, "semantic_disposition")?.contains("temporary files")
+    {
+        bail!("network materialization boundary is absent from the graph")
+    }
+    Ok(())
+}
+
+pub fn state_ownership(rows: &[Value]) -> Result<()> {
+    for row in rows {
+        for field in [
+            "state_id",
+            "representation",
+            "owner_scope",
+            "created_by",
+            "versioned",
+            "concurrency_status",
+            "authority",
+            "mutability",
+            "reentrancy",
+        ] {
+            req(row, field)?;
+        }
+        refs(row)?;
+    }
+    Ok(())
+}
+
+pub fn preview_export(rows: &[Value]) -> Result<()> {
+    let mut differences = BTreeSet::new();
+    for row in rows {
+        for field in [
+            "feature",
+            "preview_path",
+            "export_path",
+            "parity_class",
+            "known_difference",
+            "certification_impact",
+        ] {
+            req(row, field)?;
+        }
+        if !differences.insert(req(row, "known_difference")?) {
+            bail!("preview/export rows reuse a generic known difference")
+        }
+        refs(row)?;
+    }
     Ok(())
 }
 
@@ -173,6 +248,7 @@ pub fn graph(nodes: &[Value], edges: &[Value]) -> Result<()> {
 }
 
 pub fn semantics(rows: &[Value]) -> Result<()> {
+    let mut tuples = BTreeSet::new();
     for row in rows {
         for field in [
             "source_representation",
@@ -191,6 +267,16 @@ pub fn semantics(rows: &[Value]) -> Result<()> {
             bail!("unresolved semantic row cannot be high confidence")
         }
         refs(row)?;
+        let tuple = format!(
+            "{}|{}|{}|{}",
+            req(row, "source_representation")?,
+            req(row, "target_representation")?,
+            req(row, "change_stage")?,
+            req(row, "disposition")?
+        );
+        if !tuples.insert(tuple) {
+            bail!("semantic concepts reuse the same source/target/stage/disposition tuple")
+        }
     }
     Ok(())
 }
@@ -207,8 +293,29 @@ pub fn fallbacks(rows: &[Value]) -> Result<()> {
             "determinism_impact",
             "preview_export_difference",
             "repairability",
+            "diagnostic_visibility",
         ] {
             req(row, field)?;
+        }
+        let visibility = req(row, "diagnostic_visibility")?;
+        if !matches!(
+            visibility,
+            "STRUCTURED_DIAGNOSTIC"
+                | "STDERR_ONLY"
+                | "UI_STATUS_ONLY"
+                | "SILENT_STATE_DEMOTION"
+                | "SILENT_SKIP"
+        ) {
+            bail!("invalid diagnostic visibility")
+        }
+        if matches!(visibility, "SILENT_STATE_DEMOTION" | "SILENT_SKIP")
+            && (row["user_informed"].as_bool() != Some(false)
+                || row["agent_informed"].as_bool() != Some(false))
+        {
+            bail!("silent fallback cannot claim informed user or agent")
+        }
+        if visibility == "SILENT_STATE_DEMOTION" && row["agent_informed"].as_bool() != Some(false) {
+            bail!("renderer state demotion is not an agent diagnostic")
         }
         if row["quality_reducing"].as_bool() == Some(true) && req(row, "visual_impact")?.is_empty()
         {
@@ -220,6 +327,13 @@ pub fn fallbacks(rows: &[Value]) -> Result<()> {
             bail!("silent fallback mislabeled as diagnostic")
         }
         refs(row)?;
+    }
+    if !rows.iter().any(|row| {
+        row["surface"].as_str() == Some("native render materialization prepass")
+            && row["behavior"].as_str() == Some("BEST_EFFORT_MATERIALIZATION")
+            && row["diagnostic_visibility"].as_str() == Some("STDERR_ONLY")
+    }) {
+        bail!("network materialization boundary is missing")
     }
     Ok(())
 }
@@ -399,6 +513,13 @@ pub fn novel_scenes(rows: &[Value]) -> Result<()> {
         {
             bail!("novel scene capability row lacks required primitive")
         }
+        if matches!(
+            row.get("litmus_id").and_then(Value::as_str),
+            Some("LITMUS-CITY" | "LITMUS-SPACECRAFT")
+        ) && decomposition.len() < 5
+        {
+            bail!("secondary novel scene requires a per-capability decomposition")
+        }
         if row.get("litmus_id").and_then(Value::as_str) == Some("LITMUS-LAPTOP") {
             let segmentation = decomposition
                 .iter()
@@ -490,7 +611,7 @@ mod tests {
         json!({"source_representation":"a","target_representation":"b","disposition":"DROPPED","editing_impact":"x","diagnostic_impact":"x","agent_repair_impact":"x","incremental_compilation_impact":"x","confidence":"MEDIUM","source_refs":["S-X"]})
     }
     fn fallback() -> Value {
-        json!({"trigger":"x","behavior":"APPROXIMATION","visual_outcome":"x","semantic_impact":"x","visual_impact":"x","timing_impact":"x","determinism_impact":"x","preview_export_difference":"x","repairability":"x","quality_reducing":true,"user_or_agent_informed":true,"source_refs":["S-X"]})
+        json!({"surface":"native render materialization prepass","trigger":"x","behavior":"BEST_EFFORT_MATERIALIZATION","diagnostic_visibility":"STDERR_ONLY","visual_outcome":"x","semantic_impact":"x","visual_impact":"x","timing_impact":"x","determinism_impact":"x","preview_export_difference":"x","repairability":"x","quality_reducing":true,"user_or_agent_informed":true,"user_informed":true,"agent_informed":true,"source_refs":["S-X"]})
     }
     fn requirement() -> Value {
         json!({"requirement_id":"CK-R002-REQ-001","status":"CANDIDATE_ONLY","abstract_requirement":"x","problem_addressed":"x","quality_impact":"x","trust_impact":"x","performance_impact":"x","creative_programming_impact":"x","prohibited_reuse_note":"x","onda_observation_refs":["C-001"],"onda_source_refs":["S-X"],"independent_primary_source_refs":["E-X"],"affected_cinekernel_programs":["P01"],"required_follow_up_research":["R0.03"]})
@@ -548,6 +669,13 @@ mod tests {
         assert!(graph(&[n], &[]).is_err())
     }
     #[test]
+    fn network_materialization_must_be_in_graph_prepass() {
+        let nodes = [json!({"id":"N-PREPASSES","source_refs":["S-X"]})];
+        let edges =
+            [json!({"id":"AE-10","validation":"media only","semantic_disposition":"resolved"})];
+        assert!(network_materialization_graph(&nodes, &edges).is_err());
+    }
+    #[test]
     fn semantic_rejects_missing_source() {
         let mut r = semantic();
         r.as_object_mut().unwrap().remove("source_representation");
@@ -602,6 +730,32 @@ mod tests {
         r["behavior"] = json!("WARNING");
         r["user_or_agent_informed"] = json!(false);
         assert!(fallbacks(&[r]).is_err())
+    }
+    #[test]
+    fn silent_font_failure_cannot_be_structured_or_informed() {
+        let mut r = fallback();
+        r["surface"] = json!("Player font bridge");
+        r["diagnostic_visibility"] = json!("SILENT_SKIP");
+        r["user_informed"] = json!(true);
+        assert!(fallbacks(&[r]).is_err());
+    }
+    #[test]
+    fn renderer_state_demotion_cannot_be_an_agent_diagnostic() {
+        let mut r = fallback();
+        r["diagnostic_visibility"] = json!("SILENT_STATE_DEMOTION");
+        r["user_informed"] = json!(false);
+        r["agent_informed"] = json!(true);
+        assert!(fallbacks(&[r]).is_err());
+    }
+    #[test]
+    fn network_materialization_is_required() {
+        let mut r = fallback();
+        r["surface"] = json!("another boundary");
+        assert!(fallbacks(&[r]).is_err());
+    }
+    #[test]
+    fn semantic_concepts_cannot_share_one_generic_tuple() {
+        assert!(semantics(&[semantic(), semantic()]).is_err());
     }
     #[test]
     fn requirement_rejects_missing_onda_evidence() {

@@ -205,12 +205,49 @@
         "asset_truthfulness": "external assets must be declared and cannot be inferred as physically accurate",
         "capability_decomposition": [
           {
-            "dimension": "overall primitive sufficiency",
-            "evidence_scope": "The cited Scene and React surfaces establish finite composition primitives, not a general solution for every requested visual or physical behavior.",
-            "required_primitive": "inspectable scene-specific primitive composition",
+            "dimension": "data-driven tower hierarchy",
+            "evidence_scope": "Host-language React can procedurally emit finite Scene nodes from data.",
+            "required_primitive": "repeatable groups, shapes, and transforms",
             "source_refs": [
-              "S-SCENE",
-              "S-REACT-LOWER"
+              "S-EVID-REACT-HOST",
+              "S-EVID-SCENE-NODES"
+            ],
+            "status": "SUPPORTED_OR_COMPOSABLE"
+          },
+          {
+            "dimension": "revenue-to-geometry mapping",
+            "evidence_scope": "Per-frame host-language evaluation can compute renderer-facing numeric properties.",
+            "required_primitive": "numeric mapping into size and placement",
+            "source_refs": [
+              "S-EVID-REACT-LOWER"
+            ],
+            "status": "SUPPORTED_OR_COMPOSABLE"
+          },
+          {
+            "dimension": "transmissive glass material",
+            "evidence_scope": "The finite NodeKind evidence does not establish a general physically based glass material.",
+            "required_primitive": "refractive/transmissive material with thickness",
+            "source_refs": [
+              "S-EVID-SCENE-NODES"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "city-scale lighting and reflections",
+            "evidence_scope": "Camera and finite effects do not prove general scene lighting or reflection probes.",
+            "required_primitive": "general lights, reflection environment, and shadows",
+            "source_refs": [
+              "S-EVID-SCENE-NODES"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "semantic chart inspectability",
+            "evidence_scope": "Scene values remain inspectable, but chart semantics and source provenance are not retained after lowering.",
+            "required_primitive": "retained data-series and metric identity",
+            "source_refs": [
+              "S-EVID-REACT-LOWER",
+              "S-EVID-SCENE-DOCUMENT"
             ],
             "status": "PARTIAL_OR_NOT_ESTABLISHED"
           }
@@ -263,12 +300,60 @@
         "asset_truthfulness": "external assets must be declared and cannot be inferred as physically accurate",
         "capability_decomposition": [
           {
-            "dimension": "overall primitive sufficiency",
-            "evidence_scope": "The cited Scene and React surfaces establish finite composition primitives, not a general solution for every requested visual or physical behavior.",
-            "required_primitive": "inspectable scene-specific primitive composition",
+            "dimension": "spacecraft part hierarchy",
+            "evidence_scope": "Manually supplied or procedurally generated finite geometry can be grouped and transformed.",
+            "required_primitive": "nested geometry and transforms",
             "source_refs": [
-              "S-SCENE",
-              "S-REACT-LOWER"
+              "S-EVID-REACT-HOST",
+              "S-EVID-SCENE-NODES"
+            ],
+            "status": "SUPPORTED_OR_COMPOSABLE"
+          },
+          {
+            "dimension": "title-to-hull deformation",
+            "evidence_scope": "Finite path/text primitives do not establish automatic semantic deformation into a spacecraft hull.",
+            "required_primitive": "inspectable text/mesh deformation mapping",
+            "source_refs": [
+              "S-EVID-SCENE-NODES"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "liquid simulation",
+            "evidence_scope": "Host-language frame logic can author values, but no general fluid solver is established.",
+            "required_primitive": "time-evolving fluid surface simulation",
+            "source_refs": [
+              "S-EVID-REACT-LOWER",
+              "S-EVID-SCENE-NODES"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "chrome reflections",
+            "evidence_scope": "The cited renderer-facing vocabulary does not prove physically based chrome reflection.",
+            "required_primitive": "reflective material and environment lighting",
+            "source_refs": [
+              "S-EVID-SCENE-NODES"
+            ],
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
+          },
+          {
+            "dimension": "camera and authored timing",
+            "evidence_scope": "Explicit camera/transform values and host-language frame evaluation are available.",
+            "required_primitive": "camera fields, transforms, and per-frame evaluation",
+            "source_refs": [
+              "S-EVID-REACT-LOWER",
+              "S-EVID-SCENE-NODES"
+            ],
+            "status": "SUPPORTED_OR_COMPOSABLE"
+          },
+          {
+            "dimension": "source editability",
+            "evidence_scope": "Final Scene remains value-editable but does not preserve source-level semantic provenance.",
+            "required_primitive": "retained semantic source map for title, hull, and material intent",
+            "source_refs": [
+              "S-EVID-SCENE-DOCUMENT",
+              "S-EVID-REACT-LOWER"
             ],
             "status": "PARTIAL_OR_NOT_ESTABLISHED"
           }
@@ -321,5 +406,5 @@
   },
   "generated_at": "2026-08-16T00:00:00Z",
   "model_ref": "R0_02_RESEARCH_MODEL.json",
-  "schema_version": "r0.02.3"
+  "schema_version": "r0.02.4"
 }

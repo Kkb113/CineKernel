@@ -11,7 +11,7 @@
 
 ## 1. Executive status
 
-PASS. The exact remediation evidence commit passed the dedicated R0.02 workflow and ordinary CineKernel CI on Windows, Ubuntu, and macOS, with three nonempty raw-evidence artifacts.
+CONDITIONAL PASS — NOT LOCKED. The merged research tree is retained, but this independent-review closure branch requires exact-head three-OS evidence and explicit reviewer approval before R0.02 can lock.
 
 ## 2. CineKernel base revision
 
@@ -23,7 +23,7 @@ The only authority is the frozen R0.01 `UPSTREAM_LOCK.json`: repository `https:/
 
 ## 4. Branch and commits
 
-Branch `research/r0.02-onda-scene-compiler-archaeology`; PR #13 remains draft and unmerged. Existing commits are recorded in the reviewer packet; the final attestation distinguishes the evidence commit from any later documentation-only commit.
+PR #13 was merged before independent approval: branch head `6e7ff3d6016829357bb7f804dd916e6f7e796a64`, master merge commit `12024231b8983b07d9413cf96f4579bd9495f946`, common research tree `e01b2fe87d409e34f509847cdd66214d174eb0d6`. This corrective work is on `research/r0.02-independent-review-closure`; its exact evidence head remains pending until publication.
 
 ## 5. Clean-room confirmation
 
@@ -31,7 +31,7 @@ ONDA was inspected statically and never built, executed, tested, rendered, or be
 
 ## 6. Source coverage
 
-50 pinned ONDA files are fully verified and 3 official external references are indexed separately. All mandatory paths are present.
+74 pinned ONDA source records and 3 official external references are indexed. Mandatory whole-file entries are COVERAGE_ONLY; only narrow symbol-and-line entries marked CLAIM_SUPPORTING may satisfy formal claims.
 
 ## 7. Authoring surfaces discovered
 
@@ -63,11 +63,11 @@ Scene is authoritative at the renderer boundary, not at the high-level authoring
 
 ## 14. State ownership
 
-12 state records identify authority, scope, mutability, sharing, persistence, provenance, and reentrancy.
+12 state records identify creation, versioning, authority, scope, mutability, sharing, persistence, provenance, and evidence-backed concurrency status.
 
 ## 15. Mutability and reentrancy
 
-Fresh React roots isolate host trees; global frame/DOF state, shared GPU coordination, caches, and external media clocks require explicit serialization or further proof.
+Fresh React roots isolate host trees; global frame/DOF state, shared GPU coordination, caches, and external media clocks retain evidence-backed UNKNOWN or UNRESOLVED concurrency where safety is not proved.
 
 ## 16. Time ownership
 
@@ -79,7 +79,7 @@ Fresh React roots isolate host trees; global frame/DOF state, shared GPU coordin
 
 ## 18. Lowering and semantic preservation
 
-31 semantic rows record disposition, stage, reversibility, and editing/diagnostic/repair/incremental impacts.
+31 individually mapped semantic rows record exact source/target representations, disposition, stage, reversibility, and editing/diagnostic/repair/incremental impacts.
 
 ## 19. Information loss
 
@@ -87,15 +87,15 @@ Roles, labels, registry names, React keys, choreography names, transition names,
 
 ## 20. Validation and error behavior
 
-21 failure/fallback records cover every mandatory behavior and explicitly state diagnosis, semantic/visual/timing/determinism impact, parity difference, and repairability.
+22 failure/fallback records distinguish structured, stderr, UI-only, silent demotion, and silent-skip visibility and include the native network materialization boundary.
 
 ## 21. Fallbacks and approximations
 
-Fallbacks include warnings, omission, placeholders, default substitution, asynchronous repaint, GPU-to-CPU demotion, and Canvas approximation; quality reduction is recorded explicitly.
+Bad preview fonts and failed preview images are silently skipped; GPU/CPU failures silently demote renderer state without an agent diagnostic; native remote media is best-effort materialized to temporary files and failed URLs are retained after stderr notice for decoder skip.
 
 ## 22. Preview/export parity
 
-7 preview/export rows distinguish shared evaluation from browser/native media, scheduling, renderer, and fallback differences.
+7 preview/export rows carry feature-specific differences, certification impact, and focused source references.
 
 ## 23. Serialization and versioning
 
@@ -143,7 +143,7 @@ Official React, MLIR, and GStreamer sources provide independent comparisons for 
 
 ## 34. Automated tests
 
-73 fixture-driven unit and mutation tests pass, including authoritative ONDA crate identities and lockfiles, roadmap drift, categorical creative states, candidate status, graph/schema integrity, provenance, clean-room copying, stable ordering, and deterministic generation.
+82 fixture-driven unit and mutation tests cover source evidence roles, symbol-in-range validation, semantic tuple independence, silent fallback visibility, renderer demotion, network materialization in the graph/prepass, independently required schema contracts, exact-head attestation, architecture contracts, provenance, clean-room copying, stable ordering, and deterministic generation.
 
 ## 35. Deterministic generation
 
@@ -151,7 +151,7 @@ The report command generates 16 machine projections, 20 human reports, and 17 sc
 
 ## 36. Remote reproduction
 
-Evidence commit `ca6b4dc85d66ef1d5d9c456dd3173776a0c448b8` passed dedicated run `31927165059` and ordinary CI run `31927168409` on Windows, Ubuntu, and macOS. Three nonempty raw-evidence artifacts and their SHA-256 digests are recorded in the attestation.
+Historical final PR head `6e7ff3d6016829357bb7f804dd916e6f7e796a64` passed dedicated run `31927730892` and ordinary CI `31927730849` on Windows, Ubuntu, and macOS. Because this closure changes executable verifier/model code, new exact-closure-head runs and artifacts are mandatory and still pending.
 
 ## 37. Phase 0 and R0.01 immutability
 
@@ -159,4 +159,4 @@ No Phase 0 or R0.01 frozen file is modified. The R0.01 verifier is executed from
 
 ## 38. Recommendation for R0.03
 
-Keep PR #13 draft and unmerged. Do not start R0.03 until closure-head three-OS evidence and ordinary CI succeed and the reviewer grants final sign-off.
+Do not start R0.03. Publish this focused closure as a new review PR, obtain exact-head dedicated and ordinary three-OS success, require explicit independent approval before merge, and verify post-merge tree equality.

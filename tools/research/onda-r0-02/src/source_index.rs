@@ -60,8 +60,11 @@ pub const MANDATORY_PATHS: &[&str] = &[
 #[derive(Debug, PartialEq, Eq)]
 pub struct InventoryCounts {
     pub onda_files: usize,
+    pub onda_records: usize,
     pub external_references: usize,
 }
+
+const EVIDENCE_ROLES: &[&str] = &["COVERAGE_ONLY", "CLAIM_SUPPORTING"];
 
 pub fn remediate(root: &Path, model: &mut Value, lock: &UpstreamLock) -> Result<()> {
     let checkout = root.join(".cinekernel/upstreams/onda");
@@ -71,7 +74,11 @@ pub fn remediate(root: &Path, model: &mut Value, lock: &UpstreamLock) -> Result<
         .clone();
     let mut normalized = Vec::new();
     let mut paths = BTreeSet::new();
+    let mut source_ids = BTreeSet::new();
     for source in old {
+        if let Some(id) = source.get("source_id").and_then(Value::as_str) {
+            source_ids.insert(id.to_owned());
+        }
         if let Some(path) = source.get("path").and_then(Value::as_str) {
             paths.insert(path.to_owned());
             normalized.push(local_record(&checkout, lock, path, Some(&source))?);
@@ -83,6 +90,25 @@ pub fn remediate(root: &Path, model: &mut Value, lock: &UpstreamLock) -> Result<
         if paths.insert((*path).to_owned()) {
             normalized.push(local_record(&checkout, lock, path, None)?);
         }
+    }
+    for (id, path, symbol, start, end, fact) in CLAIM_EVIDENCE {
+        if !source_ids.insert((*id).to_owned()) {
+            continue;
+        }
+        normalized.push(local_record(
+            &checkout,
+            lock,
+            path,
+            Some(&json!({
+                "source_id": id,
+                "path": path,
+                "symbol_or_section": symbol,
+                "start_line": start,
+                "end_line": end,
+                "evidence_role": "CLAIM_SUPPORTING",
+                "facts_supported": [fact]
+            })),
+        )?);
     }
     normalized.sort_by(|a, b| {
         a["source_id"]
@@ -101,7 +127,7 @@ pub fn verify(root: &Path, sources: &[Value], lock: &UpstreamLock) -> Result<Inv
     let checkout = root.join(".cinekernel/upstreams/onda");
     let mut ids = BTreeSet::new();
     let mut paths = BTreeSet::new();
-    let mut onda_files = 0;
+    let mut onda_records = 0;
     let mut external_references = 0;
     for source in sources {
         let id = source["source_id"].as_str().context("source_id missing")?;
@@ -124,7 +150,7 @@ pub fn verify(root: &Path, sources: &[Value], lock: &UpstreamLock) -> Result<Inv
                 | "UPSTREAM_MANIFEST"
                 | "UPSTREAM_DOCUMENTATION",
             ) => {
-                onda_files += 1;
+                onda_records += 1;
                 verify_local(&checkout, source, lock)?;
                 paths.insert(
                     source["path"]
@@ -143,7 +169,8 @@ pub fn verify(root: &Path, sources: &[Value], lock: &UpstreamLock) -> Result<Inv
         }
     }
     Ok(InventoryCounts {
-        onda_files,
+        onda_files: paths.len(),
+        onda_records,
         external_references,
     })
 }
@@ -179,17 +206,27 @@ fn local_record(
         let ranges = previous
             .and_then(|p| p.get("line_ranges"))
             .and_then(Value::as_array);
-        let start = ranges
-            .and_then(|r| r.first())
-            .and_then(Value::as_array)
-            .and_then(|r| r.first())
+        let start = previous
+            .and_then(|p| p.get("start_line"))
             .and_then(Value::as_u64)
+            .or_else(|| {
+                ranges
+                    .and_then(|r| r.first())
+                    .and_then(Value::as_array)
+                    .and_then(|r| r.first())
+                    .and_then(Value::as_u64)
+            })
             .unwrap_or(1) as usize;
-        let end = ranges
-            .and_then(|r| r.first())
-            .and_then(Value::as_array)
-            .and_then(|r| r.get(1))
+        let end = previous
+            .and_then(|p| p.get("end_line"))
             .and_then(Value::as_u64)
+            .or_else(|| {
+                ranges
+                    .and_then(|r| r.first())
+                    .and_then(Value::as_array)
+                    .and_then(|r| r.get(1))
+                    .and_then(Value::as_u64)
+            })
             .unwrap_or(line_count as u64) as usize;
         (start.min(line_count).max(1), end.min(line_count).max(start))
     };
@@ -203,6 +240,10 @@ fn local_record(
         .and_then(Value::as_array)
         .cloned()
         .unwrap_or_else(|| vec![Value::String(mandatory_fact(path).into())]);
+    let evidence_role = previous
+        .and_then(|p| p.get("evidence_role"))
+        .and_then(Value::as_str)
+        .unwrap_or("COVERAGE_ONLY");
     Ok(json!({
         "source_id": source_id,
         "repository": lock.repository,
@@ -215,9 +256,37 @@ fn local_record(
         "end_line": end_line,
         "file_sha256": sha256(&bytes),
         "classification": classification(path),
+        "evidence_role": evidence_role,
         "facts_supported": facts
     }))
 }
+
+const CLAIM_EVIDENCE: &[(&str, &str, &str, u64, u64, &str)] = &[
+    ("S-EVID-AUDIO-CLOCK", "packages/player/src/audio-engine.ts", "export class PreviewAudio", 40, 226, "Preview audio owns an AudioContext clock, fetch/decode cache, and scheduling state."),
+    ("S-EVID-CANVAS-APPROX", "packages/player/src/canvas-renderer.ts", "export function drawScene", 23, 197, "Canvas2D draws only an approximate subset of Scene semantics."),
+    ("S-EVID-CINEMA-BUILD", "packages/cinema/src/index.tsx", "export function buildComposition", 763, 960, "Cinema consumes high-level payload concepts while building React elements."),
+    ("S-EVID-CINEMA-INSPECT", "packages/cinema/src/inspect/index.ts", "export function inspect", 76, 121, "The inspector is a parallel semantic analysis surface over a Cinema payload."),
+    ("S-EVID-CINEMA-RESOLVE", "packages/cinema/src/inspect/resolve.ts", "export function resolveComposition", 67, 179, "Cinema inspection retains resolved scene, entry, role, and transition identity."),
+    ("S-EVID-CINEMA-TYPES", "packages/cinema/src/types.ts", "export interface CompositionPayload", 70, 261, "Cinema types define roles, ids, choreography, transitions, brand, and finish intent."),
+    ("S-EVID-CLI-MATERIALIZE", "packages/cli-rs/src/main.rs", "fn materialize_src", 33, 124, "Native render prepasses best-effort fetch remote media to temporary files and retain failed URLs."),
+    ("S-EVID-CLI-RENDER", "packages/cli-rs/src/main.rs", "fn render_scene_file", 2715, 2750, "Native render deserializes Scene and applies ordered materialization and decode prepasses."),
+    ("S-EVID-IMAGE-PREPASS", "packages/image-rs/src/lib.rs", "pub fn load_images", 64, 280, "Image loading clones and rewrites Scene image nodes and skips unresolved remote sources."),
+    ("S-EVID-LAYOUT-PREPASS", "packages/layout-rs/src/lib.rs", "pub fn layout", 31, 120, "Layout clones a Scene and materializes computed placement."),
+    ("S-EVID-NODE-EXPORT", "packages/render/src/index.ts", "export async function renderToFile", 56, 183, "Node export materializes frames and fonts in a temporary directory before invoking the CLI."),
+    ("S-EVID-PLAYER-FALLBACK", "packages/player/src/player.tsx", "const mode = useMemo", 215, 489, "Player silently demotes failed GPU/CPU engines through state and may expose only a UI backend badge."),
+    ("S-EVID-PLAYER-FONT", "packages/player/src/player.tsx", "function ensureFontsLoaded", 55, 83, "Preview font loading catches and silently skips a bad font."),
+    ("S-EVID-PLAYER-IMAGE", "packages/player/src/images.ts", "export function resolveImageUrl", 9, 89, "Preview image fetch failures are cached silently and unresolved images remain skipped."),
+    ("S-EVID-REACT-HOST", "packages/react/src/host-config.ts", "export interface HostNode", 12, 204, "The custom reconciler commits a mutable finite HostNode tree."),
+    ("S-EVID-REACT-LOWER", "packages/react/src/reconciler.ts", "export function renderFrame", 33, 182, "Every requested frame creates, lowers, unmounts, and discards a fresh React root; batch export accumulates Scenes."),
+    ("S-EVID-REACT-REGISTRY", "packages/react/src/fonts.ts", "export function registerFont", 12, 49, "The module-level font registry is append-only until explicitly cleared."),
+    ("S-EVID-REACT-WARMERS", "packages/react/src/warmers.ts", "export function registerEngineWarmer", 10, 23, "The module-level engine-warmer registry is shared mutable state."),
+    ("S-EVID-SCENE-NODES", "packages/scene-rs/src/lib.rs", "pub enum NodeKind", 675, 845, "Scene exposes a finite renderer-facing NodeKind vocabulary."),
+    ("S-EVID-SCENE-DOCUMENT", "packages/scene-rs/src/lib.rs", "pub struct Scene", 1929, 1950, "Typed Rust and serialized JSON converge on the Scene document."),
+    ("S-EVID-SVG-PREPASS", "packages/svg-rs/src/lib.rs", "pub fn expand_svg", 87, 160, "SVG expansion rewrites source nodes into renderer-facing nodes."),
+    ("S-EVID-VIDEO-PREVIEW", "packages/player/src/video.ts", "export async function resolveVideoFrames", 46, 277, "Browser preview video uses shared caches, media elements, warnings, and frame extraction."),
+    ("S-EVID-WASM-CPU", "packages/wasm/src/lib.rs", "pub struct OndaEngine", 177, 249, "The CPU WASM boundary deserializes and prepasses the same Scene contract."),
+    ("S-EVID-WASM-GPU", "packages/wasm-vello/src/lib.rs", "pub struct VelloEngine", 104, 175, "The WebGPU WASM boundary deserializes the Scene contract and renders asynchronously."),
+];
 
 fn external_record(previous: &Value) -> Result<Value> {
     let id = previous
@@ -236,6 +305,7 @@ fn external_record(previous: &Value) -> Result<Value> {
         "document_url": previous.get("url").or_else(||previous.get("document_url")).and_then(Value::as_str).context("external URL missing")?,
         "accessed_at_utc": previous.get("accessed_at").or_else(||previous.get("accessed_at_utc")).and_then(Value::as_str).context("access time missing")?,
         "section": previous.get("section").and_then(Value::as_str).context("external section missing")?,
+        "evidence_role": previous.get("evidence_role").and_then(Value::as_str).unwrap_or("CLAIM_SUPPORTING"),
         "facts_supported": previous.get("facts").or_else(||previous.get("facts_supported")).and_then(Value::as_array).context("external facts missing")?
     }))
 }
@@ -277,8 +347,48 @@ fn verify_local(checkout: &Path, source: &Value, lock: &UpstreamLock) -> Result<
     let symbol = source["symbol_or_section"]
         .as_str()
         .context("symbol_or_section missing")?;
-    if symbol != "WHOLE_FILE" && !text.contains(symbol) {
-        bail!("source {id} symbol or section is absent: {symbol}")
+    let role = source["evidence_role"]
+        .as_str()
+        .context("evidence_role missing")?;
+    if !EVIDENCE_ROLES.contains(&role) {
+        bail!("source {id} has invalid evidence role {role}")
+    }
+    if role == "CLAIM_SUPPORTING" && symbol == "WHOLE_FILE" {
+        bail!("claim-supporting source {id} cannot use WHOLE_FILE")
+    }
+    if symbol != "WHOLE_FILE" && !symbol_in_range(text, start, end, symbol) {
+        bail!("source {id} symbol or section is outside recorded line range: {symbol}")
+    }
+    Ok(())
+}
+
+fn symbol_in_range(text: &str, start: u64, end: u64, symbol: &str) -> bool {
+    text.lines()
+        .skip((start - 1) as usize)
+        .take((end - start + 1) as usize)
+        .any(|line| line.contains(symbol))
+}
+
+pub fn verify_claim_evidence(sources: &[Value], claims: &[Value]) -> Result<()> {
+    let claim_supporting: BTreeSet<_> = sources
+        .iter()
+        .filter(|source| source["evidence_role"].as_str() == Some("CLAIM_SUPPORTING"))
+        .filter_map(|source| source["source_id"].as_str())
+        .collect();
+    for claim in claims {
+        let id = claim["claim_id"].as_str().context("claim_id missing")?;
+        let refs = claim["source_refs"]
+            .as_array()
+            .context("claim source_refs missing")?;
+        if refs.is_empty()
+            || refs.iter().any(|reference| {
+                reference
+                    .as_str()
+                    .is_none_or(|reference| !claim_supporting.contains(reference))
+            })
+        {
+            bail!("claim {id} cites coverage-only or unknown evidence")
+        }
     }
     Ok(())
 }
@@ -369,5 +479,19 @@ mod tests {
         assert_eq!(classification("x.test.tsx"), "UPSTREAM_TEST");
         assert_eq!(classification("package.json"), "UPSTREAM_MANIFEST");
         assert_eq!(classification("x.ts"), "UPSTREAM_SOURCE");
+    }
+
+    #[test]
+    fn coverage_only_source_cannot_support_a_claim() {
+        let sources = vec![json!({"source_id":"S-X","evidence_role":"COVERAGE_ONLY"})];
+        let claims = vec![json!({"claim_id":"C-001","source_refs":["S-X"]})];
+        assert!(verify_claim_evidence(&sources, &claims).is_err());
+    }
+
+    #[test]
+    fn symbol_outside_recorded_line_range_fails() {
+        let text = "first\ntarget_symbol\nthird\n";
+        assert!(!symbol_in_range(text, 3, 3, "target_symbol"));
+        assert!(symbol_in_range(text, 2, 2, "target_symbol"));
     }
 }

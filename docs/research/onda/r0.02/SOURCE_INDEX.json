@@ -7,6 +7,7 @@
         "classification": "PRIMARY_STANDARD",
         "document_title": "Design overview",
         "document_url": "https://gstreamer.freedesktop.org/documentation/additional/design/overview.html",
+        "evidence_role": "CLAIM_SUPPORTING",
         "facts_supported": [
           "A media pipeline makes graph direction, element boundaries, messages, and a shared running-time clock explicit."
         ],
@@ -19,6 +20,7 @@
         "classification": "PRIMARY_STANDARD",
         "document_title": "MLIR Rationale",
         "document_url": "https://mlir.llvm.org/docs/Rationale/MLIRForGraphAlgorithms/",
+        "evidence_role": "CLAIM_SUPPORTING",
         "facts_supported": [
           "Multi-level representations can preserve useful abstraction until progressive lowering is justified."
         ],
@@ -31,6 +33,7 @@
         "classification": "PRIMARY_IMPLEMENTATION_DOC",
         "document_title": "Render and Commit",
         "document_url": "https://react.dev/learn/render-and-commit",
+        "evidence_role": "CLAIM_SUPPORTING",
         "facts_supported": [
           "React separates recursive render calculation from commit mutations and recommends pure rendering."
         ],
@@ -41,6 +44,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 787,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Rust animation stores keyframe time in seconds and evaluates a cloned scene by NodeId.",
           "Missing targets are unchanged."
@@ -58,6 +62,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 306,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Preview audio has an instance clock mapping and is muted off-speed.",
           "Decode failures warn and skip."
@@ -75,6 +80,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 197,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Canvas fallback omits image and SVG nodes and approximates text and procedural gradients."
         ],
@@ -91,6 +97,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 1180,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Cinema resolves a finite choreography and transition vocabulary to React elements.",
           "A caller may supply a custom component registry.",
@@ -109,6 +116,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 121,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Inspection runs over the high-level Cinema payload rather than the lowered Scene."
         ],
@@ -125,6 +133,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 188,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Inspector identities derive from entry id or payload path and retain role labels."
         ],
@@ -141,6 +150,7 @@
       {
         "classification": "UPSTREAM_TEST",
         "end_line": 109,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Tests distinguish unknown component errors from unknown choreography warnings."
         ],
@@ -157,6 +167,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 100,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Time specifications become rounded frames.",
           "Scene overlaps shorten accumulated placement."
@@ -174,6 +185,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 261,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Cinema preserves scene, track, entry, role, component, choreography, transition, brand, and finish semantics before lowering."
         ],
@@ -190,6 +202,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 3207,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Native commands parse scene JSON and run ordered source, timeline, SVG, image, layout, and render stages.",
           "Auto backend may choose GPU or CPU."
@@ -207,6 +220,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 11559,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "The packaged component catalog is finite and schema-described."
         ],
@@ -222,7 +236,416 @@
       },
       {
         "classification": "UPSTREAM_SOURCE",
+        "end_line": 226,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Preview audio owns an AudioContext clock, fetch/decode cache, and scheduling state."
+        ],
+        "file_sha256": "3cdb79c33fda6e27df41832229569380de201978407555658b04fb5fcdb6e418",
+        "git_blob": "a89e4b7c278fb66a0a7a8432c41effa249167fd3",
+        "path": "packages/player/src/audio-engine.ts",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-AUDIO-CLOCK",
+        "start_line": 40,
+        "symbol_or_section": "export class PreviewAudio"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 197,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Canvas2D draws only an approximate subset of Scene semantics."
+        ],
+        "file_sha256": "ca2e85f68e08e88558edabf559b1fcdf193f4de8914b719bd02c42561fc8b1c6",
+        "git_blob": "ceab5a9cbc86e6391db1c6b5a786c4dbfe883fe1",
+        "path": "packages/player/src/canvas-renderer.ts",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-CANVAS-APPROX",
+        "start_line": 23,
+        "symbol_or_section": "export function drawScene"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 960,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Cinema consumes high-level payload concepts while building React elements."
+        ],
+        "file_sha256": "5a37d1489b77a77faa540510834483c72d053de7ca79f08dda4edd1f7cac6487",
+        "git_blob": "91f331f1620482fe8668ddbbc76a489124920682",
+        "path": "packages/cinema/src/index.tsx",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-CINEMA-BUILD",
+        "start_line": 763,
+        "symbol_or_section": "export function buildComposition"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 121,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "The inspector is a parallel semantic analysis surface over a Cinema payload."
+        ],
+        "file_sha256": "ae03a67186b0a3713e4557d263ec96d7b0ff37d3447b0fd38a81b35460390104",
+        "git_blob": "c9aa10fbd004f1859b1972cef376ab217b97a9ea",
+        "path": "packages/cinema/src/inspect/index.ts",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-CINEMA-INSPECT",
+        "start_line": 76,
+        "symbol_or_section": "export function inspect"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 179,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Cinema inspection retains resolved scene, entry, role, and transition identity."
+        ],
+        "file_sha256": "85c135cd9eef651386a6bfd66835d1792df4b0d012b1446b37cc6fc93fdba0d6",
+        "git_blob": "06aee728e309ce767a0a725b5b3e5a65a858fa8e",
+        "path": "packages/cinema/src/inspect/resolve.ts",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-CINEMA-RESOLVE",
+        "start_line": 67,
+        "symbol_or_section": "export function resolveComposition"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 261,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Cinema types define roles, ids, choreography, transitions, brand, and finish intent."
+        ],
+        "file_sha256": "07b3bdf0874067c54d92b2d1b6fcebb6be395172335c63f72a2b2207fd2f10df",
+        "git_blob": "1fb71040324f5247eb56f591cd9c3f9f13f62c31",
+        "path": "packages/cinema/src/types.ts",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-CINEMA-TYPES",
+        "start_line": 70,
+        "symbol_or_section": "export interface CompositionPayload"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 124,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Native render prepasses best-effort fetch remote media to temporary files and retain failed URLs."
+        ],
+        "file_sha256": "e58aff89cd79b842f470992de290a50ffc82c139a0d326ec4677c2544b50a8b9",
+        "git_blob": "fabf0315afff1308ed1114338d0c4449f2be15be",
+        "path": "packages/cli-rs/src/main.rs",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-CLI-MATERIALIZE",
+        "start_line": 33,
+        "symbol_or_section": "fn materialize_src"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 2750,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Native render deserializes Scene and applies ordered materialization and decode prepasses."
+        ],
+        "file_sha256": "e58aff89cd79b842f470992de290a50ffc82c139a0d326ec4677c2544b50a8b9",
+        "git_blob": "fabf0315afff1308ed1114338d0c4449f2be15be",
+        "path": "packages/cli-rs/src/main.rs",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-CLI-RENDER",
+        "start_line": 2715,
+        "symbol_or_section": "fn render_scene_file"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 280,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Image loading clones and rewrites Scene image nodes and skips unresolved remote sources."
+        ],
+        "file_sha256": "9f903d801b6186942f8ef7cf442447a698a91deef8f66ce581a98403ab9f582c",
+        "git_blob": "3bc10936de5e457f7cfeed0ed67046dcf123f85a",
+        "path": "packages/image-rs/src/lib.rs",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-IMAGE-PREPASS",
+        "start_line": 64,
+        "symbol_or_section": "pub fn load_images"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 120,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Layout clones a Scene and materializes computed placement."
+        ],
+        "file_sha256": "edb986f05d129dc0fdd45764887fce00822ca77adde49cbfffa4a088c3d963fd",
+        "git_blob": "95ffb7f27881530833a86ad89fa842e7d1744d60",
+        "path": "packages/layout-rs/src/lib.rs",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-LAYOUT-PREPASS",
+        "start_line": 31,
+        "symbol_or_section": "pub fn layout"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 183,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Node export materializes frames and fonts in a temporary directory before invoking the CLI."
+        ],
+        "file_sha256": "4f3c888f45b60cd02c3911acc622c93f5eb87e5d365cc64cf9f80c359f2d0167",
+        "git_blob": "971e155db975f06f28a80b7ea924e0bb5cdaac9f",
+        "path": "packages/render/src/index.ts",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-NODE-EXPORT",
+        "start_line": 56,
+        "symbol_or_section": "export async function renderToFile"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 489,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Player silently demotes failed GPU/CPU engines through state and may expose only a UI backend badge."
+        ],
+        "file_sha256": "be84195324d0dbbadf41ecef6cac844d62b4d59900ae8418be4ce1725c839847",
+        "git_blob": "1f621b6b3f9c244f975f9ed5e5789d83f9e8a2c3",
+        "path": "packages/player/src/player.tsx",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-PLAYER-FALLBACK",
+        "start_line": 215,
+        "symbol_or_section": "const mode = useMemo"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 83,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Preview font loading catches and silently skips a bad font."
+        ],
+        "file_sha256": "be84195324d0dbbadf41ecef6cac844d62b4d59900ae8418be4ce1725c839847",
+        "git_blob": "1f621b6b3f9c244f975f9ed5e5789d83f9e8a2c3",
+        "path": "packages/player/src/player.tsx",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-PLAYER-FONT",
+        "start_line": 55,
+        "symbol_or_section": "function ensureFontsLoaded"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 89,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Preview image fetch failures are cached silently and unresolved images remain skipped."
+        ],
+        "file_sha256": "184f3d8b349355ccebdd1dd7632af31755f7d355ff9fbaeb6bf09436a393f204",
+        "git_blob": "4209fd4a0718c585a6064bf3515f14a43dd87f3d",
+        "path": "packages/player/src/images.ts",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-PLAYER-IMAGE",
+        "start_line": 9,
+        "symbol_or_section": "export function resolveImageUrl"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 204,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "The custom reconciler commits a mutable finite HostNode tree."
+        ],
+        "file_sha256": "a6c04b25b4570333741f3ccff8b145dd04f73ad9d21f19fed4e3acc417153a01",
+        "git_blob": "93a654a83fc641bbda1d8d04a109e514fd038594",
+        "path": "packages/react/src/host-config.ts",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-REACT-HOST",
+        "start_line": 12,
+        "symbol_or_section": "export interface HostNode"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 182,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Every requested frame creates, lowers, unmounts, and discards a fresh React root; batch export accumulates Scenes."
+        ],
+        "file_sha256": "4d59f24e5201b9c4ef1986d1dd8c10a12d4c46436d9a9acdd8d3947208443aa7",
+        "git_blob": "484be37c2c79f5b4c530d5897fa2228800fd38d5",
+        "path": "packages/react/src/reconciler.ts",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-REACT-LOWER",
+        "start_line": 33,
+        "symbol_or_section": "export function renderFrame"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 49,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "The module-level font registry is append-only until explicitly cleared."
+        ],
+        "file_sha256": "62dd867092a45e2d76ec81ab0581b451a1a536aa009b8bae979ba897c92759c0",
+        "git_blob": "7dc5ee86479ef54bfa3378d43e9f20de718db192",
+        "path": "packages/react/src/fonts.ts",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-REACT-REGISTRY",
+        "start_line": 12,
+        "symbol_or_section": "export function registerFont"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 23,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "The module-level engine-warmer registry is shared mutable state."
+        ],
+        "file_sha256": "4860a682c88fde481fc5cb92f360b7c0658d31a6366a0ad6df120177174eced1",
+        "git_blob": "e37b9f5e8295ac83cfefe8ade7c7c61df56bd812",
+        "path": "packages/react/src/warmers.ts",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-REACT-WARMERS",
+        "start_line": 10,
+        "symbol_or_section": "export function registerEngineWarmer"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 1950,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Typed Rust and serialized JSON converge on the Scene document."
+        ],
+        "file_sha256": "eaec06397ba05e92f5192643c83ce495d6917320b73572311c68812c68207d35",
+        "git_blob": "6e650e50ef2b0cc7adc83ceb2a807bfa4df2917c",
+        "path": "packages/scene-rs/src/lib.rs",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-SCENE-DOCUMENT",
+        "start_line": 1929,
+        "symbol_or_section": "pub struct Scene"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 845,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Scene exposes a finite renderer-facing NodeKind vocabulary."
+        ],
+        "file_sha256": "eaec06397ba05e92f5192643c83ce495d6917320b73572311c68812c68207d35",
+        "git_blob": "6e650e50ef2b0cc7adc83ceb2a807bfa4df2917c",
+        "path": "packages/scene-rs/src/lib.rs",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-SCENE-NODES",
+        "start_line": 675,
+        "symbol_or_section": "pub enum NodeKind"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 160,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "SVG expansion rewrites source nodes into renderer-facing nodes."
+        ],
+        "file_sha256": "7f6573aabd8cd287724c31234c751a79d25aad9c187b21703f5fd75a23a47498",
+        "git_blob": "d8fbafaf7365fafcbd307eeb7de954bf02bd05c9",
+        "path": "packages/svg-rs/src/lib.rs",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-SVG-PREPASS",
+        "start_line": 87,
+        "symbol_or_section": "pub fn expand_svg"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 277,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "Browser preview video uses shared caches, media elements, warnings, and frame extraction."
+        ],
+        "file_sha256": "7f81bfa87bf2378ef2f43d1a772e1b539ba64e17ad8469693740bcdefdbaa2ea",
+        "git_blob": "c18b2360a46b7acf79f0e83a1f666375ed4b1292",
+        "path": "packages/player/src/video.ts",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-VIDEO-PREVIEW",
+        "start_line": 46,
+        "symbol_or_section": "export async function resolveVideoFrames"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 249,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "The CPU WASM boundary deserializes and prepasses the same Scene contract."
+        ],
+        "file_sha256": "e5188c952cd7812c37dfbb9097229e7572d86fb289cf69c591fafd469961361c",
+        "git_blob": "ab4ff309362044ad594efe45cd9934cf24bb0978",
+        "path": "packages/wasm/src/lib.rs",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-WASM-CPU",
+        "start_line": 177,
+        "symbol_or_section": "pub struct OndaEngine"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
+        "end_line": 175,
+        "evidence_role": "CLAIM_SUPPORTING",
+        "facts_supported": [
+          "The WebGPU WASM boundary deserializes the Scene contract and renders asynchronously."
+        ],
+        "file_sha256": "28a429dc0a01580fdd6915e1fc0ec387b5bbba15d8502c1dfe193b5ac21396f8",
+        "git_blob": "3741dd4bdf17187f5b2931c3b30430e6e91226a0",
+        "path": "packages/wasm-vello/src/lib.rs",
+        "pinned_commit": "3ddf1780c9799bf038ac90cec7d8cadb61acafbe",
+        "pinned_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
+        "repository": "https://github.com/onda-engine/onda-engine.git",
+        "source_id": "S-EVID-WASM-GPU",
+        "start_line": 104,
+        "symbol_or_section": "pub struct VelloEngine"
+      },
+      {
+        "classification": "UPSTREAM_SOURCE",
         "end_line": 706,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Image decoding attaches skipped pixel data and may downscale.",
           "Remote URLs remain unresolved and are skipped by renderers."
@@ -240,6 +663,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 327,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Layout is a clone-and-rewrite prepass that materializes absolute child translations."
         ],
@@ -256,6 +680,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 158,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for Cinema validation, property adaptation, inspection, or lowering behavior."
         ],
@@ -272,6 +697,7 @@
       {
         "classification": "UPSTREAM_TEST",
         "end_line": 104,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for Cinema validation, property adaptation, inspection, or lowering behavior."
         ],
@@ -288,6 +714,7 @@
       {
         "classification": "UPSTREAM_MANIFEST",
         "end_line": 61,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for public component discovery and registry boundaries."
         ],
@@ -304,6 +731,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 354,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for public component discovery and registry boundaries."
         ],
@@ -320,6 +748,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 48,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for preview scheduling, media, fallback, or engine-boundary behavior."
         ],
@@ -336,6 +765,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 65,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for preview scheduling, media, fallback, or engine-boundary behavior."
         ],
@@ -352,6 +782,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 89,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for preview scheduling, media, fallback, or engine-boundary behavior."
         ],
@@ -368,6 +799,7 @@
       {
         "classification": "UPSTREAM_TEST",
         "end_line": 55,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
         ],
@@ -384,6 +816,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 651,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
         ],
@@ -400,6 +833,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 158,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
         ],
@@ -416,6 +850,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 116,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
         ],
@@ -432,6 +867,7 @@
       {
         "classification": "UPSTREAM_TEST",
         "end_line": 63,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
         ],
@@ -448,6 +884,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 112,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
         ],
@@ -464,6 +901,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 398,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
         ],
@@ -480,6 +918,7 @@
       {
         "classification": "UPSTREAM_TEST",
         "end_line": 71,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
         ],
@@ -496,6 +935,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 130,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
         ],
@@ -512,6 +952,7 @@
       {
         "classification": "UPSTREAM_TEST",
         "end_line": 193,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
         ],
@@ -528,6 +969,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 995,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
         ],
@@ -544,6 +986,7 @@
       {
         "classification": "UPSTREAM_TEST",
         "end_line": 37,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required evidence for React authoring, timing, primitive, transition, or lowering behavior."
         ],
@@ -560,6 +1003,7 @@
       {
         "classification": "UPSTREAM_MANIFEST",
         "end_line": 11,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Required R0.02 repository or compiler-boundary evidence."
         ],
@@ -576,6 +1020,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 183,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Node export materializes all React scenes into a temporary JSON array and invokes the native CLI."
         ],
@@ -592,6 +1037,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 1440,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Preview renders requested frames on demand.",
           "GPU work is serialized per engine and intermediate frames may be dropped.",
@@ -610,6 +1056,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 41,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Frame and video configuration are context values."
         ],
@@ -626,6 +1073,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 204,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Custom reconciler uses mutable HostNode children.",
           "Persistence and hydration are disabled."
@@ -643,6 +1091,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 935,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Each requested frame creates, commits, lowers, unmounts, and discards a fresh React root.",
           "Motion blur evaluates fractional subframes.",
@@ -661,6 +1110,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 97,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Sequences translate global frame to local frame.",
           "Series calculates cumulative offsets."
@@ -678,6 +1128,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 49,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Registered font bytes are process-global mutable state."
         ],
@@ -694,6 +1145,7 @@
       {
         "classification": "UPSTREAM_TEST",
         "end_line": 513,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Tests establish frame evaluation and lowering behavior."
         ],
@@ -710,6 +1162,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 23,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Warmers are process-global and failures are best-effort."
         ],
@@ -726,6 +1179,7 @@
       {
         "classification": "UPSTREAM_DOCUMENTATION",
         "end_line": 223,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Publicly described authoring and rendering surfaces."
         ],
@@ -742,6 +1196,7 @@
       {
         "classification": "UPSTREAM_MANIFEST",
         "end_line": 84,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Rust package and renderer boundaries."
         ],
@@ -758,6 +1213,7 @@
       {
         "classification": "UPSTREAM_MANIFEST",
         "end_line": 46,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "JavaScript package and test boundaries."
         ],
@@ -774,6 +1230,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 2472,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Scene is a composition plus a finite node tree.",
           "Optional numeric NodeId supports addressing.",
@@ -793,6 +1250,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 285,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "SVG is parsed and lowered to supported scene shapes.",
           "Unsupported SVG features are not preserved as authoring semantics."
@@ -810,6 +1268,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 277,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "Preview video is bucketed at thirty source frames per second and may hold the last good decoded frame.",
           "A DOM overlay fallback is preview-only."
@@ -827,6 +1286,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 352,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "CPU WASM parses Scene JSON then conditionally runs image and layout prepasses before rendering."
         ],
@@ -843,6 +1303,7 @@
       {
         "classification": "UPSTREAM_SOURCE",
         "end_line": 175,
+        "evidence_role": "COVERAGE_ONLY",
         "facts_supported": [
           "GPU WASM follows the same JSON, image, and layout boundary before asynchronous rendering."
         ],
@@ -860,5 +1321,5 @@
   },
   "generated_at": "2026-08-16T00:00:00Z",
   "model_ref": "R0_02_RESEARCH_MODEL.json",
-  "schema_version": "r0.02.3"
+  "schema_version": "r0.02.4"
 }
