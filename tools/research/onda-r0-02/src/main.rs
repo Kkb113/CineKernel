@@ -294,7 +294,7 @@ fn generate_machine_outputs(root: &Path, model: &Value) -> Result<()> {
             .replace(".json", ".schema.json");
         write_stable_json(
             &root.join(DOC_DIR).join(name),
-            &serde_json::json!({"$schema":format!("../../../../schemas/research/r0.02/{schema}"),"schema_version":"r0.02.2","model_ref":"R0_02_RESEARCH_MODEL.json","generated_at":"2026-08-16T00:00:00Z","data":data}),
+            &serde_json::json!({"$schema":format!("../../../../schemas/research/r0.02/{schema}"),"schema_version":"r0.02.3","model_ref":"R0_02_RESEARCH_MODEL.json","generated_at":"2026-08-16T00:00:00Z","data":data}),
         )?;
     }
     Ok(())

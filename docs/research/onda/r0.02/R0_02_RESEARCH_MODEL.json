@@ -1051,269 +1051,346 @@
     {
       "abstract_requirement": "Preserve stable source identity and source-map chains across lowering stages.",
       "affected_cinekernel_programs": [
-        "authoring",
-        "compiler",
-        "preview",
-        "export"
+        "P06",
+        "P07",
+        "P08",
+        "P09",
+        "P10",
+        "P14",
+        "P23",
+        "P25"
       ],
-      "creative_programming_impact": "retains general composition without black-boxing intent",
+      "creative_programming_impact": "Preserves semantic targets for open-ended generation and repair.",
       "independent_primary_source_refs": [
-        "E-MLIR",
-        "E-REACT"
+        "E-MLIR"
       ],
       "onda_observation_refs": [
-        "C-001"
+        "C-003",
+        "C-004",
+        "C-011"
       ],
       "onda_source_refs": [
+        "S-CINEMA-TYPES",
+        "S-CINEMA-RESOLVE",
         "S-CINEMA-COMPILER",
-        "S-REACT-LOWER",
         "S-SCENE"
       ],
-      "performance_impact": "requires later measurement; no R0.02 performance claim",
-      "problem_addressed": "Early identity loss weakens inspection and repair",
-      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
-      "quality_impact": "preserves intentional output and makes degradation visible",
+      "performance_impact": "Adds metadata and lookup cost that R0.03 and R0.07 must measure.",
+      "problem_addressed": "Early identity loss weakens inspection and repair.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Enables precise edits without reconstructing flattened authoring intent.",
       "required_follow_up_research": [
         "R0.03",
-        "R0.04"
+        "R0.05",
+        "R0.07",
+        "R0.08"
       ],
       "requirement_id": "CK-R002-REQ-001",
       "status": "CANDIDATE_ONLY",
-      "trust_impact": "improves traceability and repairability"
+      "trust_impact": "Lets agents and reviewers trace rendered results to stable authored entities."
     },
     {
       "abstract_requirement": "Represent time domains and conversions explicitly.",
       "affected_cinekernel_programs": [
-        "authoring",
-        "compiler",
-        "preview",
-        "export"
+        "P01",
+        "P02",
+        "P03",
+        "P07",
+        "P08",
+        "P14",
+        "P18",
+        "P19"
       ],
-      "creative_programming_impact": "retains general composition without black-boxing intent",
+      "creative_programming_impact": "Gives procedural animation a deterministic temporal contract.",
       "independent_primary_source_refs": [
         "E-GSTREAMER"
       ],
       "onda_observation_refs": [
-        "C-002"
+        "C-007",
+        "C-010",
+        "C-011"
       ],
       "onda_source_refs": [
-        "S-CINEMA-COMPILER",
-        "S-REACT-LOWER",
-        "S-SCENE"
+        "S-CINEMA-TIME",
+        "S-ANIMATION",
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-CLI"
       ],
-      "performance_impact": "requires later measurement; no R0.02 performance claim",
-      "problem_addressed": "Fragmented clocks, rounding, and sampling obscure determinism",
-      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
-      "quality_impact": "preserves intentional output and makes degradation visible",
+      "performance_impact": "Allows conversion and synchronization overhead to be measured explicitly.",
+      "problem_addressed": "Fragmented clocks, rounding, and sampling obscure determinism.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Prevents timing drift across authoring, preview, media, and export.",
       "required_follow_up_research": [
-        "R0.04",
-        "R0.06"
+        "R0.03",
+        "R0.06",
+        "R0.07"
       ],
       "requirement_id": "CK-R002-REQ-002",
       "status": "CANDIDATE_ONLY",
-      "trust_impact": "improves traceability and repairability"
+      "trust_impact": "Makes rounding, rate ownership, and clock conversion auditable."
     },
     {
       "abstract_requirement": "Separate semantic authoring IR from renderer IR through explicit lowering contracts.",
       "affected_cinekernel_programs": [
-        "authoring",
-        "compiler",
-        "preview",
-        "export"
+        "P05",
+        "P06",
+        "P07",
+        "P08",
+        "P09",
+        "P10",
+        "P14",
+        "P23",
+        "P25"
       ],
-      "creative_programming_impact": "retains general composition without black-boxing intent",
+      "creative_programming_impact": "Supports novel high-level constructs without forcing them into a template catalog.",
       "independent_primary_source_refs": [
-        "E-MLIR",
-        "E-REACT"
+        "E-MLIR"
       ],
       "onda_observation_refs": [
-        "C-003"
+        "C-003",
+        "C-004",
+        "C-005",
+        "C-011"
       ],
       "onda_source_refs": [
+        "S-CINEMA-TYPES",
         "S-CINEMA-COMPILER",
         "S-REACT-LOWER",
         "S-SCENE"
       ],
-      "performance_impact": "requires later measurement; no R0.02 performance claim",
-      "problem_addressed": "High-level intent is consumed before rendering",
-      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
-      "quality_impact": "preserves intentional output and makes degradation visible",
+      "performance_impact": "Permits renderer IR optimization without silently changing authoring meaning.",
+      "problem_addressed": "High-level intent is consumed before rendering.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Keeps authoring semantics available while renderer data stays constrained.",
       "required_follow_up_research": [
-        "R0.03"
+        "R0.03",
+        "R0.04",
+        "R0.05",
+        "R0.08"
       ],
       "requirement_id": "CK-R002-REQ-003",
       "status": "CANDIDATE_ONLY",
-      "trust_impact": "improves traceability and repairability"
+      "trust_impact": "Makes each semantic-loss boundary explicit and reviewable."
     },
     {
       "abstract_requirement": "Make capability fallback typed, diagnosed, and quality-classified.",
       "affected_cinekernel_programs": [
-        "authoring",
-        "compiler",
-        "preview",
-        "export"
+        "P05",
+        "P08",
+        "P10",
+        "P14",
+        "P20",
+        "P21",
+        "P23",
+        "P24"
       ],
-      "creative_programming_impact": "retains general composition without black-boxing intent",
+      "creative_programming_impact": "Lets authors deliberately choose approximations without mistaking them for equivalence.",
       "independent_primary_source_refs": [
-        "E-MLIR",
-        "E-REACT"
+        "E-GSTREAMER"
       ],
       "onda_observation_refs": [
-        "C-004"
+        "C-007",
+        "C-008"
       ],
       "onda_source_refs": [
-        "S-CINEMA-COMPILER",
-        "S-REACT-LOWER",
-        "S-SCENE"
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-WASM",
+        "S-WASM-VELLO",
+        "S-CANVAS",
+        "S-CLI"
       ],
-      "performance_impact": "requires later measurement; no R0.02 performance claim",
-      "problem_addressed": "Automatic fallback can alter visible semantics",
-      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
-      "quality_impact": "preserves intentional output and makes degradation visible",
+      "performance_impact": "Supports capability-aware planning instead of repeated failing work.",
+      "problem_addressed": "Automatic fallback can alter visible semantics.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Prevents silent quality loss when a backend or media capability is unavailable.",
       "required_follow_up_research": [
         "R0.03",
-        "R0.05"
+        "R0.04",
+        "R0.06",
+        "R0.07"
       ],
       "requirement_id": "CK-R002-REQ-004",
       "status": "CANDIDATE_ONLY",
-      "trust_impact": "improves traceability and repairability"
+      "trust_impact": "Makes every demotion visible to users, agents, and certification logic."
     },
     {
       "abstract_requirement": "Support bounded streaming frame generation.",
       "affected_cinekernel_programs": [
-        "authoring",
-        "compiler",
-        "preview",
-        "export"
+        "P08",
+        "P14",
+        "P18",
+        "P19",
+        "P20",
+        "P26"
       ],
-      "creative_programming_impact": "retains general composition without black-boxing intent",
+      "creative_programming_impact": "Allows long procedural works without requiring whole-program frame materialization.",
       "independent_primary_source_refs": [
-        "E-MLIR",
-        "E-REACT"
+        "E-GSTREAMER"
       ],
       "onda_observation_refs": [
-        "C-005"
+        "C-006",
+        "C-009"
       ],
       "onda_source_refs": [
-        "S-CINEMA-COMPILER",
         "S-REACT-LOWER",
-        "S-SCENE"
+        "S-NODE-EXPORT",
+        "S-LAYOUT",
+        "S-IMAGE",
+        "S-VIDEO",
+        "S-CLI"
       ],
-      "performance_impact": "requires later measurement; no R0.02 performance claim",
-      "problem_addressed": "Whole-video Scene materialization scales with duration and graph size",
-      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
-      "quality_impact": "preserves intentional output and makes degradation visible",
+      "performance_impact": "Bounds memory and I/O, with thresholds reserved for R0.07 measurement.",
+      "problem_addressed": "Whole-video Scene materialization scales with duration and graph size.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Avoids duration-driven exhaustion that can prevent otherwise valid renders.",
       "required_follow_up_research": [
-        "R0.06"
+        "R0.03",
+        "R0.07"
       ],
       "requirement_id": "CK-R002-REQ-005",
       "status": "CANDIDATE_ONLY",
-      "trust_impact": "improves traceability and repairability"
+      "trust_impact": "Makes buffering and materialization limits explicit failure contracts."
     },
     {
       "abstract_requirement": "Version serialized boundaries with compatibility fixtures and negotiation.",
       "affected_cinekernel_programs": [
-        "authoring",
-        "compiler",
-        "preview",
-        "export"
+        "P07",
+        "P08",
+        "P09",
+        "P10",
+        "P14",
+        "P18",
+        "P19",
+        "P23",
+        "P24"
       ],
-      "creative_programming_impact": "retains general composition without black-boxing intent",
+      "creative_programming_impact": "Protects editable creative programs across tool and runtime upgrades.",
       "independent_primary_source_refs": [
-        "E-MLIR",
-        "E-REACT"
+        "E-MLIR"
       ],
       "onda_observation_refs": [
-        "C-006"
+        "C-005",
+        "C-011"
       ],
       "onda_source_refs": [
-        "S-CINEMA-COMPILER",
-        "S-REACT-LOWER",
-        "S-SCENE"
+        "S-SCENE",
+        "S-CLI",
+        "S-WASM",
+        "S-WASM-VELLO"
       ],
-      "performance_impact": "requires later measurement; no R0.02 performance claim",
-      "problem_addressed": "Current compatibility guarantees are incomplete",
-      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
-      "quality_impact": "preserves intentional output and makes degradation visible",
+      "performance_impact": "Makes migration cost measurable and avoids accidental full recompilation paths.",
+      "problem_addressed": "Current compatibility guarantees are incomplete.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Prevents schema evolution from corrupting or rejecting valid creative documents unpredictably.",
       "required_follow_up_research": [
         "R0.03",
+        "R0.06",
         "R0.08"
       ],
       "requirement_id": "CK-R002-REQ-006",
       "status": "CANDIDATE_ONLY",
-      "trust_impact": "improves traceability and repairability"
+      "trust_impact": "Provides explicit compatibility evidence for stored and exchanged artifacts."
     },
     {
       "abstract_requirement": "Preserve deterministic random, media, and global-state ownership contracts.",
       "affected_cinekernel_programs": [
-        "authoring",
-        "compiler",
-        "preview",
-        "export"
+        "P01",
+        "P02",
+        "P03",
+        "P07",
+        "P08",
+        "P14",
+        "P18",
+        "P19",
+        "P20",
+        "P21"
       ],
-      "creative_programming_impact": "retains general composition without black-boxing intent",
+      "creative_programming_impact": "Keeps procedural randomness and media behavior reproducible for agent iteration.",
       "independent_primary_source_refs": [
-        "E-MLIR",
-        "E-REACT"
+        "E-REACT",
+        "E-GSTREAMER"
       ],
       "onda_observation_refs": [
-        "C-007"
+        "C-002",
+        "C-010",
+        "C-012"
       ],
       "onda_source_refs": [
-        "S-CINEMA-COMPILER",
-        "S-REACT-LOWER",
-        "S-SCENE"
+        "S-REACT-FRAME",
+        "S-REACT-STATE",
+        "S-REACT-WARM",
+        "S-PLAYER",
+        "S-VIDEO",
+        "S-AUDIO",
+        "S-REACT-LOWER"
       ],
-      "performance_impact": "requires later measurement; no R0.02 performance claim",
-      "problem_addressed": "Module-global and external runtime state complicate reentrancy",
-      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
-      "quality_impact": "preserves intentional output and makes degradation visible",
+      "performance_impact": "Enables safe parallelism only where isolation costs and benefits are known.",
+      "problem_addressed": "Module-global and external runtime state complicate reentrancy.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Produces repeatable frames under concurrency, seeking, and retries.",
       "required_follow_up_research": [
-        "R0.04",
-        "R0.06"
+        "R0.03",
+        "R0.06",
+        "R0.07"
       ],
       "requirement_id": "CK-R002-REQ-007",
       "status": "CANDIDATE_ONLY",
-      "trust_impact": "improves traceability and repairability"
+      "trust_impact": "Makes nondeterministic state ownership observable and testable."
     },
     {
       "abstract_requirement": "Keep open-ended host-language escape hatches while retaining inspectable primitives.",
       "affected_cinekernel_programs": [
-        "authoring",
-        "compiler",
-        "preview",
-        "export"
+        "P01",
+        "P02",
+        "P03",
+        "P05",
+        "P06",
+        "P07",
+        "P25",
+        "P26",
+        "P28"
       ],
-      "creative_programming_impact": "retains general composition without black-boxing intent",
+      "creative_programming_impact": "Maintains the project goal of general creative programming rather than template selection.",
       "independent_primary_source_refs": [
-        "E-MLIR",
-        "E-REACT"
+        "E-REACT",
+        "E-MLIR"
       ],
       "onda_observation_refs": [
-        "C-008"
+        "C-001",
+        "C-003",
+        "C-005"
       ],
       "onda_source_refs": [
+        "S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS",
+        "S-MANDATORY-PACKAGES-REACT-SRC-COMPONENTS-TS",
         "S-CINEMA-COMPILER",
-        "S-REACT-LOWER",
+        "S-COMPONENTS",
         "S-SCENE"
       ],
-      "performance_impact": "requires later measurement; no R0.02 performance claim",
-      "problem_addressed": "Finite catalogs alone cannot guarantee novel-scene expressibility",
-      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, or API may be reused.",
-      "quality_impact": "preserves intentional output and makes degradation visible",
+      "performance_impact": "Allows specialization while retaining analyzable primitive output and later measurement.",
+      "problem_addressed": "Finite catalogs alone cannot guarantee novel-scene expressibility.",
+      "prohibited_reuse_note": "Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.",
+      "quality_impact": "Combines reusable components with precise low-level control.",
       "required_follow_up_research": [
-        "R0.05"
+        "R0.04",
+        "R0.05",
+        "R0.06",
+        "R0.08"
       ],
       "requirement_id": "CK-R002-REQ-008",
       "status": "CANDIDATE_ONLY",
-      "trust_impact": "improves traceability and repairability"
+      "trust_impact": "Keeps generated structures inspectable instead of hiding behavior behind opaque presets."
     }
   ],
   "cinekernel_base": "974d93ef224b75383499cdb2b70cc086a0dd6f40",
   "claims": [
     {
-      "claim_id": "C-UNKNOWN",
-      "confidence": "LOW",
+      "claim_id": "C-001",
+      "confidence": "HIGH",
       "contradictions": [],
       "source_refs": [
         "S-REACT-HOST",
@@ -1321,22 +1398,22 @@
         "S-SCENE"
       ],
       "statement": "React authoring is programmatic, but its render boundary is a finite scene vocabulary.",
-      "status": "UNRESOLVED"
+      "status": "VERIFIED_AT_PIN"
     },
     {
-      "claim_id": "C-UNKNOWN",
-      "confidence": "LOW",
+      "claim_id": "C-002",
+      "confidence": "HIGH",
       "contradictions": [],
       "source_refs": [
         "S-REACT-LOWER",
         "S-REACT-TEST"
       ],
       "statement": "React component state is not retained between output frames because every frame uses a fresh root that is unmounted.",
-      "status": "UNRESOLVED"
+      "status": "VERIFIED_AT_PIN"
     },
     {
-      "claim_id": "C-UNKNOWN",
-      "confidence": "LOW",
+      "claim_id": "C-003",
+      "confidence": "HIGH",
       "contradictions": [],
       "source_refs": [
         "S-CINEMA-TYPES",
@@ -1344,11 +1421,11 @@
         "S-CINEMA-RESOLVE"
       ],
       "statement": "Cinema retains more editorial identity and intent than Scene, while its inspector is a parallel high-level analysis path.",
-      "status": "UNRESOLVED"
+      "status": "VERIFIED_AT_PIN"
     },
     {
-      "claim_id": "C-UNKNOWN",
-      "confidence": "LOW",
+      "claim_id": "C-004",
+      "confidence": "HIGH",
       "contradictions": [],
       "source_refs": [
         "S-CINEMA-COMPILER",
@@ -1356,11 +1433,11 @@
         "S-SCENE"
       ],
       "statement": "Cinema roles, choreography names, brand identity, and most string ids do not survive as first-class Scene fields.",
-      "status": "UNRESOLVED"
+      "status": "VERIFIED_AT_PIN"
     },
     {
-      "claim_id": "C-UNKNOWN",
-      "confidence": "LOW",
+      "claim_id": "C-005",
+      "confidence": "HIGH",
       "contradictions": [],
       "source_refs": [
         "S-SCENE",
@@ -1368,11 +1445,11 @@
         "S-WASM"
       ],
       "statement": "Direct Scene JSON and typed Rust construction converge at the same finite Scene contract.",
-      "status": "UNRESOLVED"
+      "status": "VERIFIED_AT_PIN"
     },
     {
-      "claim_id": "C-UNKNOWN",
-      "confidence": "LOW",
+      "claim_id": "C-006",
+      "confidence": "HIGH",
       "contradictions": [],
       "source_refs": [
         "S-LAYOUT",
@@ -1382,11 +1459,11 @@
         "S-CLI"
       ],
       "statement": "Layout, SVG, image, video, and timeline behavior includes destructive or materializing prepasses rather than a single immutable IR pipeline.",
-      "status": "UNRESOLVED"
+      "status": "VERIFIED_AT_PIN"
     },
     {
-      "claim_id": "C-UNKNOWN",
-      "confidence": "LOW",
+      "claim_id": "C-007",
+      "confidence": "HIGH",
       "contradictions": [],
       "source_refs": [
         "S-PLAYER",
@@ -1397,33 +1474,33 @@
         "S-CLI"
       ],
       "statement": "GPU and CPU preview can share renderer semantics with native export, but browser media resolution and scheduling keep end-to-end parity conditional.",
-      "status": "UNRESOLVED"
+      "status": "VERIFIED_AT_PIN"
     },
     {
-      "claim_id": "C-UNKNOWN",
-      "confidence": "LOW",
+      "claim_id": "C-008",
+      "confidence": "HIGH",
       "contradictions": [],
       "source_refs": [
         "S-CANVAS",
         "S-PLAYER"
       ],
       "statement": "Canvas2D is an explicit approximation and not a parity path.",
-      "status": "UNRESOLVED"
+      "status": "VERIFIED_AT_PIN"
     },
     {
-      "claim_id": "C-UNKNOWN",
-      "confidence": "LOW",
+      "claim_id": "C-009",
+      "confidence": "HIGH",
       "contradictions": [],
       "source_refs": [
         "S-REACT-LOWER",
         "S-NODE-EXPORT"
       ],
       "statement": "Full React export materializes every evaluated frame before the native export call, creating duration-proportional scene memory and JSON I/O.",
-      "status": "UNRESOLVED"
+      "status": "VERIFIED_AT_PIN"
     },
     {
-      "claim_id": "C-UNKNOWN",
-      "confidence": "LOW",
+      "claim_id": "C-010",
+      "confidence": "HIGH",
       "contradictions": [],
       "source_refs": [
         "S-REACT-STATE",
@@ -1432,11 +1509,11 @@
         "S-VIDEO"
       ],
       "statement": "Global registries and caches require explicit isolation if authoring evaluation is parallelized or made multi-tenant.",
-      "status": "UNRESOLVED"
+      "status": "VERIFIED_AT_PIN"
     },
     {
-      "claim_id": "C-UNKNOWN",
-      "confidence": "LOW",
+      "claim_id": "C-011",
+      "confidence": "HIGH",
       "contradictions": [],
       "source_refs": [
         "S-CINEMA-TYPES",
@@ -1446,18 +1523,18 @@
         "E-GSTREAMER"
       ],
       "statement": "A future CineKernel IR should preserve stable identity, semantic intent, time domains, diagnostics, and capability requirements until explicit lowering stages.",
-      "status": "UNRESOLVED"
+      "status": "CANDIDATE_ONLY"
     },
     {
-      "claim_id": "C-UNKNOWN",
-      "confidence": "LOW",
+      "claim_id": "C-012",
+      "confidence": "HIGH",
       "contradictions": [],
       "source_refs": [
         "S-REACT-LOWER",
         "E-REACT"
       ],
       "statement": "React's render and commit model is analogous only at a high level; ONDA deliberately remounts per frame rather than preserving a committed application tree.",
-      "status": "UNRESOLVED"
+      "status": "VERIFIED_AT_PIN"
     }
   ],
   "contradictions": [
@@ -1489,120 +1566,120 @@
   ],
   "creative_programmability": {
     "overall_verdict": "MULTI_LAYER_PROGRAMMABILITY_WITH_FINITE_RENDERER_VOCABULARY",
-    "scoring_policy": "No numeric creativity score is assigned; each capability is an evidence-backed categorical finding.",
+    "scoring_policy": "No numeric creativity score is assigned; every capability uses an evidence-backed categorical state that distinguishes native, host-language, registry, lower-level, finite-catalog, partial, and unknown support.",
     "surface_assessments": [
       {
         "black_box_risk": "MEDIUM",
-        "can_descend_to_primitives": true,
-        "custom_animation": false,
-        "custom_component_extension": true,
-        "custom_geometry": "Only composition of supported Scene geometry; arbitrary shader geometry is not established.",
-        "escape_hatch_evidence": "Host-language or direct primitive construction is evidenced.",
-        "general_primitive_access": true,
-        "inspectability": true,
-        "named_pattern_dependence": true,
-        "novel_scene_expressibility": true,
-        "post_generation_editability": true,
-        "procedural_logic": true,
-        "registry_dependence": true,
-        "source_mapping": false,
+        "can_descend_to_primitives": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "custom_animation": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "custom_component_extension": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "custom_geometry": "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+        "escape_hatch_evidence": "Custom registry code can emit React and reach Scene primitives, while built-in named patterns remain finite.",
+        "general_primitive_access": "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+        "inspectability": "PARTIALLY_SUPPORTED",
+        "named_pattern_dependence": "FINITE_CATALOG_LIMIT",
+        "novel_scene_expressibility": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "post_generation_editability": "PARTIALLY_SUPPORTED",
+        "procedural_logic": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "registry_dependence": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "source_mapping": "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
         "source_refs": [
+          "S-CINEMA-TYPES",
           "S-CINEMA-COMPILER",
-          "S-REACT-LOWER",
-          "S-SCENE",
+          "S-CINEMA-RESOLVE",
           "S-COMPONENTS"
         ],
         "surface_id": "AS-CINEMA"
       },
       {
-        "black_box_risk": "MEDIUM",
-        "can_descend_to_primitives": false,
-        "custom_animation": false,
-        "custom_component_extension": true,
-        "custom_geometry": "Only composition of supported Scene geometry; arbitrary shader geometry is not established.",
-        "escape_hatch_evidence": "Host-language or direct primitive construction is evidenced.",
-        "general_primitive_access": true,
-        "inspectability": true,
-        "named_pattern_dependence": false,
-        "novel_scene_expressibility": true,
-        "post_generation_editability": true,
-        "procedural_logic": true,
-        "registry_dependence": true,
-        "source_mapping": false,
+        "black_box_risk": "LOW",
+        "can_descend_to_primitives": "SUPPORTED",
+        "custom_animation": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "custom_component_extension": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "custom_geometry": "FINITE_CATALOG_LIMIT",
+        "escape_hatch_evidence": "Frame hooks, interpolation, spring, sequencing, transitions, loops, and primitive nodes are directly available to host-language code.",
+        "general_primitive_access": "SUPPORTED",
+        "inspectability": "SUPPORTED",
+        "named_pattern_dependence": "NOT_NATIVE",
+        "novel_scene_expressibility": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "post_generation_editability": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "procedural_logic": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "registry_dependence": "NOT_NATIVE",
+        "source_mapping": "PARTIALLY_SUPPORTED",
         "source_refs": [
-          "S-CINEMA-COMPILER",
-          "S-REACT-LOWER",
-          "S-SCENE",
-          "S-COMPONENTS"
+          "S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS",
+          "S-MANDATORY-PACKAGES-REACT-SRC-COMPONENTS-TS",
+          "S-MANDATORY-PACKAGES-REACT-SRC-INTERPOLATE-TS",
+          "S-MANDATORY-PACKAGES-REACT-SRC-SPRING-TS",
+          "S-MANDATORY-PACKAGES-REACT-SRC-TRANSITIONS-TS",
+          "S-REACT-LOWER"
         ],
         "surface_id": "AS-REACT"
       },
       {
         "black_box_risk": "MEDIUM",
-        "can_descend_to_primitives": false,
-        "custom_animation": false,
-        "custom_component_extension": true,
-        "custom_geometry": "Only composition of supported Scene geometry; arbitrary shader geometry is not established.",
-        "escape_hatch_evidence": "Host-language or direct primitive construction is evidenced.",
-        "general_primitive_access": true,
-        "inspectability": true,
-        "named_pattern_dependence": false,
-        "novel_scene_expressibility": true,
-        "post_generation_editability": true,
-        "procedural_logic": false,
-        "registry_dependence": false,
-        "source_mapping": false,
+        "can_descend_to_primitives": "SUPPORTED",
+        "custom_animation": "SUPPORTED",
+        "custom_component_extension": "NOT_NATIVE",
+        "custom_geometry": "FINITE_CATALOG_LIMIT",
+        "escape_hatch_evidence": "Direct JSON composes the finite Scene schema; it cannot define a new component implementation at this layer.",
+        "general_primitive_access": "SUPPORTED",
+        "inspectability": "SUPPORTED",
+        "named_pattern_dependence": "NOT_NATIVE",
+        "novel_scene_expressibility": "PARTIALLY_SUPPORTED",
+        "post_generation_editability": "SUPPORTED",
+        "procedural_logic": "NOT_NATIVE",
+        "registry_dependence": "NOT_NATIVE",
+        "source_mapping": "PARTIALLY_SUPPORTED",
         "source_refs": [
-          "S-CINEMA-COMPILER",
-          "S-REACT-LOWER",
           "S-SCENE",
-          "S-COMPONENTS"
+          "S-CLI",
+          "S-WASM"
         ],
         "surface_id": "AS-JSON"
       },
       {
-        "black_box_risk": "MEDIUM",
-        "can_descend_to_primitives": false,
-        "custom_animation": false,
-        "custom_component_extension": true,
-        "custom_geometry": "Only composition of supported Scene geometry; arbitrary shader geometry is not established.",
-        "escape_hatch_evidence": "Host-language or direct primitive construction is evidenced.",
-        "general_primitive_access": true,
-        "inspectability": true,
-        "named_pattern_dependence": false,
-        "novel_scene_expressibility": true,
-        "post_generation_editability": true,
-        "procedural_logic": true,
-        "registry_dependence": true,
-        "source_mapping": false,
+        "black_box_risk": "LOW",
+        "can_descend_to_primitives": "SUPPORTED",
+        "custom_animation": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "custom_component_extension": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "custom_geometry": "FINITE_CATALOG_LIMIT",
+        "escape_hatch_evidence": "Typed Rust constructs Scene and Timeline values directly without depending on the Cinema component registry.",
+        "general_primitive_access": "SUPPORTED",
+        "inspectability": "SUPPORTED",
+        "named_pattern_dependence": "NOT_NATIVE",
+        "novel_scene_expressibility": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "post_generation_editability": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "procedural_logic": "SUPPORTED_THROUGH_HOST_LANGUAGE",
+        "registry_dependence": "NOT_NATIVE",
+        "source_mapping": "PARTIALLY_SUPPORTED",
         "source_refs": [
-          "S-CINEMA-COMPILER",
-          "S-REACT-LOWER",
           "S-SCENE",
-          "S-COMPONENTS"
+          "S-ANIMATION",
+          "S-CLI"
         ],
         "surface_id": "AS-RUST"
       },
       {
         "black_box_risk": "MEDIUM",
-        "can_descend_to_primitives": false,
-        "custom_animation": false,
-        "custom_component_extension": true,
-        "custom_geometry": "Only composition of supported Scene geometry; arbitrary shader geometry is not established.",
-        "escape_hatch_evidence": "Host-language or direct primitive construction is evidenced.",
-        "general_primitive_access": false,
-        "inspectability": true,
-        "named_pattern_dependence": true,
-        "novel_scene_expressibility": true,
-        "post_generation_editability": true,
-        "procedural_logic": true,
-        "registry_dependence": true,
-        "source_mapping": true,
+        "can_descend_to_primitives": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "custom_animation": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "custom_component_extension": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "custom_geometry": "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+        "escape_hatch_evidence": "Catalog identity is present before expansion, but complete component-to-Scene-to-pixel source mapping is not preserved.",
+        "general_primitive_access": "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+        "inspectability": "PARTIALLY_SUPPORTED",
+        "named_pattern_dependence": "FINITE_CATALOG_LIMIT",
+        "novel_scene_expressibility": "FINITE_CATALOG_LIMIT",
+        "post_generation_editability": "PARTIALLY_SUPPORTED",
+        "procedural_logic": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "registry_dependence": "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+        "source_mapping": "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
         "source_refs": [
+          "S-COMPONENTS",
+          "S-MANDATORY-PACKAGES-COMPONENTS-SRC-INDEX-TS",
           "S-CINEMA-COMPILER",
-          "S-REACT-LOWER",
-          "S-SCENE",
-          "S-COMPONENTS"
+          "S-REACT-LOWER"
         ],
         "surface_id": "AS-COMPONENTS"
       }
@@ -1611,32 +1688,32 @@
   "deferred_topics": [
     {
       "phase": "R0.03",
-      "topic": "renderer and GPU architecture",
+      "topic": "Native GPU, CPU, WASM, and encoding architecture",
       "topic_id": "DEF-001"
     },
     {
       "phase": "R0.04",
-      "topic": "time, determinism, and identity architecture",
+      "topic": "Typography, layout, effects, color, and 3D architecture",
       "topic_id": "DEF-002"
     },
     {
       "phase": "R0.05",
-      "topic": "component quality and creative grammar",
+      "topic": "Agent component catalog and cinematic composition model",
       "topic_id": "DEF-003"
     },
     {
       "phase": "R0.06",
-      "topic": "streaming, media, and performance measurement",
+      "topic": "CLI, installation, preview, embedding, and developer experience",
       "topic_id": "DEF-004"
     },
     {
       "phase": "R0.07",
-      "topic": "encoding and delivery",
+      "topic": "Independent benchmark and failure analysis",
       "topic_id": "DEF-005"
     },
     {
       "phase": "R0.08",
-      "topic": "versioning and compatibility",
+      "topic": "Adoption, rejection, clean-room, and roadmap-delta matrix",
       "topic_id": "DEF-006"
     }
   ],
@@ -1912,13 +1989,14 @@
       "inference"
     ]
   },
-  "model_version": "r0.02.2",
+  "model_version": "r0.02.3",
   "novel_scene_litmus": [
     {
       "asset_truthfulness": "external assets must be declared and cannot be inferred as physically accurate",
       "capability_decomposition": [
         {
           "dimension": "part hierarchy",
+          "evidence_scope": "A presegmented model or manually supplied hierarchy can be composed.",
           "required_primitive": "inspectable part hierarchy representation",
           "source_refs": [
             "S-SCENE",
@@ -1928,15 +2006,17 @@
         },
         {
           "dimension": "segmentation",
+          "evidence_scope": "Manual or presegmented hierarchy is supported; automatic semantic or mechanical segmentation of a monolithic asset is not established.",
           "required_primitive": "inspectable segmentation representation",
           "source_refs": [
             "S-SCENE",
             "S-REACT-LOWER"
           ],
-          "status": "SUPPORTED_OR_COMPOSABLE"
+          "status": "PARTIAL_OR_NOT_ESTABLISHED"
         },
         {
           "dimension": "exploded-view planning",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
           "required_primitive": "inspectable exploded-view planning representation",
           "source_refs": [
             "S-SCENE",
@@ -1946,6 +2026,7 @@
         },
         {
           "dimension": "collision avoidance",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
           "required_primitive": "inspectable collision avoidance representation",
           "source_refs": [
             "S-SCENE",
@@ -1955,6 +2036,7 @@
         },
         {
           "dimension": "mechanical geometry",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
           "required_primitive": "inspectable mechanical geometry representation",
           "source_refs": [
             "S-SCENE",
@@ -1964,6 +2046,7 @@
         },
         {
           "dimension": "materials",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
           "required_primitive": "inspectable materials representation",
           "source_refs": [
             "S-SCENE",
@@ -1973,6 +2056,7 @@
         },
         {
           "dimension": "emissive lighting",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
           "required_primitive": "inspectable emissive lighting representation",
           "source_refs": [
             "S-SCENE",
@@ -1982,6 +2066,7 @@
         },
         {
           "dimension": "camera",
+          "evidence_scope": "The cited authoring and Scene surfaces expose composable primitives for this dimension.",
           "required_primitive": "inspectable camera representation",
           "source_refs": [
             "S-SCENE",
@@ -1991,6 +2076,7 @@
         },
         {
           "dimension": "particles",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
           "required_primitive": "inspectable particles representation",
           "source_refs": [
             "S-SCENE",
@@ -2000,6 +2086,7 @@
         },
         {
           "dimension": "timing",
+          "evidence_scope": "The cited authoring and Scene surfaces expose composable primitives for this dimension.",
           "required_primitive": "inspectable timing representation",
           "source_refs": [
             "S-SCENE",
@@ -2009,15 +2096,18 @@
         },
         {
           "dimension": "sound",
+          "evidence_scope": "Audio authoring lowers to runtime scheduling with distinct clock ownership.",
           "required_primitive": "inspectable sound representation",
           "source_refs": [
-            "S-SCENE",
+            "S-AUDIO",
+            "S-PLAYER",
             "S-REACT-LOWER"
           ],
           "status": "SUPPORTED_OR_COMPOSABLE"
         },
         {
           "dimension": "semantic grouping",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
           "required_primitive": "inspectable semantic grouping representation",
           "source_refs": [
             "S-SCENE",
@@ -2027,6 +2117,7 @@
         },
         {
           "dimension": "inspectability",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
           "required_primitive": "inspectable inspectability representation",
           "source_refs": [
             "S-SCENE",
@@ -2036,6 +2127,7 @@
         },
         {
           "dimension": "editability",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
           "required_primitive": "inspectable editability representation",
           "source_refs": [
             "S-SCENE",
@@ -2045,6 +2137,7 @@
         },
         {
           "dimension": "asset truthfulness",
+          "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
           "required_primitive": "inspectable asset truthfulness representation",
           "source_refs": [
             "S-SCENE",
@@ -2102,6 +2195,7 @@
       "capability_decomposition": [
         {
           "dimension": "overall primitive sufficiency",
+          "evidence_scope": "The cited Scene and React surfaces establish finite composition primitives, not a general solution for every requested visual or physical behavior.",
           "required_primitive": "inspectable scene-specific primitive composition",
           "source_refs": [
             "S-SCENE",
@@ -2159,6 +2253,7 @@
       "capability_decomposition": [
         {
           "dimension": "overall primitive sufficiency",
+          "evidence_scope": "The cited Scene and React surfaces establish finite composition primitives, not a general solution for every requested visual or physical behavior.",
           "required_primitive": "inspectable scene-specific primitive composition",
           "source_refs": [
             "S-SCENE",
@@ -2217,15 +2312,21 @@
   "onda_tree": "639df83ebf0262afccd6d021bf6d16ef19777d85",
   "open_questions": [
     {
-      "defer_to": "R0.03",
+      "defer_to": [
+        "R0.03",
+        "R0.07"
+      ],
       "id": "Q-001",
       "question": "What scene-size and duration thresholds make full frame materialization unacceptable on target machines?",
       "source_refs": [
-        "S-NODE-EXPORT"
+        "S-NODE-EXPORT",
+        "S-REACT-LOWER"
       ]
     },
     {
-      "defer_to": "R0.04",
+      "defer_to": [
+        "R0.03"
+      ],
       "id": "Q-002",
       "question": "Which renderer capabilities are intentionally stable across CPU, Vello, and browser hosts?",
       "source_refs": [
@@ -2235,15 +2336,24 @@
       ]
     },
     {
-      "defer_to": "R0.05",
+      "defer_to": [
+        "R0.03",
+        "R0.08"
+      ],
       "id": "Q-003",
       "question": "What serialization evolution policy is promised beyond current version handling?",
       "source_refs": [
-        "S-SCENE"
+        "S-SCENE",
+        "S-CLI",
+        "S-WASM"
       ]
     },
     {
-      "defer_to": "R0.06",
+      "defer_to": [
+        "R0.03",
+        "R0.06",
+        "R0.07"
+      ],
       "id": "Q-004",
       "question": "How should media clocks, frame rates, variable frame rate, and audio resampling compose?",
       "source_refs": [
@@ -2253,7 +2363,9 @@
       ]
     },
     {
-      "defer_to": "R0.07",
+      "defer_to": [
+        "R0.04"
+      ],
       "id": "Q-005",
       "question": "What general material, shader, constraint, and simulation model is required for the target creative ceiling?",
       "source_refs": [
@@ -2262,7 +2374,10 @@
       ]
     },
     {
-      "defer_to": "R0.08",
+      "defer_to": [
+        "R0.05",
+        "R0.08"
+      ],
       "id": "Q-006",
       "question": "Which authoring semantics must remain editable after lowering and round-trip serialization?",
       "source_refs": [

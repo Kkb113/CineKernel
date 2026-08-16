@@ -52,6 +52,7 @@ pub fn document_schema(document: &Value, lock: Option<&UpstreamLock>) -> Result<
         harden_sources(&mut schema, lock)?;
     }
     harden_graph(&mut schema);
+    harden_semantic_vocabularies(&mut schema);
     Ok(schema)
 }
 
@@ -166,6 +167,66 @@ fn harden_graph(value: &mut Value) {
         Value::Array(items) => {
             for child in items {
                 harden_graph(child);
+            }
+        }
+        _ => {}
+    }
+}
+
+fn harden_semantic_vocabularies(value: &mut Value) {
+    const CAPABILITY_FIELDS: &[&str] = &[
+        "general_primitive_access",
+        "procedural_logic",
+        "custom_geometry",
+        "custom_animation",
+        "custom_component_extension",
+        "registry_dependence",
+        "named_pattern_dependence",
+        "can_descend_to_primitives",
+        "inspectability",
+        "post_generation_editability",
+        "source_mapping",
+        "novel_scene_expressibility",
+    ];
+    let creative_states = json!({"type":"string","enum":["SUPPORTED","PARTIALLY_SUPPORTED","PARTIALLY_SUPPORTED_BEFORE_LOWERING","SUPPORTED_THROUGH_HOST_LANGUAGE","SUPPORTED_THROUGH_CUSTOM_REGISTRY","REQUIRES_LOWER_LEVEL_SCENE_ACCESS","FINITE_CATALOG_LIMIT","NOT_NATIVE","NOT_REPRESENTABLE_AT_THIS_LAYER","UNKNOWN"]});
+    let phases = json!({"type":"string","enum":["R0.03","R0.04","R0.05","R0.06","R0.07","R0.08"]});
+    match value {
+        Value::Object(map) => {
+            if let Some(properties) = map.get_mut("properties").and_then(Value::as_object_mut) {
+                if let Some(assessments) = properties.get_mut("surface_assessments") {
+                    if let Some(fields) = assessments["items"]["properties"].as_object_mut() {
+                        for field in CAPABILITY_FIELDS {
+                            if fields.contains_key(*field) {
+                                fields.insert((*field).into(), creative_states.clone());
+                            }
+                        }
+                    }
+                }
+                if let Some(requirements) = properties.get_mut("candidate_requirements") {
+                    requirements["items"]["properties"]["status"] =
+                        json!({"const":"CANDIDATE_ONLY"});
+                    requirements["items"]["properties"]["affected_cinekernel_programs"]["items"] =
+                        json!({"type":"string","pattern":"^P(?:0[1-9]|1[0-9]|2[0-8])$"});
+                    requirements["items"]["properties"]["required_follow_up_research"]["items"] =
+                        phases.clone();
+                }
+                if let Some(claims) = properties.get_mut("claims") {
+                    claims["items"]["properties"]["status"] = json!({"type":"string","enum":["VERIFIED_AT_PIN","INFERRED_FROM_MULTIPLE_SOURCES","CONTRADICTED","CANDIDATE_ONLY","UNRESOLVED"]});
+                }
+                if let Some(questions) = properties.get_mut("open_questions") {
+                    questions["items"]["properties"]["defer_to"]["items"] = phases.clone();
+                }
+                if let Some(deferred) = properties.get_mut("deferred_topics") {
+                    deferred["items"]["properties"]["phase"] = phases.clone();
+                }
+            }
+            for child in map.values_mut() {
+                harden_semantic_vocabularies(child);
+            }
+        }
+        Value::Array(items) => {
+            for child in items {
+                harden_semantic_vocabularies(child);
             }
         }
         _ => {}

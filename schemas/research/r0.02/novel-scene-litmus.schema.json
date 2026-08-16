@@ -25,6 +25,10 @@
                       "minLength": 1,
                       "type": "string"
                     },
+                    "evidence_scope": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
                     "required_primitive": {
                       "minLength": 1,
                       "type": "string"
@@ -44,6 +48,7 @@
                   },
                   "required": [
                     "dimension",
+                    "evidence_scope",
                     "required_primitive",
                     "source_refs",
                     "status"

@@ -43,6 +43,38 @@ const EDGE_KINDS: &[&str] = &[
     "DROPS_OR_FLATTENS",
     "INSPECTS",
 ];
+const CREATIVE_STATES: &[&str] = &[
+    "SUPPORTED",
+    "PARTIALLY_SUPPORTED",
+    "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+    "SUPPORTED_THROUGH_HOST_LANGUAGE",
+    "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+    "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+    "FINITE_CATALOG_LIMIT",
+    "NOT_NATIVE",
+    "NOT_REPRESENTABLE_AT_THIS_LAYER",
+    "UNKNOWN",
+];
+const R0_REGISTRY: &[(&str, &str)] = &[
+    ("R0.03", "Native GPU, CPU, WASM, and encoding architecture"),
+    (
+        "R0.04",
+        "Typography, layout, effects, color, and 3D architecture",
+    ),
+    (
+        "R0.05",
+        "Agent component catalog and cinematic composition model",
+    ),
+    (
+        "R0.06",
+        "CLI, installation, preview, embedding, and developer experience",
+    ),
+    ("R0.07", "Independent benchmark and failure analysis"),
+    (
+        "R0.08",
+        "Adoption, rejection, clean-room, and roadmap-delta matrix",
+    ),
+];
 
 pub fn validate(model: &Value) -> Result<()> {
     graph(
@@ -68,11 +100,21 @@ pub fn validate(model: &Value) -> Result<()> {
             .as_array()
             .context("requirements missing")?,
     )?;
+    claims(model["claims"].as_array().context("claims missing")?)?;
     creativity(&model["creative_programmability"])?;
     novel_scenes(
         model["novel_scene_litmus"]
             .as_array()
             .context("novel scenes missing")?,
+    )?;
+    roadmap(
+        model["deferred_topics"]
+            .as_array()
+            .context("deferred topics missing")?,
+        model["open_questions"]
+            .as_array()
+            .context("open questions missing")?,
+        model["candidate_requirements"].as_array().unwrap(),
     )?;
     stable_order(
         model["sources"].as_array().context("sources missing")?,
@@ -183,12 +225,13 @@ pub fn fallbacks(rows: &[Value]) -> Result<()> {
 }
 
 pub fn requirements(rows: &[Value]) -> Result<()> {
+    let mut impact_signatures = BTreeSet::new();
     for row in rows {
         if !req(row, "requirement_id")?.starts_with("CK-R002-REQ-") {
             bail!("candidate requirement ID is invalid")
         }
-        if req(row, "status")? == "FINAL" {
-            bail!("R0.02 requirement incorrectly marked final")
+        if req(row, "status")? != "CANDIDATE_ONLY" {
+            bail!("R0.02 requirement must remain CANDIDATE_ONLY")
         }
         for field in [
             "abstract_requirement",
@@ -212,6 +255,83 @@ pub fn requirements(rows: &[Value]) -> Result<()> {
                 bail!("requirement missing {field}")
             }
         }
+        for program in row["affected_cinekernel_programs"].as_array().unwrap() {
+            let program = program.as_str().context("program ID is not a string")?;
+            let number = program
+                .strip_prefix('P')
+                .and_then(|value| value.parse::<u8>().ok())
+                .filter(|value| (1..=28).contains(value));
+            if program.len() != 3 || number.is_none() {
+                bail!("requirement uses an unlocked CineKernel program identifier")
+            }
+        }
+        let signature = format!(
+            "{}|{}|{}|{}",
+            req(row, "quality_impact")?,
+            req(row, "trust_impact")?,
+            req(row, "performance_impact")?,
+            req(row, "creative_programming_impact")?
+        );
+        if !impact_signatures.insert(signature) {
+            bail!("candidate requirements reuse a generic impact block")
+        }
+        match req(row, "requirement_id")? {
+            "CK-R002-REQ-001"
+                if !has(row, "onda_observation_refs", "C-004")
+                    || !has(row, "affected_cinekernel_programs", "P25") =>
+            {
+                bail!("cross-stage identity traceability is mismapped")
+            }
+            "CK-R002-REQ-002"
+                if !has(row, "onda_source_refs", "S-CINEMA-TIME")
+                    || !has(row, "onda_source_refs", "S-AUDIO")
+                    || !has(row, "affected_cinekernel_programs", "P19") =>
+            {
+                bail!("time-domain traceability is mismapped")
+            }
+            "CK-R002-REQ-004"
+                if !has(row, "onda_observation_refs", "C-007")
+                    || !has(row, "onda_observation_refs", "C-008")
+                    || !has(row, "onda_source_refs", "S-CANVAS") =>
+            {
+                bail!("fallback traceability is mismapped")
+            }
+            "CK-R002-REQ-005"
+                if !has(row, "onda_observation_refs", "C-009")
+                    || !has(row, "affected_cinekernel_programs", "P26") =>
+            {
+                bail!("bounded-generation traceability is mismapped")
+            }
+            _ => {}
+        }
+    }
+    Ok(())
+}
+
+fn has(row: &Value, field: &str, expected: &str) -> bool {
+    row[field]
+        .as_array()
+        .is_some_and(|items| items.iter().any(|item| item == expected))
+}
+
+pub fn claims(rows: &[Value]) -> Result<()> {
+    for row in rows {
+        if !req(row, "claim_id")?.starts_with("C-") {
+            bail!("claim ID is invalid")
+        }
+        if !matches!(
+            req(row, "status")?,
+            "VERIFIED_AT_PIN"
+                | "INFERRED_FROM_MULTIPLE_SOURCES"
+                | "CONTRADICTED"
+                | "CANDIDATE_ONLY"
+                | "UNRESOLVED"
+        ) {
+            bail!("claim status is invalid")
+        }
+        if req(row, "status")? == "UNRESOLVED" && req(row, "confidence")? == "HIGH" {
+            bail!("unresolved claim cannot have high confidence")
+        }
     }
     Ok(())
 }
@@ -230,6 +350,8 @@ pub fn creativity(value: &Value) -> Result<()> {
         for field in [
             "general_primitive_access",
             "procedural_logic",
+            "custom_geometry",
+            "custom_animation",
             "custom_component_extension",
             "registry_dependence",
             "named_pattern_dependence",
@@ -239,11 +361,11 @@ pub fn creativity(value: &Value) -> Result<()> {
             "source_mapping",
             "novel_scene_expressibility",
         ] {
-            if row.get(field).and_then(Value::as_bool).is_none() {
-                bail!("creative assessment missing boolean {field}")
+            if !CREATIVE_STATES.contains(&req(row, field)?) {
+                bail!("creative assessment has invalid categorical state for {field}")
             }
         }
-        if row["general_primitive_access"].as_bool() == Some(true)
+        if req(row, "general_primitive_access")? == "SUPPORTED"
             && req(row, "escape_hatch_evidence")?.contains("No general")
         {
             bail!("open-ended classification lacks escape-hatch evidence")
@@ -277,7 +399,57 @@ pub fn novel_scenes(rows: &[Value]) -> Result<()> {
         {
             bail!("novel scene capability row lacks required primitive")
         }
+        if row.get("litmus_id").and_then(Value::as_str) == Some("LITMUS-LAPTOP") {
+            let segmentation = decomposition
+                .iter()
+                .find(|item| item["dimension"] == "segmentation")
+                .context("laptop segmentation row missing")?;
+            if req(segmentation, "status")? != "PARTIAL_OR_NOT_ESTABLISHED"
+                || !req(segmentation, "evidence_scope")?
+                    .contains("automatic semantic or mechanical segmentation")
+            {
+                bail!("laptop segmentation overclaims automatic asset understanding")
+            }
+            let sound = decomposition
+                .iter()
+                .find(|item| item["dimension"] == "sound")
+                .context("laptop sound row missing")?;
+            if !sound["source_refs"]
+                .as_array()
+                .is_some_and(|refs| refs.iter().any(|item| item == "S-AUDIO"))
+            {
+                bail!("laptop sound row lacks audio-specific evidence")
+            }
+        }
         refs(row)?;
+    }
+    Ok(())
+}
+
+pub fn roadmap(deferred: &[Value], questions: &[Value], requirements: &[Value]) -> Result<()> {
+    if deferred.len() != R0_REGISTRY.len() {
+        bail!("locked R0 registry has the wrong number of phases")
+    }
+    for (row, (phase, topic)) in deferred.iter().zip(R0_REGISTRY) {
+        if req(row, "phase")? != *phase || req(row, "topic")? != *topic {
+            bail!("locked R0 registry drifted at {phase}")
+        }
+    }
+    for routes in questions.iter().map(|row| &row["defer_to"]).chain(
+        requirements
+            .iter()
+            .map(|row| &row["required_follow_up_research"]),
+    ) {
+        let routes = routes.as_array().context("R0 routing must be an array")?;
+        if routes.is_empty()
+            || routes.iter().any(|route| {
+                route
+                    .as_str()
+                    .is_none_or(|phase| !R0_REGISTRY.iter().any(|entry| entry.0 == phase))
+            })
+        {
+            bail!("future-work routing references an unlocked R0 phase")
+        }
     }
     Ok(())
 }
@@ -321,10 +493,10 @@ mod tests {
         json!({"trigger":"x","behavior":"APPROXIMATION","visual_outcome":"x","semantic_impact":"x","visual_impact":"x","timing_impact":"x","determinism_impact":"x","preview_export_difference":"x","repairability":"x","quality_reducing":true,"user_or_agent_informed":true,"source_refs":["S-X"]})
     }
     fn requirement() -> Value {
-        json!({"requirement_id":"CK-R002-REQ-001","status":"CANDIDATE_ONLY","abstract_requirement":"x","problem_addressed":"x","quality_impact":"x","trust_impact":"x","performance_impact":"x","creative_programming_impact":"x","prohibited_reuse_note":"x","onda_observation_refs":["C-1"],"onda_source_refs":["S-X"],"independent_primary_source_refs":["E-X"],"affected_cinekernel_programs":["compiler"],"required_follow_up_research":["R0.03"]})
+        json!({"requirement_id":"CK-R002-REQ-001","status":"CANDIDATE_ONLY","abstract_requirement":"x","problem_addressed":"x","quality_impact":"x","trust_impact":"x","performance_impact":"x","creative_programming_impact":"x","prohibited_reuse_note":"x","onda_observation_refs":["C-001"],"onda_source_refs":["S-X"],"independent_primary_source_refs":["E-X"],"affected_cinekernel_programs":["P01"],"required_follow_up_research":["R0.03"]})
     }
     fn creative() -> Value {
-        json!({"overall_verdict":"MULTI_LAYER","scoring_policy":"No numeric creativity score is assigned.","surface_assessments":[{"general_primitive_access":true,"procedural_logic":true,"custom_component_extension":true,"registry_dependence":false,"named_pattern_dependence":false,"can_descend_to_primitives":true,"inspectability":true,"post_generation_editability":true,"source_mapping":false,"novel_scene_expressibility":true,"escape_hatch_evidence":"Host-language code","source_refs":["S-X"]}]})
+        json!({"overall_verdict":"MULTI_LAYER","scoring_policy":"No numeric creativity score is assigned.","surface_assessments":[{"general_primitive_access":"SUPPORTED","procedural_logic":"SUPPORTED_THROUGH_HOST_LANGUAGE","custom_geometry":"FINITE_CATALOG_LIMIT","custom_animation":"SUPPORTED_THROUGH_HOST_LANGUAGE","custom_component_extension":"SUPPORTED_THROUGH_HOST_LANGUAGE","registry_dependence":"NOT_NATIVE","named_pattern_dependence":"NOT_NATIVE","can_descend_to_primitives":"SUPPORTED","inspectability":"SUPPORTED","post_generation_editability":"SUPPORTED_THROUGH_HOST_LANGUAGE","source_mapping":"PARTIALLY_SUPPORTED","novel_scene_expressibility":"SUPPORTED_THROUGH_HOST_LANGUAGE","escape_hatch_evidence":"Host-language code","source_refs":["S-X"]}]})
     }
     fn novel() -> Value {
         json!({"required_primitives":["geometry"],"surface_comparison":[{"surface_id":"AS-X"}],"capability_decomposition":[{"required_primitive":"geometry"}],"source_refs":["S-X"]})
@@ -470,6 +642,34 @@ mod tests {
         let mut row = creative();
         row["surface_assessments"][0]["escape_hatch_evidence"] = json!("No general escape hatch");
         assert!(creativity(&row).is_err())
+    }
+    #[test]
+    fn creativity_rejects_boolean_compression() {
+        let mut row = creative();
+        row["surface_assessments"][0]["custom_animation"] = json!(true);
+        assert!(creativity(&row).is_err())
+    }
+    #[test]
+    fn claim_candidate_status_is_explicit() {
+        assert!(claims(&[
+            json!({"claim_id":"C-011","status":"CANDIDATE_ONLY","confidence":"HIGH"})
+        ])
+        .is_ok());
+        assert!(
+            claims(&[json!({"claim_id":"C-011","status":"UNRESOLVED","confidence":"HIGH"})])
+                .is_err()
+        );
+    }
+    #[test]
+    fn roadmap_rejects_definition_drift() {
+        let mut deferred: Vec<Value> = R0_REGISTRY.iter().enumerate().map(|(i, (phase, topic))| json!({"topic_id":format!("DEF-{:03}",i+1),"phase":phase,"topic":topic})).collect();
+        deferred[1]["topic"] = json!("time and identity architecture");
+        assert!(roadmap(
+            &deferred,
+            &[json!({"defer_to":["R0.03"]})],
+            &[requirement()]
+        )
+        .is_err());
     }
     #[test]
     fn novel_scene_requires_primitive() {

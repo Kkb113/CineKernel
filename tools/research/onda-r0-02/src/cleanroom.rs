@@ -21,7 +21,7 @@ pub fn run(root: &Path) -> Result<Vec<String>> {
     Ok(vec![
         "Phase 0 and R0.01 frozen paths unchanged".into(),
         "no tracked private/generated upstream paths".into(),
-        "all tracked manifests reject direct, aliased, and Git dependencies on research subjects"
+        "all tracked manifests and lockfiles reject authoritative ONDA package identities, aliases, Git sources, and checkout paths"
             .into(),
         "absolute-path variants absent from all changed research artifacts".into(),
         "exact nontrivial upstream-file hash comparison passed".into(),
@@ -29,24 +29,30 @@ pub fn run(root: &Path) -> Result<Vec<String>> {
     ])
 }
 
+#[cfg(test)]
 pub fn manifest_has_prohibited_dependency(path: &str, text: &str) -> bool {
+    manifest_has_prohibited_dependency_with_names(path, text, &default_subject_names())
+}
+
+fn manifest_has_prohibited_dependency_with_names(
+    path: &str,
+    text: &str,
+    subject_names: &BTreeSet<String>,
+) -> bool {
     let lower = text.to_ascii_lowercase();
-    let banned = [
-        "onda-engine",
-        "onda_engine",
-        "remotion",
-        "hyperframes",
-        "hyperframe",
-    ];
     if path.ends_with("Cargo.toml") {
         let mut dependencies = false;
         for line in lower.lines() {
             let trimmed = line.trim();
             if trimmed.starts_with('[') {
-                dependencies = trimmed.contains("dependencies");
+                dependencies = dependency_section(trimmed);
                 continue;
             }
-            if dependencies && banned.iter().any(|name| trimmed.contains(name)) {
+            if dependencies
+                && (contains_subject_identity(trimmed, subject_names)
+                    || contains_subject_repository(trimmed)
+                    || path_points_into_onda_checkout(trimmed))
+            {
                 return true;
             }
         }
@@ -54,29 +60,183 @@ pub fn manifest_has_prohibited_dependency(path: &str, text: &str) -> bool {
     }
     if path.ends_with("package.json") {
         if let Ok(json) = serde_json::from_str::<serde_json::Value>(&lower) {
-            for section in [
-                "dependencies",
-                "devdependencies",
-                "peerdependencies",
-                "optionaldependencies",
-            ] {
-                if let Some(map) = json.get(section).and_then(serde_json::Value::as_object) {
-                    if map.iter().any(|(name, value)| {
-                        banned.iter().any(|b| {
-                            name.contains(b) || value.as_str().is_some_and(|v| v.contains(b))
-                        })
-                    }) {
-                        return true;
-                    }
-                }
-            }
+            return json_dependency_has_subject(&json, subject_names);
         }
         return false;
     }
-    if path.ends_with("pnpm-lock.yaml") || path.ends_with("Cargo.lock") {
-        return banned.iter().any(|name| lower.contains(name));
+    if path.ends_with("Cargo.lock") {
+        return cargo_lock_has_subject(&lower, subject_names);
+    }
+    if path.ends_with("pnpm-lock.yaml") {
+        return contains_subject_identity(&lower, subject_names)
+            || contains_subject_repository(&lower);
     }
     false
+}
+
+fn manifest_has_prohibited_dependency_at(
+    root: &Path,
+    path: &str,
+    text: &str,
+    subject_names: &BTreeSet<String>,
+) -> bool {
+    if manifest_has_prohibited_dependency_with_names(path, text, subject_names) {
+        return true;
+    }
+    if !path.ends_with("Cargo.toml") {
+        return false;
+    }
+    let checkout = root.join(".cinekernel/upstreams/onda").canonicalize().ok();
+    let manifest_dir = root.join(path).parent().map(Path::to_path_buf);
+    let (Some(checkout), Some(manifest_dir)) = (checkout, manifest_dir) else {
+        return false;
+    };
+    let mut dependencies = false;
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if trimmed.starts_with('[') {
+            dependencies = dependency_section(&trimmed.to_ascii_lowercase());
+            continue;
+        }
+        if !dependencies || !trimmed.contains("path") {
+            continue;
+        }
+        for quoted in trimmed.split('"').skip(1).step_by(2) {
+            if manifest_dir
+                .join(quoted)
+                .canonicalize()
+                .is_ok_and(|resolved| resolved.starts_with(&checkout))
+            {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+fn dependency_section(header: &str) -> bool {
+    header
+        .trim_matches(|c| c == '[' || c == ']')
+        .split('.')
+        .any(|part| part.trim_matches('"').ends_with("dependencies"))
+}
+
+fn contains_subject_identity(text: &str, names: &BTreeSet<String>) -> bool {
+    let normalized = text.to_ascii_lowercase();
+    names.iter().any(|name| normalized.contains(name))
+        || normalized.contains("@onda-engine/")
+        || normalized
+            .split(|c: char| !(c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '@' | '/')))
+            .any(|token| token.starts_with("onda-") && token != "onda-r0-02-research")
+}
+
+fn contains_subject_repository(text: &str) -> bool {
+    let lower = text.to_ascii_lowercase();
+    lower.contains("github.com/onda-engine/onda-engine")
+        || lower.contains("onda_engine")
+        || lower.contains("remotion")
+        || lower.contains("hyperframes")
+        || lower.contains("hyperframe")
+}
+
+fn path_points_into_onda_checkout(text: &str) -> bool {
+    text.replace('\\', "/")
+        .to_ascii_lowercase()
+        .contains(".cinekernel/upstreams/onda")
+}
+
+fn json_dependency_has_subject(value: &serde_json::Value, names: &BTreeSet<String>) -> bool {
+    let Some(object) = value.as_object() else {
+        return false;
+    };
+    object.iter().any(|(key, value)| {
+        let dependency_section = key.to_ascii_lowercase().ends_with("dependencies");
+        if dependency_section {
+            value.as_object().is_some_and(|dependencies| {
+                dependencies.iter().any(|(name, spec)| {
+                    contains_subject_identity(name, names)
+                        || spec.as_str().is_some_and(|text| {
+                            contains_subject_identity(text, names)
+                                || contains_subject_repository(text)
+                                || path_points_into_onda_checkout(text)
+                        })
+                })
+            })
+        } else {
+            json_dependency_has_subject(value, names)
+        }
+    })
+}
+
+fn cargo_lock_has_subject(text: &str, names: &BTreeSet<String>) -> bool {
+    text.split("[[package]]").skip(1).any(|package| {
+        package.lines().any(|line| {
+            let trimmed = line.trim();
+            if let Some(name) = trimmed.strip_prefix("name = ") {
+                let name = name.trim_matches('"');
+                name != "onda-r0-02-research" && (names.contains(name) || name.starts_with("onda-"))
+            } else if trimmed.starts_with("source = ") {
+                contains_subject_repository(trimmed)
+            } else {
+                false
+            }
+        })
+    })
+}
+
+fn default_subject_names() -> BTreeSet<String> {
+    [
+        "onda-engine",
+        "@onda-engine/",
+        "onda-scene",
+        "onda-vello",
+        "onda-audio",
+        "remotion",
+        "hyperframes",
+        "hyperframe",
+    ]
+    .into_iter()
+    .map(str::to_owned)
+    .collect()
+}
+
+fn authoritative_subject_names(root: &Path) -> Result<BTreeSet<String>> {
+    let mut names = default_subject_names();
+    for relative in [
+        "docs/research/onda/r0.01/MODULE_INVENTORY.json",
+        "docs/research/onda/r0.01/DEPENDENCY_INVENTORY.json",
+    ] {
+        let value: serde_json::Value = serde_json::from_slice(&fs::read(root.join(relative))?)?;
+        collect_onda_names(&value, &mut names);
+    }
+    Ok(names)
+}
+
+fn collect_onda_names(value: &serde_json::Value, names: &mut BTreeSet<String>) {
+    match value {
+        serde_json::Value::Object(map) => {
+            for (key, child) in map {
+                if matches!(key.as_str(), "name" | "package_name") {
+                    if let Some(name) = child.as_str() {
+                        let name = name.to_ascii_lowercase();
+                        if name == "onda-engine"
+                            || name.starts_with("onda-")
+                            || name.starts_with("@onda-engine/")
+                        {
+                            names.insert(name);
+                        }
+                    }
+                }
+                collect_onda_names(child, names);
+            }
+        }
+        serde_json::Value::Array(items) => {
+            for child in items {
+                collect_onda_names(child, names);
+            }
+        }
+        _ => {}
+    }
 }
 
 pub fn contains_absolute_path(text: &str) -> bool {
@@ -173,6 +333,7 @@ fn validate_no_tracked_private_paths(root: &Path) -> Result<()> {
 }
 
 fn validate_dependencies(root: &Path) -> Result<()> {
+    let subject_names = authoritative_subject_names(root)?;
     for path in git(root, &["ls-files"])?.lines().filter(|p| {
         p.ends_with("Cargo.toml")
             || p.ends_with("Cargo.lock")
@@ -180,7 +341,7 @@ fn validate_dependencies(root: &Path) -> Result<()> {
             || p.ends_with("pnpm-lock.yaml")
     }) {
         let text = fs::read_to_string(root.join(path))?;
-        if manifest_has_prohibited_dependency(path, &text) {
+        if manifest_has_prohibited_dependency_at(root, path, &text, &subject_names) {
             let spec = format!("{BASE}:{path}");
             let baseline = Command::new("git")
                 .args(["show", &spec])
@@ -191,7 +352,7 @@ fn validate_dependencies(root: &Path) -> Result<()> {
             } else {
                 String::new()
             };
-            if !manifest_has_prohibited_dependency(path, &baseline_text)
+            if !manifest_has_prohibited_dependency_at(root, path, &baseline_text, &subject_names)
                 || text.replace("\r\n", "\n") != baseline_text.replace("\r\n", "\n")
             {
                 bail!("new or modified prohibited permanent dependency in {path}")
@@ -348,6 +509,65 @@ mod tests {
     #[test]
     fn catches_git_dependency_alias() {
         assert!(manifest_has_prohibited_dependency("Cargo.toml", "[dependencies]\nsafe = { package = \"other\", git = \"https://github.com/onda-engine/onda-engine\" }"));
+    }
+    #[test]
+    fn catches_authoritative_onda_rust_crates() {
+        for name in ["onda-scene", "onda-vello", "onda-audio"] {
+            assert!(manifest_has_prohibited_dependency(
+                "Cargo.toml",
+                &format!("[dependencies]\nsubject = {{ package = \"{name}\", version = \"1\" }}")
+            ));
+        }
+    }
+    #[test]
+    fn catches_renamed_onda_core_dependency() {
+        assert!(manifest_has_prohibited_dependency(
+            "Cargo.toml",
+            "[target.'cfg(unix)'.dependencies]\nscene_backend = { package = \"onda-core\", optional = true }"
+        ));
+    }
+    #[test]
+    fn catches_path_dependency_into_onda_checkout() {
+        assert!(manifest_has_prohibited_dependency(
+            "Cargo.toml",
+            "[build-dependencies]\nbackend = { path = \"../../../.cinekernel/upstreams/onda/packages/scene-rs\" }"
+        ));
+    }
+    #[test]
+    fn catches_workspace_and_dev_dependencies() {
+        assert!(manifest_has_prohibited_dependency(
+            "Cargo.toml",
+            "[workspace.dependencies]\nonda-vello = \"1\""
+        ));
+        assert!(manifest_has_prohibited_dependency(
+            "Cargo.toml",
+            "[dev-dependencies]\naudio = { package = \"onda-audio\", version = \"1\" }"
+        ));
+    }
+    #[test]
+    fn catches_resolved_lockfile_identity() {
+        assert!(manifest_has_prohibited_dependency(
+            "Cargo.lock",
+            "[[package]]\nname = \"onda-scene\"\nversion = \"0.1.0\""
+        ));
+    }
+    #[test]
+    fn catches_npm_alias_and_scoped_dependency() {
+        assert!(manifest_has_prohibited_dependency(
+            "package.json",
+            r#"{"devDependencies":{"safe":"npm:@onda-engine/react@1"}}"#
+        ));
+    }
+    #[test]
+    fn clean_negative_dependency_is_allowed() {
+        assert!(!manifest_has_prohibited_dependency(
+            "Cargo.toml",
+            "[package]\nname = \"onda-r0-02-research\"\n[dependencies]\nserde = \"1\""
+        ));
+        assert!(!manifest_has_prohibited_dependency(
+            "Cargo.lock",
+            "[[package]]\nname = \"onda-r0-02-research\"\nversion = \"0.1.0\"\n[[package]]\nname = \"serde\"\nversion = \"1.0.0\""
+        ));
     }
     #[test]
     fn package_name_outside_dependencies_is_not_a_dependency() {

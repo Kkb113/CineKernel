@@ -8,9 +8,9 @@
 
 ## Open questions
 
-- **Q-001:** What scene-size and duration thresholds make full frame materialization unacceptable on target machines?
-- **Q-002:** Which renderer capabilities are intentionally stable across CPU, Vello, and browser hosts?
-- **Q-003:** What serialization evolution policy is promised beyond current version handling?
-- **Q-004:** How should media clocks, frame rates, variable frame rate, and audio resampling compose?
-- **Q-005:** What general material, shader, constraint, and simulation model is required for the target creative ceiling?
-- **Q-006:** Which authoring semantics must remain editable after lowering and round-trip serialization?
+- **Q-001** → **R0.03, R0.07:** What scene-size and duration thresholds make full frame materialization unacceptable on target machines?
+- **Q-002** → **R0.03:** Which renderer capabilities are intentionally stable across CPU, Vello, and browser hosts?
+- **Q-003** → **R0.03, R0.08:** What serialization evolution policy is promised beyond current version handling?
+- **Q-004** → **R0.03, R0.06, R0.07:** How should media clocks, frame rates, variable frame rate, and audio resampling compose?
+- **Q-005** → **R0.04:** What general material, shader, constraint, and simulation model is required for the target creative ceiling?
+- **Q-006** → **R0.05, R0.08:** Which authoring semantics must remain editable after lowering and round-trip serialization?

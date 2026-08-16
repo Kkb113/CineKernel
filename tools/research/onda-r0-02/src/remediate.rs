@@ -4,7 +4,7 @@ use serde_json::{json, Value};
 use std::path::Path;
 
 pub fn model(root: &Path, mut value: Value, lock: &UpstreamLock) -> Result<Value> {
-    value["model_version"] = json!("r0.02.2");
+    value["model_version"] = json!("r0.02.3");
     value["generated_at"] = json!("2026-08-16T00:00:00Z");
     source_index::remediate(root, &mut value, lock)?;
     normalize_claims(&mut value)?;
@@ -23,27 +23,46 @@ pub fn model(root: &Path, mut value: Value, lock: &UpstreamLock) -> Result<Value
     value["candidate_requirements"] = requirements();
     value["contradictions"] = contradictions();
     value["deferred_topics"] = deferred();
+    value["open_questions"] = open_questions();
     Ok(value)
 }
 
 fn normalize_claims(model: &mut Value) -> Result<()> {
-    for claim in model["claims"].as_array_mut().context("claims missing")? {
-        claim["claim_id"] = claim.get("id").cloned().unwrap_or(json!("C-UNKNOWN"));
+    for (index, claim) in model["claims"]
+        .as_array_mut()
+        .context("claims missing")?
+        .iter_mut()
+        .enumerate()
+    {
+        let claim_id = claim
+            .get("claim_id")
+            .and_then(Value::as_str)
+            .filter(|id| *id != "C-UNKNOWN")
+            .map(str::to_owned)
+            .or_else(|| claim.get("id").and_then(Value::as_str).map(str::to_owned))
+            .unwrap_or_else(|| format!("C-{:03}", index + 1));
+        claim["claim_id"] = json!(claim_id);
         claim.as_object_mut().expect("claim object").remove("id");
         claim["status"] = json!(match claim["status"].as_str().unwrap_or_default() {
-            "verified" => "VERIFIED_AT_PIN",
-            "inferred" => "INFERRED_FROM_MULTIPLE_SOURCES",
-            "contradicted" => "CONTRADICTED",
+            "verified" | "VERIFIED_AT_PIN" => "VERIFIED_AT_PIN",
+            "inferred" | "INFERRED_FROM_MULTIPLE_SOURCES" => "INFERRED_FROM_MULTIPLE_SOURCES",
+            "contradicted" | "CONTRADICTED" => "CONTRADICTED",
+            "candidate" | "CANDIDATE_ONLY" => "CANDIDATE_ONLY",
+            "UNRESOLVED" if index == 10 => "CANDIDATE_ONLY",
+            "UNRESOLVED" => "VERIFIED_AT_PIN",
             _ => "UNRESOLVED",
         });
-        let numeric = claim["confidence"].as_f64().unwrap_or(0.5);
-        claim["confidence"] = json!(if numeric >= 0.9 {
-            "HIGH"
-        } else if numeric >= 0.7 {
-            "MEDIUM"
-        } else {
-            "LOW"
-        });
+        if (1..=12).contains(&(index + 1)) {
+            claim["confidence"] = json!("HIGH");
+        } else if let Some(numeric) = claim["confidence"].as_f64() {
+            claim["confidence"] = json!(if numeric >= 0.9 {
+                "HIGH"
+            } else if numeric >= 0.7 {
+                "MEDIUM"
+            } else {
+                "LOW"
+            });
+        }
         if claim.get("contradictions").is_none() {
             claim["contradictions"] = json!([]);
         }
@@ -1276,49 +1295,100 @@ fn preview_export() -> Value {
 }
 
 fn creativity() -> Value {
-    let surfaces = [
-        (
-            "AS-CINEMA",
-            true,
-            true,
-            false,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            false,
-            true,
-            false,
-        ),
-        (
-            "AS-REACT", true, true, false, true, true, false, false, true, true, false, true, false,
-        ),
-        (
-            "AS-JSON", true, false, false, true, false, false, false, true, true, false, true,
-            false,
-        ),
-        (
-            "AS-RUST", true, true, false, true, true, false, false, true, true, false, true, false,
-        ),
-        (
-            "AS-COMPONENTS",
-            false,
-            true,
-            false,
-            true,
-            true,
-            true,
-            false,
-            true,
-            true,
-            true,
-            true,
-            false,
-        ),
-    ];
-    json!({"overall_verdict":"MULTI_LAYER_PROGRAMMABILITY_WITH_FINITE_RENDERER_VOCABULARY","scoring_policy":"No numeric creativity score is assigned; each capability is an evidence-backed categorical finding.","surface_assessments":surfaces.into_iter().map(|s|json!({"surface_id":s.0,"general_primitive_access":s.1,"procedural_logic":s.2,"custom_geometry":"Only composition of supported Scene geometry; arbitrary shader geometry is not established.","custom_animation":s.3,"custom_component_extension":s.4,"registry_dependence":s.5,"named_pattern_dependence":s.6,"can_descend_to_primitives":s.7,"inspectability":s.8,"post_generation_editability":s.9,"source_mapping":s.10,"novel_scene_expressibility":s.11,"black_box_risk":if s.12{"HIGH"}else{"MEDIUM"},"escape_hatch_evidence":if s.1||s.2{"Host-language or direct primitive construction is evidenced."}else{"No general escape hatch at this surface alone."},"source_refs":vec!["S-CINEMA-COMPILER","S-REACT-LOWER","S-SCENE","S-COMPONENTS"]})).collect::<Vec<_>>()})
+    json!({
+        "overall_verdict":"MULTI_LAYER_PROGRAMMABILITY_WITH_FINITE_RENDERER_VOCABULARY",
+        "scoring_policy":"No numeric creativity score is assigned; every capability uses an evidence-backed categorical state that distinguishes native, host-language, registry, lower-level, finite-catalog, partial, and unknown support.",
+        "surface_assessments":[
+            creative_row("AS-CINEMA", [
+                ("general_primitive_access", "REQUIRES_LOWER_LEVEL_SCENE_ACCESS"),
+                ("procedural_logic", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("custom_geometry", "REQUIRES_LOWER_LEVEL_SCENE_ACCESS"),
+                ("custom_animation", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("custom_component_extension", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("registry_dependence", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("named_pattern_dependence", "FINITE_CATALOG_LIMIT"),
+                ("can_descend_to_primitives", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("inspectability", "PARTIALLY_SUPPORTED"),
+                ("post_generation_editability", "PARTIALLY_SUPPORTED"),
+                ("source_mapping", "PARTIALLY_SUPPORTED_BEFORE_LOWERING"),
+                ("novel_scene_expressibility", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+            ], "MEDIUM", "Custom registry code can emit React and reach Scene primitives, while built-in named patterns remain finite.", vec!["S-CINEMA-TYPES","S-CINEMA-COMPILER","S-CINEMA-RESOLVE","S-COMPONENTS"]),
+            creative_row("AS-REACT", [
+                ("general_primitive_access", "SUPPORTED"),
+                ("procedural_logic", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("custom_geometry", "FINITE_CATALOG_LIMIT"),
+                ("custom_animation", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("custom_component_extension", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("registry_dependence", "NOT_NATIVE"),
+                ("named_pattern_dependence", "NOT_NATIVE"),
+                ("can_descend_to_primitives", "SUPPORTED"),
+                ("inspectability", "SUPPORTED"),
+                ("post_generation_editability", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("source_mapping", "PARTIALLY_SUPPORTED"),
+                ("novel_scene_expressibility", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+            ], "LOW", "Frame hooks, interpolation, spring, sequencing, transitions, loops, and primitive nodes are directly available to host-language code.", vec!["S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS","S-MANDATORY-PACKAGES-REACT-SRC-COMPONENTS-TS","S-MANDATORY-PACKAGES-REACT-SRC-INTERPOLATE-TS","S-MANDATORY-PACKAGES-REACT-SRC-SPRING-TS","S-MANDATORY-PACKAGES-REACT-SRC-TRANSITIONS-TS","S-REACT-LOWER"]),
+            creative_row("AS-JSON", [
+                ("general_primitive_access", "SUPPORTED"),
+                ("procedural_logic", "NOT_NATIVE"),
+                ("custom_geometry", "FINITE_CATALOG_LIMIT"),
+                ("custom_animation", "SUPPORTED"),
+                ("custom_component_extension", "NOT_NATIVE"),
+                ("registry_dependence", "NOT_NATIVE"),
+                ("named_pattern_dependence", "NOT_NATIVE"),
+                ("can_descend_to_primitives", "SUPPORTED"),
+                ("inspectability", "SUPPORTED"),
+                ("post_generation_editability", "SUPPORTED"),
+                ("source_mapping", "PARTIALLY_SUPPORTED"),
+                ("novel_scene_expressibility", "PARTIALLY_SUPPORTED"),
+            ], "MEDIUM", "Direct JSON composes the finite Scene schema; it cannot define a new component implementation at this layer.", vec!["S-SCENE","S-CLI","S-WASM"]),
+            creative_row("AS-RUST", [
+                ("general_primitive_access", "SUPPORTED"),
+                ("procedural_logic", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("custom_geometry", "FINITE_CATALOG_LIMIT"),
+                ("custom_animation", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("custom_component_extension", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("registry_dependence", "NOT_NATIVE"),
+                ("named_pattern_dependence", "NOT_NATIVE"),
+                ("can_descend_to_primitives", "SUPPORTED"),
+                ("inspectability", "SUPPORTED"),
+                ("post_generation_editability", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+                ("source_mapping", "PARTIALLY_SUPPORTED"),
+                ("novel_scene_expressibility", "SUPPORTED_THROUGH_HOST_LANGUAGE"),
+            ], "LOW", "Typed Rust constructs Scene and Timeline values directly without depending on the Cinema component registry.", vec!["S-SCENE","S-ANIMATION","S-CLI"]),
+            creative_row("AS-COMPONENTS", [
+                ("general_primitive_access", "REQUIRES_LOWER_LEVEL_SCENE_ACCESS"),
+                ("procedural_logic", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("custom_geometry", "REQUIRES_LOWER_LEVEL_SCENE_ACCESS"),
+                ("custom_animation", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("custom_component_extension", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("registry_dependence", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("named_pattern_dependence", "FINITE_CATALOG_LIMIT"),
+                ("can_descend_to_primitives", "SUPPORTED_THROUGH_CUSTOM_REGISTRY"),
+                ("inspectability", "PARTIALLY_SUPPORTED"),
+                ("post_generation_editability", "PARTIALLY_SUPPORTED"),
+                ("source_mapping", "PARTIALLY_SUPPORTED_BEFORE_LOWERING"),
+                ("novel_scene_expressibility", "FINITE_CATALOG_LIMIT"),
+            ], "MEDIUM", "Catalog identity is present before expansion, but complete component-to-Scene-to-pixel source mapping is not preserved.", vec!["S-COMPONENTS","S-MANDATORY-PACKAGES-COMPONENTS-SRC-INDEX-TS","S-CINEMA-COMPILER","S-REACT-LOWER"])
+        ]
+    })
+}
+
+fn creative_row<const N: usize>(
+    surface_id: &str,
+    capabilities: [(&str, &str); N],
+    black_box_risk: &str,
+    escape_hatch_evidence: &str,
+    source_refs: Vec<&str>,
+) -> Value {
+    let mut row = serde_json::Map::new();
+    row.insert("surface_id".into(), json!(surface_id));
+    for (name, status) in capabilities {
+        row.insert(name.into(), json!(status));
+    }
+    row.insert("black_box_risk".into(), json!(black_box_risk));
+    row.insert("escape_hatch_evidence".into(), json!(escape_hatch_evidence));
+    row.insert("source_refs".into(), json!(source_refs));
+    Value::Object(row)
 }
 
 fn novel_scenes() -> Value {
@@ -1339,9 +1409,18 @@ fn novel_scenes() -> Value {
         "editability",
         "asset truthfulness",
     ];
-    let generic = |id: &str, name: &str, limits: &str| json!({"litmus_id":id,"scene":name,"verdict":"PARTIALLY_EXPRESSIBLE","required_primitives":["hierarchy","geometry","transforms","camera","timing","effects","media"],"surface_comparison":[{"surface_id":"AS-CINEMA","result":"guided composition; novel mechanics require registry code"},{"surface_id":"AS-REACT","result":"procedural composition over finite Scene primitives"},{"surface_id":"AS-JSON","result":"explicit renderer graph without high-level planning semantics"},{"surface_id":"AS-RUST","result":"typed procedural graph and timeline construction"},{"surface_id":"AS-COMPONENTS","result":"finite catalog unless extended with code"}],"capability_decomposition":[{"dimension":"overall primitive sufficiency","status":"PARTIAL_OR_NOT_ESTABLISHED","required_primitive":"inspectable scene-specific primitive composition","source_refs":["S-SCENE","S-REACT-LOWER"]}],"limitations":limits,"inspectability":"Scene values are inspectable; high-level planning intent is not retained","editability":"value-level editing remains; semantic repair is weakened","asset_truthfulness":"external assets must be declared and cannot be inferred as physically accurate","source_refs":vec!["S-SCENE","S-REACT-LOWER","S-CINEMA-COMPILER","S-COMPONENTS"]});
+    let generic = |id: &str, name: &str, limits: &str| json!({"litmus_id":id,"scene":name,"verdict":"PARTIALLY_EXPRESSIBLE","required_primitives":["hierarchy","geometry","transforms","camera","timing","effects","media"],"surface_comparison":[{"surface_id":"AS-CINEMA","result":"guided composition; novel mechanics require registry code"},{"surface_id":"AS-REACT","result":"procedural composition over finite Scene primitives"},{"surface_id":"AS-JSON","result":"explicit renderer graph without high-level planning semantics"},{"surface_id":"AS-RUST","result":"typed procedural graph and timeline construction"},{"surface_id":"AS-COMPONENTS","result":"finite catalog unless extended with code"}],"capability_decomposition":[{"dimension":"overall primitive sufficiency","status":"PARTIAL_OR_NOT_ESTABLISHED","required_primitive":"inspectable scene-specific primitive composition","evidence_scope":"The cited Scene and React surfaces establish finite composition primitives, not a general solution for every requested visual or physical behavior.","source_refs":["S-SCENE","S-REACT-LOWER"]}],"limitations":limits,"inspectability":"Scene values are inspectable; high-level planning intent is not retained","editability":"value-level editing remains; semantic repair is weakened","asset_truthfulness":"external assets must be declared and cannot be inferred as physically accurate","source_refs":vec!["S-SCENE","S-REACT-LOWER","S-CINEMA-COMPILER","S-COMPONENTS"]});
     let mut laptop_scene=generic("LITMUS-LAPTOP","exploded laptop layers","general mechanical constraints, collision solving, physically based materials, and general shaders are not established");
-    laptop_scene["capability_decomposition"]=Value::Array(laptop.into_iter().map(|d|json!({"dimension":d,"status":if matches!(d,"part hierarchy"|"segmentation"|"camera"|"timing"|"sound"){"SUPPORTED_OR_COMPOSABLE"}else{"PARTIAL_OR_NOT_ESTABLISHED"},"required_primitive":format!("inspectable {d} representation"),"source_refs":vec!["S-SCENE","S-REACT-LOWER"]})).collect());
+    laptop_scene["capability_decomposition"] = Value::Array(laptop.into_iter().map(|dimension| {
+        let (status, source_refs, evidence_scope) = match dimension {
+            "part hierarchy" => ("SUPPORTED_OR_COMPOSABLE", vec!["S-SCENE", "S-REACT-LOWER"], "A presegmented model or manually supplied hierarchy can be composed."),
+            "segmentation" => ("PARTIAL_OR_NOT_ESTABLISHED", vec!["S-SCENE", "S-REACT-LOWER"], "Manual or presegmented hierarchy is supported; automatic semantic or mechanical segmentation of a monolithic asset is not established."),
+            "camera" | "timing" => ("SUPPORTED_OR_COMPOSABLE", vec!["S-SCENE", "S-REACT-LOWER"], "The cited authoring and Scene surfaces expose composable primitives for this dimension."),
+            "sound" => ("SUPPORTED_OR_COMPOSABLE", vec!["S-AUDIO", "S-PLAYER", "S-REACT-LOWER"], "Audio authoring lowers to runtime scheduling with distinct clock ownership."),
+            _ => ("PARTIAL_OR_NOT_ESTABLISHED", vec!["S-SCENE", "S-REACT-LOWER"], "The available finite primitives do not establish a general solution for this dimension."),
+        };
+        json!({"dimension":dimension,"status":status,"required_primitive":format!("inspectable {dimension} representation"),"evidence_scope":evidence_scope,"source_refs":source_refs})
+    }).collect());
     Value::Array(vec![
         laptop_scene,
         generic(
@@ -1358,57 +1437,34 @@ fn novel_scenes() -> Value {
 }
 
 fn requirements() -> Value {
-    let rows = [
-        (
-            "CK-R002-REQ-001",
-            "Preserve stable source identity and source-map chains across lowering stages.",
-            "Early identity loss weakens inspection and repair",
-            vec!["R0.03", "R0.04"],
-        ),
-        (
-            "CK-R002-REQ-002",
-            "Represent time domains and conversions explicitly.",
-            "Fragmented clocks, rounding, and sampling obscure determinism",
-            vec!["R0.04", "R0.06"],
-        ),
-        (
-            "CK-R002-REQ-003",
-            "Separate semantic authoring IR from renderer IR through explicit lowering contracts.",
-            "High-level intent is consumed before rendering",
-            vec!["R0.03"],
-        ),
-        (
-            "CK-R002-REQ-004",
-            "Make capability fallback typed, diagnosed, and quality-classified.",
-            "Automatic fallback can alter visible semantics",
-            vec!["R0.03", "R0.05"],
-        ),
-        (
-            "CK-R002-REQ-005",
-            "Support bounded streaming frame generation.",
-            "Whole-video Scene materialization scales with duration and graph size",
-            vec!["R0.06"],
-        ),
-        (
-            "CK-R002-REQ-006",
-            "Version serialized boundaries with compatibility fixtures and negotiation.",
-            "Current compatibility guarantees are incomplete",
-            vec!["R0.03", "R0.08"],
-        ),
-        (
-            "CK-R002-REQ-007",
-            "Preserve deterministic random, media, and global-state ownership contracts.",
-            "Module-global and external runtime state complicate reentrancy",
-            vec!["R0.04", "R0.06"],
-        ),
-        (
-            "CK-R002-REQ-008",
-            "Keep open-ended host-language escape hatches while retaining inspectable primitives.",
-            "Finite catalogs alone cannot guarantee novel-scene expressibility",
-            vec!["R0.05"],
-        ),
-    ];
-    Value::Array(rows.into_iter().enumerate().map(|(i,r)|json!({"requirement_id":r.0,"abstract_requirement":r.1,"problem_addressed":r.2,"onda_observation_refs":vec![format!("C-{:03}",(i%12)+1)],"onda_source_refs":vec!["S-CINEMA-COMPILER","S-REACT-LOWER","S-SCENE"],"independent_primary_source_refs":if i==1{vec!["E-GSTREAMER"]}else{vec!["E-MLIR","E-REACT"]},"affected_cinekernel_programs":["authoring","compiler","preview","export"],"quality_impact":"preserves intentional output and makes degradation visible","trust_impact":"improves traceability and repairability","performance_impact":"requires later measurement; no R0.02 performance claim","creative_programming_impact":"retains general composition without black-boxing intent","required_follow_up_research":r.3,"prohibited_reuse_note":"Abstract requirement only; no ONDA code, schema, or API may be reused.","status":"CANDIDATE_ONLY"})).collect())
+    json!([
+        requirement("CK-R002-REQ-001", "Preserve stable source identity and source-map chains across lowering stages.", "Early identity loss weakens inspection and repair.", vec!["C-003","C-004","C-011"], vec!["S-CINEMA-TYPES","S-CINEMA-RESOLVE","S-CINEMA-COMPILER","S-SCENE"], vec!["E-MLIR"], vec!["P06","P07","P08","P09","P10","P14","P23","P25"], "Enables precise edits without reconstructing flattened authoring intent.", "Lets agents and reviewers trace rendered results to stable authored entities.", "Adds metadata and lookup cost that R0.03 and R0.07 must measure.", "Preserves semantic targets for open-ended generation and repair.", vec!["R0.03","R0.05","R0.07","R0.08"]),
+        requirement("CK-R002-REQ-002", "Represent time domains and conversions explicitly.", "Fragmented clocks, rounding, and sampling obscure determinism.", vec!["C-007","C-010","C-011"], vec!["S-CINEMA-TIME","S-ANIMATION","S-PLAYER","S-VIDEO","S-AUDIO","S-CLI"], vec!["E-GSTREAMER"], vec!["P01","P02","P03","P07","P08","P14","P18","P19"], "Prevents timing drift across authoring, preview, media, and export.", "Makes rounding, rate ownership, and clock conversion auditable.", "Allows conversion and synchronization overhead to be measured explicitly.", "Gives procedural animation a deterministic temporal contract.", vec!["R0.03","R0.06","R0.07"]),
+        requirement("CK-R002-REQ-003", "Separate semantic authoring IR from renderer IR through explicit lowering contracts.", "High-level intent is consumed before rendering.", vec!["C-003","C-004","C-005","C-011"], vec!["S-CINEMA-TYPES","S-CINEMA-COMPILER","S-REACT-LOWER","S-SCENE"], vec!["E-MLIR"], vec!["P05","P06","P07","P08","P09","P10","P14","P23","P25"], "Keeps authoring semantics available while renderer data stays constrained.", "Makes each semantic-loss boundary explicit and reviewable.", "Permits renderer IR optimization without silently changing authoring meaning.", "Supports novel high-level constructs without forcing them into a template catalog.", vec!["R0.03","R0.04","R0.05","R0.08"]),
+        requirement("CK-R002-REQ-004", "Make capability fallback typed, diagnosed, and quality-classified.", "Automatic fallback can alter visible semantics.", vec!["C-007","C-008"], vec!["S-PLAYER","S-VIDEO","S-AUDIO","S-WASM","S-WASM-VELLO","S-CANVAS","S-CLI"], vec!["E-GSTREAMER"], vec!["P05","P08","P10","P14","P20","P21","P23","P24"], "Prevents silent quality loss when a backend or media capability is unavailable.", "Makes every demotion visible to users, agents, and certification logic.", "Supports capability-aware planning instead of repeated failing work.", "Lets authors deliberately choose approximations without mistaking them for equivalence.", vec!["R0.03","R0.04","R0.06","R0.07"]),
+        requirement("CK-R002-REQ-005", "Support bounded streaming frame generation.", "Whole-video Scene materialization scales with duration and graph size.", vec!["C-006","C-009"], vec!["S-REACT-LOWER","S-NODE-EXPORT","S-LAYOUT","S-IMAGE","S-VIDEO","S-CLI"], vec!["E-GSTREAMER"], vec!["P08","P14","P18","P19","P20","P26"], "Avoids duration-driven exhaustion that can prevent otherwise valid renders.", "Makes buffering and materialization limits explicit failure contracts.", "Bounds memory and I/O, with thresholds reserved for R0.07 measurement.", "Allows long procedural works without requiring whole-program frame materialization.", vec!["R0.03","R0.07"]),
+        requirement("CK-R002-REQ-006", "Version serialized boundaries with compatibility fixtures and negotiation.", "Current compatibility guarantees are incomplete.", vec!["C-005","C-011"], vec!["S-SCENE","S-CLI","S-WASM","S-WASM-VELLO"], vec!["E-MLIR"], vec!["P07","P08","P09","P10","P14","P18","P19","P23","P24"], "Prevents schema evolution from corrupting or rejecting valid creative documents unpredictably.", "Provides explicit compatibility evidence for stored and exchanged artifacts.", "Makes migration cost measurable and avoids accidental full recompilation paths.", "Protects editable creative programs across tool and runtime upgrades.", vec!["R0.03","R0.06","R0.08"]),
+        requirement("CK-R002-REQ-007", "Preserve deterministic random, media, and global-state ownership contracts.", "Module-global and external runtime state complicate reentrancy.", vec!["C-002","C-010","C-012"], vec!["S-REACT-FRAME","S-REACT-STATE","S-REACT-WARM","S-PLAYER","S-VIDEO","S-AUDIO","S-REACT-LOWER"], vec!["E-REACT","E-GSTREAMER"], vec!["P01","P02","P03","P07","P08","P14","P18","P19","P20","P21"], "Produces repeatable frames under concurrency, seeking, and retries.", "Makes nondeterministic state ownership observable and testable.", "Enables safe parallelism only where isolation costs and benefits are known.", "Keeps procedural randomness and media behavior reproducible for agent iteration.", vec!["R0.03","R0.06","R0.07"]),
+        requirement("CK-R002-REQ-008", "Keep open-ended host-language escape hatches while retaining inspectable primitives.", "Finite catalogs alone cannot guarantee novel-scene expressibility.", vec!["C-001","C-003","C-005"], vec!["S-MANDATORY-PACKAGES-REACT-SRC-INDEX-TS","S-MANDATORY-PACKAGES-REACT-SRC-COMPONENTS-TS","S-CINEMA-COMPILER","S-COMPONENTS","S-SCENE"], vec!["E-REACT","E-MLIR"], vec!["P01","P02","P03","P05","P06","P07","P25","P26","P28"], "Combines reusable components with precise low-level control.", "Keeps generated structures inspectable instead of hiding behavior behind opaque presets.", "Allows specialization while retaining analyzable primitive output and later measurement.", "Maintains the project goal of general creative programming rather than template selection.", vec!["R0.04","R0.05","R0.06","R0.08"])
+    ])
+}
+
+#[allow(clippy::too_many_arguments)]
+fn requirement(
+    requirement_id: &str,
+    abstract_requirement: &str,
+    problem_addressed: &str,
+    observations: Vec<&str>,
+    onda_sources: Vec<&str>,
+    primary_sources: Vec<&str>,
+    programs: Vec<&str>,
+    quality: &str,
+    trust: &str,
+    performance: &str,
+    creativity: &str,
+    follow_up: Vec<&str>,
+) -> Value {
+    json!({"requirement_id":requirement_id,"abstract_requirement":abstract_requirement,"problem_addressed":problem_addressed,"onda_observation_refs":observations,"onda_source_refs":onda_sources,"independent_primary_source_refs":primary_sources,"affected_cinekernel_programs":programs,"quality_impact":quality,"trust_impact":trust,"performance_impact":performance,"creative_programming_impact":creativity,"required_follow_up_research":follow_up,"prohibited_reuse_note":"Abstract requirement only; no ONDA code, schema, API, naming, or implementation detail may be reused.","status":"CANDIDATE_ONLY"})
 }
 
 fn contradictions() -> Value {
@@ -1416,5 +1472,16 @@ fn contradictions() -> Value {
 }
 
 fn deferred() -> Value {
-    json!([{"topic_id":"DEF-001","phase":"R0.03","topic":"renderer and GPU architecture"},{"topic_id":"DEF-002","phase":"R0.04","topic":"time, determinism, and identity architecture"},{"topic_id":"DEF-003","phase":"R0.05","topic":"component quality and creative grammar"},{"topic_id":"DEF-004","phase":"R0.06","topic":"streaming, media, and performance measurement"},{"topic_id":"DEF-005","phase":"R0.07","topic":"encoding and delivery"},{"topic_id":"DEF-006","phase":"R0.08","topic":"versioning and compatibility"}])
+    json!([{"topic_id":"DEF-001","phase":"R0.03","topic":"Native GPU, CPU, WASM, and encoding architecture"},{"topic_id":"DEF-002","phase":"R0.04","topic":"Typography, layout, effects, color, and 3D architecture"},{"topic_id":"DEF-003","phase":"R0.05","topic":"Agent component catalog and cinematic composition model"},{"topic_id":"DEF-004","phase":"R0.06","topic":"CLI, installation, preview, embedding, and developer experience"},{"topic_id":"DEF-005","phase":"R0.07","topic":"Independent benchmark and failure analysis"},{"topic_id":"DEF-006","phase":"R0.08","topic":"Adoption, rejection, clean-room, and roadmap-delta matrix"}])
+}
+
+fn open_questions() -> Value {
+    json!([
+        {"id":"Q-001","question":"What scene-size and duration thresholds make full frame materialization unacceptable on target machines?","defer_to":["R0.03","R0.07"],"source_refs":["S-NODE-EXPORT","S-REACT-LOWER"]},
+        {"id":"Q-002","question":"Which renderer capabilities are intentionally stable across CPU, Vello, and browser hosts?","defer_to":["R0.03"],"source_refs":["S-WASM","S-WASM-VELLO","S-CLI"]},
+        {"id":"Q-003","question":"What serialization evolution policy is promised beyond current version handling?","defer_to":["R0.03","R0.08"],"source_refs":["S-SCENE","S-CLI","S-WASM"]},
+        {"id":"Q-004","question":"How should media clocks, frame rates, variable frame rate, and audio resampling compose?","defer_to":["R0.03","R0.06","R0.07"],"source_refs":["S-AUDIO","S-VIDEO","S-CLI"]},
+        {"id":"Q-005","question":"What general material, shader, constraint, and simulation model is required for the target creative ceiling?","defer_to":["R0.04"],"source_refs":["S-SCENE","S-COMPONENTS"]},
+        {"id":"Q-006","question":"Which authoring semantics must remain editable after lowering and round-trip serialization?","defer_to":["R0.05","R0.08"],"source_refs":["S-CINEMA-TYPES","S-CINEMA-COMPILER"]}
+    ])
 }

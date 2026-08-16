@@ -7,6 +7,7 @@
         "capability_decomposition": [
           {
             "dimension": "part hierarchy",
+            "evidence_scope": "A presegmented model or manually supplied hierarchy can be composed.",
             "required_primitive": "inspectable part hierarchy representation",
             "source_refs": [
               "S-SCENE",
@@ -16,15 +17,17 @@
           },
           {
             "dimension": "segmentation",
+            "evidence_scope": "Manual or presegmented hierarchy is supported; automatic semantic or mechanical segmentation of a monolithic asset is not established.",
             "required_primitive": "inspectable segmentation representation",
             "source_refs": [
               "S-SCENE",
               "S-REACT-LOWER"
             ],
-            "status": "SUPPORTED_OR_COMPOSABLE"
+            "status": "PARTIAL_OR_NOT_ESTABLISHED"
           },
           {
             "dimension": "exploded-view planning",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
             "required_primitive": "inspectable exploded-view planning representation",
             "source_refs": [
               "S-SCENE",
@@ -34,6 +37,7 @@
           },
           {
             "dimension": "collision avoidance",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
             "required_primitive": "inspectable collision avoidance representation",
             "source_refs": [
               "S-SCENE",
@@ -43,6 +47,7 @@
           },
           {
             "dimension": "mechanical geometry",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
             "required_primitive": "inspectable mechanical geometry representation",
             "source_refs": [
               "S-SCENE",
@@ -52,6 +57,7 @@
           },
           {
             "dimension": "materials",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
             "required_primitive": "inspectable materials representation",
             "source_refs": [
               "S-SCENE",
@@ -61,6 +67,7 @@
           },
           {
             "dimension": "emissive lighting",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
             "required_primitive": "inspectable emissive lighting representation",
             "source_refs": [
               "S-SCENE",
@@ -70,6 +77,7 @@
           },
           {
             "dimension": "camera",
+            "evidence_scope": "The cited authoring and Scene surfaces expose composable primitives for this dimension.",
             "required_primitive": "inspectable camera representation",
             "source_refs": [
               "S-SCENE",
@@ -79,6 +87,7 @@
           },
           {
             "dimension": "particles",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
             "required_primitive": "inspectable particles representation",
             "source_refs": [
               "S-SCENE",
@@ -88,6 +97,7 @@
           },
           {
             "dimension": "timing",
+            "evidence_scope": "The cited authoring and Scene surfaces expose composable primitives for this dimension.",
             "required_primitive": "inspectable timing representation",
             "source_refs": [
               "S-SCENE",
@@ -97,15 +107,18 @@
           },
           {
             "dimension": "sound",
+            "evidence_scope": "Audio authoring lowers to runtime scheduling with distinct clock ownership.",
             "required_primitive": "inspectable sound representation",
             "source_refs": [
-              "S-SCENE",
+              "S-AUDIO",
+              "S-PLAYER",
               "S-REACT-LOWER"
             ],
             "status": "SUPPORTED_OR_COMPOSABLE"
           },
           {
             "dimension": "semantic grouping",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
             "required_primitive": "inspectable semantic grouping representation",
             "source_refs": [
               "S-SCENE",
@@ -115,6 +128,7 @@
           },
           {
             "dimension": "inspectability",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
             "required_primitive": "inspectable inspectability representation",
             "source_refs": [
               "S-SCENE",
@@ -124,6 +138,7 @@
           },
           {
             "dimension": "editability",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
             "required_primitive": "inspectable editability representation",
             "source_refs": [
               "S-SCENE",
@@ -133,6 +148,7 @@
           },
           {
             "dimension": "asset truthfulness",
+            "evidence_scope": "The available finite primitives do not establish a general solution for this dimension.",
             "required_primitive": "inspectable asset truthfulness representation",
             "source_refs": [
               "S-SCENE",
@@ -190,6 +206,7 @@
         "capability_decomposition": [
           {
             "dimension": "overall primitive sufficiency",
+            "evidence_scope": "The cited Scene and React surfaces establish finite composition primitives, not a general solution for every requested visual or physical behavior.",
             "required_primitive": "inspectable scene-specific primitive composition",
             "source_refs": [
               "S-SCENE",
@@ -247,6 +264,7 @@
         "capability_decomposition": [
           {
             "dimension": "overall primitive sufficiency",
+            "evidence_scope": "The cited Scene and React surfaces establish finite composition primitives, not a general solution for every requested visual or physical behavior.",
             "required_primitive": "inspectable scene-specific primitive composition",
             "source_refs": [
               "S-SCENE",
@@ -303,5 +321,5 @@
   },
   "generated_at": "2026-08-16T00:00:00Z",
   "model_ref": "R0_02_RESEARCH_MODEL.json",
-  "schema_version": "r0.02.2"
+  "schema_version": "r0.02.3"
 }

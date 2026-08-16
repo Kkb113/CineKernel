@@ -461,7 +461,7 @@
           },
           "affected_cinekernel_programs": {
             "items": {
-              "minLength": 1,
+              "pattern": "^P(?:0[1-9]|1[0-9]|2[0-8])$",
               "type": "string"
             },
             "minItems": 1,
@@ -513,7 +513,14 @@
           },
           "required_follow_up_research": {
             "items": {
-              "minLength": 1,
+              "enum": [
+                "R0.03",
+                "R0.04",
+                "R0.05",
+                "R0.06",
+                "R0.07",
+                "R0.08"
+              ],
               "type": "string"
             },
             "minItems": 1,
@@ -524,8 +531,7 @@
             "type": "string"
           },
           "status": {
-            "minLength": 1,
-            "type": "string"
+            "const": "CANDIDATE_ONLY"
           },
           "trust_impact": {
             "minLength": 1,
@@ -591,7 +597,13 @@
             "type": "string"
           },
           "status": {
-            "minLength": 1,
+            "enum": [
+              "VERIFIED_AT_PIN",
+              "INFERRED_FROM_MULTIPLE_SOURCES",
+              "CONTRADICTED",
+              "CANDIDATE_ONLY",
+              "UNRESOLVED"
+            ],
             "type": "string"
           }
         },
@@ -659,16 +671,63 @@
                 "type": "string"
               },
               "can_descend_to_primitives": {
-                "type": "boolean"
+                "enum": [
+                  "SUPPORTED",
+                  "PARTIALLY_SUPPORTED",
+                  "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+                  "SUPPORTED_THROUGH_HOST_LANGUAGE",
+                  "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+                  "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+                  "FINITE_CATALOG_LIMIT",
+                  "NOT_NATIVE",
+                  "NOT_REPRESENTABLE_AT_THIS_LAYER",
+                  "UNKNOWN"
+                ],
+                "type": "string"
               },
               "custom_animation": {
-                "type": "boolean"
+                "enum": [
+                  "SUPPORTED",
+                  "PARTIALLY_SUPPORTED",
+                  "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+                  "SUPPORTED_THROUGH_HOST_LANGUAGE",
+                  "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+                  "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+                  "FINITE_CATALOG_LIMIT",
+                  "NOT_NATIVE",
+                  "NOT_REPRESENTABLE_AT_THIS_LAYER",
+                  "UNKNOWN"
+                ],
+                "type": "string"
               },
               "custom_component_extension": {
-                "type": "boolean"
+                "enum": [
+                  "SUPPORTED",
+                  "PARTIALLY_SUPPORTED",
+                  "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+                  "SUPPORTED_THROUGH_HOST_LANGUAGE",
+                  "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+                  "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+                  "FINITE_CATALOG_LIMIT",
+                  "NOT_NATIVE",
+                  "NOT_REPRESENTABLE_AT_THIS_LAYER",
+                  "UNKNOWN"
+                ],
+                "type": "string"
               },
               "custom_geometry": {
-                "minLength": 1,
+                "enum": [
+                  "SUPPORTED",
+                  "PARTIALLY_SUPPORTED",
+                  "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+                  "SUPPORTED_THROUGH_HOST_LANGUAGE",
+                  "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+                  "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+                  "FINITE_CATALOG_LIMIT",
+                  "NOT_NATIVE",
+                  "NOT_REPRESENTABLE_AT_THIS_LAYER",
+                  "UNKNOWN"
+                ],
                 "type": "string"
               },
               "escape_hatch_evidence": {
@@ -676,28 +735,124 @@
                 "type": "string"
               },
               "general_primitive_access": {
-                "type": "boolean"
+                "enum": [
+                  "SUPPORTED",
+                  "PARTIALLY_SUPPORTED",
+                  "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+                  "SUPPORTED_THROUGH_HOST_LANGUAGE",
+                  "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+                  "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+                  "FINITE_CATALOG_LIMIT",
+                  "NOT_NATIVE",
+                  "NOT_REPRESENTABLE_AT_THIS_LAYER",
+                  "UNKNOWN"
+                ],
+                "type": "string"
               },
               "inspectability": {
-                "type": "boolean"
+                "enum": [
+                  "SUPPORTED",
+                  "PARTIALLY_SUPPORTED",
+                  "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+                  "SUPPORTED_THROUGH_HOST_LANGUAGE",
+                  "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+                  "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+                  "FINITE_CATALOG_LIMIT",
+                  "NOT_NATIVE",
+                  "NOT_REPRESENTABLE_AT_THIS_LAYER",
+                  "UNKNOWN"
+                ],
+                "type": "string"
               },
               "named_pattern_dependence": {
-                "type": "boolean"
+                "enum": [
+                  "SUPPORTED",
+                  "PARTIALLY_SUPPORTED",
+                  "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+                  "SUPPORTED_THROUGH_HOST_LANGUAGE",
+                  "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+                  "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+                  "FINITE_CATALOG_LIMIT",
+                  "NOT_NATIVE",
+                  "NOT_REPRESENTABLE_AT_THIS_LAYER",
+                  "UNKNOWN"
+                ],
+                "type": "string"
               },
               "novel_scene_expressibility": {
-                "type": "boolean"
+                "enum": [
+                  "SUPPORTED",
+                  "PARTIALLY_SUPPORTED",
+                  "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+                  "SUPPORTED_THROUGH_HOST_LANGUAGE",
+                  "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+                  "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+                  "FINITE_CATALOG_LIMIT",
+                  "NOT_NATIVE",
+                  "NOT_REPRESENTABLE_AT_THIS_LAYER",
+                  "UNKNOWN"
+                ],
+                "type": "string"
               },
               "post_generation_editability": {
-                "type": "boolean"
+                "enum": [
+                  "SUPPORTED",
+                  "PARTIALLY_SUPPORTED",
+                  "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+                  "SUPPORTED_THROUGH_HOST_LANGUAGE",
+                  "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+                  "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+                  "FINITE_CATALOG_LIMIT",
+                  "NOT_NATIVE",
+                  "NOT_REPRESENTABLE_AT_THIS_LAYER",
+                  "UNKNOWN"
+                ],
+                "type": "string"
               },
               "procedural_logic": {
-                "type": "boolean"
+                "enum": [
+                  "SUPPORTED",
+                  "PARTIALLY_SUPPORTED",
+                  "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+                  "SUPPORTED_THROUGH_HOST_LANGUAGE",
+                  "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+                  "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+                  "FINITE_CATALOG_LIMIT",
+                  "NOT_NATIVE",
+                  "NOT_REPRESENTABLE_AT_THIS_LAYER",
+                  "UNKNOWN"
+                ],
+                "type": "string"
               },
               "registry_dependence": {
-                "type": "boolean"
+                "enum": [
+                  "SUPPORTED",
+                  "PARTIALLY_SUPPORTED",
+                  "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+                  "SUPPORTED_THROUGH_HOST_LANGUAGE",
+                  "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+                  "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+                  "FINITE_CATALOG_LIMIT",
+                  "NOT_NATIVE",
+                  "NOT_REPRESENTABLE_AT_THIS_LAYER",
+                  "UNKNOWN"
+                ],
+                "type": "string"
               },
               "source_mapping": {
-                "type": "boolean"
+                "enum": [
+                  "SUPPORTED",
+                  "PARTIALLY_SUPPORTED",
+                  "PARTIALLY_SUPPORTED_BEFORE_LOWERING",
+                  "SUPPORTED_THROUGH_HOST_LANGUAGE",
+                  "SUPPORTED_THROUGH_CUSTOM_REGISTRY",
+                  "REQUIRES_LOWER_LEVEL_SCENE_ACCESS",
+                  "FINITE_CATALOG_LIMIT",
+                  "NOT_NATIVE",
+                  "NOT_REPRESENTABLE_AT_THIS_LAYER",
+                  "UNKNOWN"
+                ],
+                "type": "string"
               },
               "source_refs": {
                 "items": {
@@ -748,7 +903,14 @@
         "additionalProperties": false,
         "properties": {
           "phase": {
-            "minLength": 1,
+            "enum": [
+              "R0.03",
+              "R0.04",
+              "R0.05",
+              "R0.06",
+              "R0.07",
+              "R0.08"
+            ],
             "type": "string"
           },
           "topic": {
@@ -992,6 +1154,10 @@
                   "minLength": 1,
                   "type": "string"
                 },
+                "evidence_scope": {
+                  "minLength": 1,
+                  "type": "string"
+                },
                 "required_primitive": {
                   "minLength": 1,
                   "type": "string"
@@ -1011,6 +1177,7 @@
               },
               "required": [
                 "dimension",
+                "evidence_scope",
                 "required_primitive",
                 "source_refs",
                 "status"
@@ -1118,8 +1285,19 @@
         "additionalProperties": false,
         "properties": {
           "defer_to": {
-            "minLength": 1,
-            "type": "string"
+            "items": {
+              "enum": [
+                "R0.03",
+                "R0.04",
+                "R0.05",
+                "R0.06",
+                "R0.07",
+                "R0.08"
+              ],
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
           },
           "id": {
             "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",

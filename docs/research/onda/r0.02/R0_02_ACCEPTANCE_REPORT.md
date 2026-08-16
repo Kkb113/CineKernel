@@ -1,8 +1,17 @@
 # R0.02 acceptance report
 
+## Locked future-phase registry
+
+- R0.03 — Native GPU, CPU, WASM, and encoding architecture
+- R0.04 — Typography, layout, effects, color, and 3D architecture
+- R0.05 — Agent component catalog and cinematic composition model
+- R0.06 — CLI, installation, preview, embedding, and developer experience
+- R0.07 — Independent benchmark and failure analysis
+- R0.08 — Adoption, rejection, clean-room, and roadmap-delta matrix
+
 ## 1. Executive status
 
-PASS. The exact remediation evidence commit passed the dedicated R0.02 workflow and ordinary CineKernel CI on Windows, Ubuntu, and macOS, with three nonempty raw-evidence artifacts.
+CONDITIONAL PASS pending a final remediation-head remote reproduction and updated attestation. All local remediation gates pass before publication.
 
 ## 2. CineKernel base revision
 
@@ -18,7 +27,7 @@ Branch `research/r0.02-onda-scene-compiler-archaeology`; PR #13 remains draft an
 
 ## 5. Clean-room confirmation
 
-ONDA was inspected statically and never built, executed, tested, rendered, or benchmarked. Exact-file, normalized multiline-fragment, dependency-alias, Git-dependency, absolute-path, tracked-upstream, and frozen-path guards pass.
+ONDA was inspected statically and never built, executed, tested, rendered, or benchmarked. Exact-file, normalized multiline-fragment, authoritative package-identity, renamed dependency, Git source, ONDA-checkout path, lockfile identity, absolute-path, tracked-upstream, and frozen-path guards pass.
 
 ## 6. Source coverage
 
@@ -38,15 +47,15 @@ Cinema validates and normalizes timing and semantic payload fields, invokes regi
 
 ## 10. React authoring flow
 
-Fresh roots and HostNode trees are created per requested frame, lowered, and unmounted. Module-global active frame/DOF state leaves concurrent or nested reentrancy unresolved.
+React directly supports host-language frame logic, interpolation, springs, sequences, loops, transitions, and primitive Scene nodes. Fresh roots and HostNode trees are created per requested frame, lowered, and unmounted; module-global frame/DOF state still leaves concurrent or nested reentrancy unresolved.
 
 ## 11. Direct JSON flow
 
-Direct JSON enters at Scene deserialization/version handling and therefore bypasses Cinema and React contracts.
+Direct JSON enters at Scene deserialization/version handling and composes the finite declarative Scene schema. It does not natively define a new component implementation.
 
 ## 12. Rust Scene and Timeline flow
 
-Typed Rust construction is explicit and close to the renderer contract. Timeline evaluation clones and mutates a Scene using numeric NodeId targets.
+Typed Rust construction directly builds the finite Scene and Timeline model without Cinema-registry dependence. Timeline evaluation clones and mutates a Scene using numeric NodeId targets.
 
 ## 13. Scene graph authority
 
@@ -90,7 +99,7 @@ Fallbacks include warnings, omission, placeholders, default substitution, asynch
 
 ## 23. Serialization and versioning
 
-Scene JSON is versioned, but forward compatibility and semantic migration guarantees remain unresolved and deferred.
+Scene JSON is versioned, but forward compatibility and semantic migration guarantees remain unresolved and routed to R0.03 and R0.08.
 
 ## 24. Prepasses
 
@@ -98,15 +107,15 @@ Layout, image, SVG, timeline, and media resolution materialize or rewrite Scene 
 
 ## 25. Materialization and scalability hypotheses
 
-React export builds a complete Scene array and temporary JSON; motion blur multiplies evaluations. This is a scaling hypothesis only—R0.02 performed no benchmark.
+React export builds a complete Scene array and temporary JSON; motion blur multiplies evaluations. This is a scaling hypothesis only—measurement belongs in R0.07.
 
 ## 26. Creative-programmability assessment
 
-Five surfaces are assessed categorically across primitive access, procedural logic, extension, registry/pattern dependence, descent to primitives, inspectability, editability, source mapping, novel-scene expression, and black-box risk. No numeric score is used.
+Five surfaces use categorical capability states rather than ambiguous Booleans. React host-language animation and primitive descent are supported; JSON custom components and Rust registry dependence are not native; component identity is only partial before lowering.
 
 ## 27. Laptop exploded-layers litmus
 
-The laptop case separately covers hierarchy, segmentation, exploded-view planning, collision avoidance, geometry, materials, emissive lighting, camera, particles, timing, sound, semantic grouping, inspectability, editability, and asset truthfulness.
+The laptop case distinguishes manually supplied or presegmented hierarchy from automatic semantic/mechanical segmentation, which is not established. Sound uses audio-specific authoring/runtime evidence, and authoritative assets remain required for claims about real product construction.
 
 ## 28. Additional novel-scene litmus results
 
@@ -118,7 +127,7 @@ Official React, MLIR, and GStreamer sources provide independent comparisons for 
 
 ## 30. CineKernel candidate requirements
 
-8 requirement candidates use CK-R002 IDs, cite ONDA and independent sources, identify affected programs and impacts, require later research, prohibit reuse, and remain CANDIDATE_ONLY.
+8 requirement candidates cite requirement-specific claims and sources, use locked P01–P28 program IDs, tailor all four impacts, route through the locked R0 registry, prohibit reuse, and remain CANDIDATE_ONLY.
 
 ## 31. Contradictions found
 
@@ -126,15 +135,15 @@ Official React, MLIR, and GStreamer sources provide independent comparisons for 
 
 ## 32. Unresolved questions
 
-6 unresolved questions remain open.
+6 unresolved questions remain open and are routed without renaming later phases.
 
 ## 33. Deferred topics
 
-6 topics are routed to R0.03–R0.08.
+6 topics preserve the exact locked definitions for R0.03–R0.08: Native GPU/CPU/WASM/encoding; visual/3D; agent components; developer experience; benchmark/failure analysis; and final adoption/roadmap decisions.
 
 ## 34. Automated tests
 
-63 fixture-driven unit and mutation tests pass, covering lock/checkout failures, provenance, strict nested schemas, graph integrity, semantic/fallback/requirement completeness, creative-taxonomy and novel-scene mutations, clean-room aliases and fragments, absolute paths, sorting, and two-run determinism.
+73 fixture-driven unit and mutation tests pass, including authoritative ONDA crate identities and lockfiles, roadmap drift, categorical creative states, candidate status, graph/schema integrity, provenance, clean-room copying, stable ordering, and deterministic generation.
 
 ## 35. Deterministic generation
 
@@ -142,7 +151,7 @@ The report command generates 16 machine projections, 20 human reports, and 17 sc
 
 ## 36. Remote reproduction
 
-Evidence commit `b528d651fa4e1f5678b098f39fc8c35ce034e1ef` passed dedicated run `31923882312` and ordinary CI run `31923882324` on Windows, Ubuntu, and macOS. Three nonempty raw-evidence artifacts and their SHA-256 digests are recorded in the attestation.
+Pending closure-head Windows, Ubuntu, and macOS reproduction. The attestation is updated only after those runs complete and three nonempty raw-evidence artifacts are published.
 
 ## 37. Phase 0 and R0.01 immutability
 
@@ -150,4 +159,4 @@ No Phase 0 or R0.01 frozen file is modified. The R0.01 verifier is executed from
 
 ## 38. Recommendation for R0.03
 
-R0.02 now satisfies its automated PASS gates. Keep PR #13 draft and unmerged until reviewer sign-off; begin R0.03 only after that review accepts the evidence lock.
+Keep PR #13 draft and unmerged. Do not start R0.03 until closure-head three-OS evidence and ordinary CI succeed and the reviewer grants final sign-off.

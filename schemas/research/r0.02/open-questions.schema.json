@@ -14,8 +14,19 @@
             "additionalProperties": false,
             "properties": {
               "defer_to": {
-                "minLength": 1,
-                "type": "string"
+                "items": {
+                  "enum": [
+                    "R0.03",
+                    "R0.04",
+                    "R0.05",
+                    "R0.06",
+                    "R0.07",
+                    "R0.08"
+                  ],
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
               },
               "id": {
                 "pattern": "^[A-Z][A-Z0-9.-]*(?:-[A-Z0-9.-]+)+$",
