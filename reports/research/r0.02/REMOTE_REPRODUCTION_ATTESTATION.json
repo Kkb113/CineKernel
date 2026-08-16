@@ -1,24 +1,54 @@
 {
   "schema_version": "r0.02.2",
-  "recorded_at": "2026-08-16T00:00:00Z",
+  "recorded_at": "2026-08-16T03:27:00Z",
   "repository": "Kkb113/CineKernel",
-  "attestation_state": "PENDING_REMEDIATION_HEAD_REPRODUCTION",
-  "current_remediation_commit": null,
-  "historical_evidence": {
-    "evidence_commit": "c8d16e3d7d8029a3e2fe2e2e2019f48996533758",
-    "documentation_commit": "81ba1835d759e332f2d73683161de28a1f0954fc",
-    "relationship": "The evidence commit contained the tested implementation. The later documentation-only commit recorded that evidence. Both predate the reviewer remediation and are retained only as historical context.",
-    "dedicated_run_id": 31898496016,
-    "final_documentation_head_run_id": 31899067941,
-    "repository_ci_run_id": 31899067940,
-    "conclusion": "HISTORICAL_SUCCESS_SUPERSEDED_BY_REMEDIATION"
+  "attestation_state": "COMPLETE",
+  "evidence_commit": "b528d651fa4e1f5678b098f39fc8c35ce034e1ef",
+  "attestation_relationship": "This attestation is committed after the tested evidence commit. Its only implementation effect is report and attestation finalization; it does not alter the verifier, research model, schemas, guards, or workflow exercised at the evidence commit.",
+  "conclusion": "PASS",
+  "runs": [
+    {
+      "name": "R0.02 ONDA architecture archaeology",
+      "run_id": 31923882312,
+      "run_number": 5,
+      "url": "https://github.com/Kkb113/CineKernel/actions/runs/31923882312",
+      "head_sha": "b528d651fa4e1f5678b098f39fc8c35ce034e1ef",
+      "conclusion": "success",
+      "jobs": [
+        {"os": "ubuntu-latest", "job_id": 95108208808, "conclusion": "success"},
+        {"os": "windows-latest", "job_id": 95108208821, "conclusion": "success"},
+        {"os": "macos-latest", "job_id": 95108208832, "conclusion": "success"}
+      ],
+      "artifacts": [
+        {"name": "r0-02-windows-latest-evidence", "artifact_id": 9257282377, "size_bytes": 1586, "digest": "sha256:40261bfc15cd945cab7f09ab5355e4cd57024a767f3ca745291f07348d0c8108"},
+        {"name": "r0-02-macos-latest-evidence", "artifact_id": 9257239354, "size_bytes": 1586, "digest": "sha256:2c63bdd641d736afc28a2e5f64d3b1f15970e766a0858204f3a251abac8decb3"},
+        {"name": "r0-02-ubuntu-latest-evidence", "artifact_id": 9257230853, "size_bytes": 1586, "digest": "sha256:f381ab255a94ac0341decf3dfd4ecb9d69504aa0b4bc0169d97c9d8a6846210a"}
+      ]
+    },
+    {
+      "name": "CI",
+      "run_id": 31923882324,
+      "run_number": 80,
+      "url": "https://github.com/Kkb113/CineKernel/actions/runs/31923882324",
+      "head_sha": "b528d651fa4e1f5678b098f39fc8c35ce034e1ef",
+      "conclusion": "success",
+      "jobs": [
+        {"os": "macos-latest", "job_id": 95108208735, "conclusion": "success"},
+        {"os": "windows-latest", "job_id": 95108208792, "conclusion": "success"},
+        {"os": "ubuntu-latest", "job_id": 95108208823, "conclusion": "success"}
+      ]
+    }
+  ],
+  "r0_01_immutability": {
+    "method": "unchanged verifier executed in a detached exact-base worktree on every dedicated R0.02 operating-system job",
+    "integrity_entries": 29,
+    "conclusion": "success"
   },
-  "required_final_evidence": {
-    "exact_remediation_head": true,
-    "dedicated_three_os_success": true,
-    "ordinary_three_os_ci_success": true,
-    "nonempty_raw_evidence_artifacts": true,
-    "r0_01_exact_base_integrity_entries": 29
-  },
-  "conclusion": "PENDING"
+  "known_legacy_signal": {
+    "workflow": "R0.01 ONDA provenance reproduction",
+    "run_id": 31923882364,
+    "conclusion": "failure",
+    "reason": "the frozen R0.01 workflow scans future schemas/research namespaces against its intentionally frozen 29-entry manifest",
+    "acceptance_effect": "none; the identical frozen verifier passed from the exact accepted R0.01 base on all three R0.02 jobs"
+  }
 }

@@ -47,7 +47,14 @@ pub fn generate(root: &Path, model: &Value) -> Result<()> {
     write(root, "RISKS_AND_OPEN_QUESTIONS.md", &risks(model))?;
     write(root, "DEFERRED_TO_LATER_R0_PHASES.md", &deferred(model))?;
     write(root, "RESEARCH_SOURCE_INDEX.md", &sources(model))?;
-    write(root, "R0_02_ACCEPTANCE_REPORT.md", &acceptance(model))?;
+    let mut acceptance_report = acceptance(model);
+    if attestation_pass(root)? {
+        acceptance_report = acceptance_report
+            .replace("CONDITIONAL PASS pending a final remediation-head remote reproduction and updated attestation. All local remediation gates pass before publication.", "PASS. The exact remediation evidence commit passed the dedicated R0.02 workflow and ordinary CineKernel CI on Windows, Ubuntu, and macOS, with three nonempty raw-evidence artifacts.")
+            .replace("Pending remediation-head Windows, Ubuntu, and macOS reproduction. The attestation is updated only after those runs complete and a nonempty raw-evidence artifact is published.", "Evidence commit `b528d651fa4e1f5678b098f39fc8c35ce034e1ef` passed dedicated run `31923882312` and ordinary CI run `31923882324` on Windows, Ubuntu, and macOS. Three nonempty raw-evidence artifacts and their SHA-256 digests are recorded in the attestation.")
+            .replace("Do not start R0.03 until remediation-head three-OS evidence succeeds and the reviewer accepts promotion from CONDITIONAL PASS to PASS.", "R0.02 now satisfies its automated PASS gates. Keep PR #13 draft and unmerged until reviewer sign-off; begin R0.03 only after that review accepts the evidence lock.");
+    }
+    write(root, "R0_02_ACCEPTANCE_REPORT.md", &acceptance_report)?;
     write_review_packet(root, model)?;
     Ok(())
 }
@@ -316,12 +323,32 @@ fn write_review_packet(root: &Path, m: &Value) -> Result<()> {
         "| Strict schemas | 17 |",
         "| Strict schemas | 17 |\n| Standalone verifier tests | 63 |",
     );
+    let text = if attestation_pass(root)? {
+        text.replace("**CONDITIONAL PASS pending final remediation-head remote reproduction.**", "**PASS — exact remediation-head research workflow and ordinary CI succeeded on all three operating systems.**")
+            .replace("- two-run byte equality: run during final reproduction", "- two-run byte equality: PASS")
+            .replace("- remote workflow and artifacts: pending remediation-head run", "- remote workflow and artifacts: PASS — run 31923882312; three nonempty artifacts")
+            .replace("- standard three-OS CI: pending remediation-head run", "- standard three-OS CI: PASS — run 31923882324")
+            + "\n## Implementation and evidence commits\n\n- `8d9d425024761715bbbb37f8a14104d1c1fd670b` — initial research packet\n- `e9a4546db0962cd30858ad71041ec92c33b81fa7` — workflow token correction\n- `c8d16e3d7d8029a3e2fe2e2e2019f48996533758` — immutable blob hashing correction\n- `81ba1835d759e332f2d73683161de28a1f0954fc` — historical attestation\n- `b528d651fa4e1f5678b098f39fc8c35ce034e1ef` — reviewer remediation evidence commit\n\n## Final remote evidence\n\n- Dedicated R0.02 run: `31923882312` — Windows, Ubuntu, macOS success\n- Ordinary CI run: `31923882324` — Windows, Ubuntu, macOS success\n- `r0-02-windows-latest-evidence`: `sha256:40261bfc15cd945cab7f09ab5355e4cd57024a767f3ca745291f07348d0c8108`\n- `r0-02-macos-latest-evidence`: `sha256:2c63bdd641d736afc28a2e5f64d3b1f15970e766a0858204f3a251abac8decb3`\n- `r0-02-ubuntu-latest-evidence`: `sha256:f381ab255a94ac0341decf3dfd4ecb9d69504aa0b4bc0169d97c9d8a6846210a`\n"
+    } else {
+        text
+    };
     fs::create_dir_all(root.join(REVIEW))?;
     fs::write(
         root.join(REVIEW).join("REVIEW_PACKET.md"),
         format!("{}\n", text.trim_end()),
     )?;
     Ok(())
+}
+
+fn attestation_pass(root: &Path) -> Result<bool> {
+    let path = root
+        .join(REVIEW)
+        .join("REMOTE_REPRODUCTION_ATTESTATION.json");
+    if !path.is_file() {
+        return Ok(false);
+    }
+    let value: Value = serde_json::from_slice(&fs::read(path)?)?;
+    Ok(value["conclusion"].as_str() == Some("PASS"))
 }
 
 fn array<'a>(v: &'a Value, key: &str) -> &'a [Value] {

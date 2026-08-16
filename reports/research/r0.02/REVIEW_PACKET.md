@@ -2,7 +2,7 @@
 
 ## Status
 
-**CONDITIONAL PASS pending final remediation-head remote reproduction.** PR #13 must remain draft and unmerged.
+**PASS — exact remediation-head research workflow and ordinary CI succeeded on all three operating systems.** PR #13 must remain draft and unmerged.
 
 ## Locked identity
 
@@ -49,9 +49,9 @@
 - dependency alias and Git dependency guard: PASS
 - absolute path and tracked-upstream guard: PASS
 - Phase 0 and R0.01 frozen paths: PASS
-- two-run byte equality: run during final reproduction
-- remote workflow and artifacts: pending remediation-head run
-- standard three-OS CI: pending remediation-head run
+- two-run byte equality: PASS
+- remote workflow and artifacts: PASS — run 31923882312; three nonempty artifacts
+- standard three-OS CI: PASS — run 31923882324
 
 ## Known check behavior
 
@@ -81,3 +81,19 @@ cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- repor
 cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- guard --json
 cargo run --locked --manifest-path tools/research/onda-r0-02/Cargo.toml -- integrity --check --json
 ```
+
+## Implementation and evidence commits
+
+- `8d9d425024761715bbbb37f8a14104d1c1fd670b` — initial research packet
+- `e9a4546db0962cd30858ad71041ec92c33b81fa7` — workflow token correction
+- `c8d16e3d7d8029a3e2fe2e2e2019f48996533758` — immutable blob hashing correction
+- `81ba1835d759e332f2d73683161de28a1f0954fc` — historical attestation
+- `b528d651fa4e1f5678b098f39fc8c35ce034e1ef` — reviewer remediation evidence commit
+
+## Final remote evidence
+
+- Dedicated R0.02 run: `31923882312` — Windows, Ubuntu, macOS success
+- Ordinary CI run: `31923882324` — Windows, Ubuntu, macOS success
+- `r0-02-windows-latest-evidence`: `sha256:40261bfc15cd945cab7f09ab5355e4cd57024a767f3ca745291f07348d0c8108`
+- `r0-02-macos-latest-evidence`: `sha256:2c63bdd641d736afc28a2e5f64d3b1f15970e766a0858204f3a251abac8decb3`
+- `r0-02-ubuntu-latest-evidence`: `sha256:f381ab255a94ac0341decf3dfd4ecb9d69504aa0b4bc0169d97c9d8a6846210a`
